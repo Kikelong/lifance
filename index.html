@@ -2,33 +2,140 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Página rápida</title>
+  <title>Finanzas Personales</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #f2f4f7;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .box {
+
+    .card {
       background: #fff;
-      padding: 20px 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      padding: 25px;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+
+    h2 {
       text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .input-group span {
+      background: #e5e7eb;
+      padding: 10px 14px;
+      border-radius: 6px 0 0 6px;
+      font-weight: bold;
+    }
+
+    .input-group input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .ingreso {
+      background: #16a34a;
+      color: white;
+    }
+
+    .egreso {
+      background: #dc2626;
+      color: white;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
     }
   </style>
 </head>
 <body>
 
-  <div class="box">
-    <h1>🚀 HTML rápido</h1>
-    <p>Página ligera y funcional.</p>
+  <div class="card">
+    <h2>💰 Finanzas Personales</h2>
+
+    <div class="input-group">
+      <span>$</span>
+      <input type="number" placeholder="Ingrese el valor" min="0">
+    </div>
+
+    <div class="buttons">
+      <button class="ingreso" onclick="mostrarIngreso()">INGRESO</button>
+      <button class="egreso" onclick="mostrarEgreso()">EGRESO</button>
+    </div>
+
+    <select id="opciones" style="display:none;">
+    </select>
   </div>
+
+  <script>
+    const select = document.getElementById("opciones");
+
+    function mostrarIngreso() {
+      select.style.display = "block";
+      select.innerHTML = `
+        <option value="">Seleccione tipo de ingreso</option>
+        <option>Nomina</option>
+        <option>Carreras</option>
+        <option>Prestamos</option>
+        <option>Otros Ingresos</option>
+      `;
+    }
+
+    function mostrarEgreso() {
+      select.style.display = "block";
+      select.innerHTML = `
+        <option value="">Seleccione tipo de egreso</option>
+        <option>Combustible</option>
+        <option>Comisión / Peajes</option>
+        <option>Lavada</option>
+        <option>Mantenimiento</option>
+        <option>Hogar</option>
+        <option>Salidas y Compras (ocio)</option>
+        <option>Gastos Menores</option>
+        <option>Deudas</option>
+        <option>Inversiones / Ahorros</option>
+        <option>Préstamos / Ajustes / GMF / Intereses</option>
+      `;
+    }
+  </script>
 
 </body>
 </html>
