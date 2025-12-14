@@ -284,6 +284,44 @@ function cargar(){
     });
 }
 </script>
+
+
+
+
+<button onclick="login()">Ingresar con Google</button>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD01j9IrV8deYcd0fsAzmFrDNPJaU34_c",
+    authDomain: "lifance-d2316.firebaseapp.com",
+    projectId: "lifance-d2316",
+    storageBucket: "lifance-d2316.appspot.com",
+    messagingSenderId: "87725148350",
+    appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  function login() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        console.log("Login OK:", result.user.email);
+      })
+      .catch((error) => {
+        console.error("Error login:", error);
+      });
+  }
+</script>
+
+
+
+
+
+
+  
 </body>
 </html>
 
