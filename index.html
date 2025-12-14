@@ -9,14 +9,13 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f6f8;
-      margin: 0;
       padding: 20px;
     }
 
     .container {
       max-width: 420px;
       margin: auto;
-      background: #ffffff;
+      background: #fff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -26,66 +25,143 @@
       text-align: center;
     }
 
-    button {
+    input, select, button {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin-top: 10px;
       font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
     }
 
-    .google {
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-ingreso {
+      background: #2ecc71;
+      color: white;
+      border: none;
+    }
+
+    .btn-egreso {
+      background: #e74c3c;
+      color: white;
+      border: none;
+    }
+
+    .btn-google {
       background: #4285F4;
       color: white;
+      border: none;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h2>Lifance</h2>
+<div class="container">
 
-    <button class="google" onclick="login()">
-      Ingresar con Google
-    </button>
+  <h2>Lifance</h2>
+
+  <!-- LOGIN -->
+  <button class="btn-google" onclick="login()">Ingresar con Google</button>
+
+  <hr>
+
+  <!-- MONTO -->
+  <label>Monto</label>
+  <input 
+    type="text" 
+    id="monto" 
+    inputmode="numeric" 
+    placeholder="$ 0"
+    oninput="formatearMonto(this)"
+  >
+
+  <!-- FECHA -->
+  <label>Fecha</label>
+  <input type="date" id="fecha">
+
+  <!-- BOTONES INGRESO / EGRESO -->
+  <div class="row">
+    <button class="btn-ingreso" onclick="mostrarCategorias('ingreso')">INGRESO</button>
+    <button class="btn-egreso" onclick="mostrarCategorias('egreso')">EGRESO</button>
   </div>
 
-  <!-- 🔥 FIREBASE SDK (COMPAT, SIN MODULE) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <!-- CATEGORÍAS -->
+  <select id="categoria" style="display:none;"></select>
 
-  <script>
-    // 🔥 CONFIGURACIÓN REAL DE TU PROYECTO
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
-      authDomain: "lifance-d2316.firebaseapp.com",
-      projectId: "lifance-d2316",
-      storageBucket: "lifance-d2316.appspot.com",
-      messagingSenderId: "87725148350",
-      appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
-    };
+</div>
 
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    function login() {
-      const provider = new firebase.auth.GoogleAuthProvider();
+<script>
+  // 🔥 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
+    authDomain: "lifance-d2316.firebaseapp.com",
+    projectId: "lifance-d2316",
+    storageBucket: "lifance-d2316.appspot.com",
+    messagingSenderId: "87725148350",
+    appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
+  };
 
-      firebase.auth()
-        .signInWithPopup(provider)
-        .then((result) => {
-          alert("Login correcto:\n" + result.user.email);
-          console.log("Usuario:", result.user);
-        })
-        .catch((error) => {
-          console.error("Error Firebase:", error);
-          alert(error.message);
-        });
-    }
-  </script>
+  firebase.initializeApp(firebaseConfig);
+
+  // LOGIN
+  function login() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then(res => console.log("Login OK", res.user.email))
+      .catch(err => alert(err.message));
+  }
+
+  // FECHA HOY POR DEFECTO
+  document.getElementById("fecha").valueAsDate = new Date();
+
+  // FORMATO DE MONTO CON MILES
+  function formatearMonto(input) {
+    let valor = input.value.replace(/\D/g, "");
+    valor = new Intl.NumberFormat("es-CO").format(valor);
+    input.value = "$ " + valor;
+  }
+
+  // CATEGORÍAS
+  const categorias = {
+    ingreso: [
+      "Nómina",
+      "Carreras",
+      "Préstamos",
+      "Otros ingresos"
+    ],
+    egreso: [
+      "Combustible",
+      "Comisión / Peajes",
+      "Lavada",
+      "Mantenimiento",
+      "Hogar",
+      "Salidas y compras (ocio)",
+      "Gastos menores",
+      "Deudas",
+      "Inversiones / Ahorros",
+      "Préstamos / Ajustes / GMF / Intereses"
+    ]
+  };
+
+  function mostrarCategorias(tipo) {
+    const select = document.getElementById("categoria");
+    select.innerHTML = "";
+    categorias[tipo].forEach(cat => {
+      const option = document.createElement("option");
+      option.textContent = cat;
+      select.appendChild(option);
+    });
+    select.style.display = "block";
+  }
+</script>
 
 </body>
 </html>
+
