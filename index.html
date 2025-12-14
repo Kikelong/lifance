@@ -5,10 +5,15 @@
 <title>Finanzas Personales</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Firebase SDK (COMPAT) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
+  font-family:Arial, sans-serif;
   background:#f2f4f7;
 }
 .container{
@@ -59,17 +64,20 @@ input, select, button{
 .ingreso{background:#16a34a;color:#fff;border:none;}
 .egreso{background:#dc2626;color:#fff;border:none;}
 .save{background:#2563eb;color:#fff;border:none;}
-.list{
-  font-size:14px;
-}
-.list div{
-  border-bottom:1px solid #eee;
-  padding:6px 0;
-}
+.logout{background:#6b7280;color:#fff;border:none;}
 .summary{
   display:flex;
   justify-content:space-between;
   font-weight:bold;
+  margin-top:5px;
+}
+.list{
+  font-size:14px;
+  margin-top:10px;
+}
+.list div{
+  border-bottom:1px solid #eee;
+  padding:6px 0;
 }
 </style>
 </head>
@@ -77,7 +85,15 @@ input, select, button{
 <body>
 <div class="container">
 
-<!-- REGISTRO -->
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+  <h2>🔐 Iniciar sesión</h2>
+  <button onclick="login()">Ingresar con Google</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+
 <div class="card">
 <h2>💰 Nuevo Movimiento</h2>
 
@@ -96,18 +112,22 @@ input, select, button{
 <select id="categoria" style="display:none"></select>
 
 <button class="save" onclick="guardar()">Guardar</button>
+<button class="logout" onclick="logout()">Cerrar sesión</button>
 </div>
 
-<!-- FILTRO -->
 <div class="card">
-<h3>📅 Movimientos</h3>
+<h3>📊 Resumen</h3>
 
-<select id="mesFiltro" onchange="filtrar()"></select>
-<select id="anioFiltro" onchange="filtrar()"></select>
+<select id="mesFiltro" onchange="cargar()"></select>
+<select id="anioFiltro" onchange="cargar()"></select>
 
 <div class="summary">
-  <div>Ingresos: <span id="totalIngresos">$0</span></div>
-  <div>Egresos: <span id="totalEgresos">$0</span></div>
+  <div>Ingresos:</div>
+  <div id="totalIngresos">$0</div>
+</div>
+<div class="summary">
+  <div>Egresos:</div>
+  <div id="totalEgresos">$0</div>
 </div>
 <div class="summary">
   <div>Disponible:</div>
@@ -118,34 +138,71 @@ input, select, button{
 </div>
 
 </div>
+</div>
 
 <script>
+/* 🔥 CONFIGURACIÓN FIREBASE (TUYA) */
+const firebaseConfig = {
+  apiKey: "AIzaSyD0Lj9IrWH8deYcd0fsAzmFrDNPJaU34_c",
+  authDomain: "lifance-d2316.firebaseapp.com",
+  projectId: "lifance-d2316",
+  storageBucket: "lifance-d2316.firebasestorage.app",
+  messagingSenderId: "87725148350",
+  appId: "1:87725148350:web:9d04cf1c247d9058eeb6ef"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let user = null;
 let tipo = "";
-const montoInput = document.getElementById("monto");
-const fechaInput = document.getElementById("fecha");
-const categoria = document.getElementById("categoria");
 
-fechaInput.valueAsDate = new Date();
-
-/* Formato miles */
-montoInput.addEventListener("input", ()=>{
-  let valor = montoInput.value.replace(/\D/g,"");
-  montoInput.value = new Intl.NumberFormat("es-CO").format(valor);
+/* AUTH */
+auth.onAuthStateChanged(u=>{
+  if(u){
+    user = u;
+    loginCard.style.display = "none";
+    app.style.display = "block";
+    fecha.valueAsDate = new Date();
+    cargarFiltros();
+    cargar();
+  }else{
+    loginCard.style.display = "block";
+    app.style.display = "none";
+  }
 });
 
+function login(){
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+}
+
+function logout(){
+  auth.signOut();
+}
+
+/* FORMATO MILES */
+monto.addEventListener("input", ()=>{
+  let v = monto.value.replace(/\D/g,"");
+  monto.value = new Intl.NumberFormat("es-CO").format(v);
+});
+
+/* TIPO */
 function setTipo(t){
   tipo = t;
-  categoria.style.display="block";
+  categoria.style.display = "block";
 
-  if(t==="INGRESO"){
-    categoria.innerHTML=`
+  if(t === "INGRESO"){
+    categoria.innerHTML = `
       <option value="">Tipo ingreso</option>
       <option>Nómina</option>
       <option>Carreras</option>
       <option>Préstamos</option>
-      <option>Otros Ingresos</option>`;
+      <option>Otros Ingresos</option>
+    `;
   }else{
-    categoria.innerHTML=`
+    categoria.innerHTML = `
       <option value="">Tipo egreso</option>
       <option>Combustible</option>
       <option>Comisión / Peajes</option>
@@ -156,62 +213,78 @@ function setTipo(t){
       <option>Gastos Menores</option>
       <option>Deudas</option>
       <option>Inversiones / Ahorros</option>
-      <option>Préstamos / Ajustes / GMF</option>`;
+      <option>Préstamos / Ajustes / GMF</option>
+    `;
   }
 }
 
+/* GUARDAR */
 function guardar(){
-  if(!tipo || !categoria.value || !montoInput.value) return alert("Completa todos los campos");
+  if(!tipo || !categoria.value || !monto.value){
+    alert("Completa todos los campos");
+    return;
+  }
 
-  const registros = JSON.parse(localStorage.getItem("movimientos")||"[]");
-
-  registros.push({
-    tipo,
-    categoria:categoria.value,
-    monto:Number(montoInput.value.replace(/\D/g,"")),
-    fecha:fechaInput.value
+  db.collection("movimientos").add({
+    uid: user.uid,
+    tipo: tipo,
+    categoria: categoria.value,
+    monto: Number(monto.value.replace(/\D/g,"")),
+    fecha: fecha.value,
+    creado: new Date()
+  }).then(()=>{
+    monto.value="";
+    cargar();
   });
-
-  localStorage.setItem("movimientos",JSON.stringify(registros));
-  montoInput.value="";
-  filtrar();
 }
 
+/* FILTROS */
 function cargarFiltros(){
-  const anio = new Date().getFullYear();
-  mesFiltro.innerHTML="<option value=''>Todos los meses</option>";
-  for(let i=1;i<=12;i++) mesFiltro.innerHTML+=`<option value="${i}">${i}</option>`;
+  mesFiltro.innerHTML = "<option value=''>Todos los meses</option>";
+  for(let i=1;i<=12;i++){
+    mesFiltro.innerHTML += `<option value="${i}">${i}</option>`;
+  }
 
-  anioFiltro.innerHTML="";
-  for(let i=anio;i>=anio-5;i--) anioFiltro.innerHTML+=`<option>${i}</option>`;
+  const y = new Date().getFullYear();
+  anioFiltro.innerHTML = "";
+  for(let i=y;i>=y-5;i--){
+    anioFiltro.innerHTML += `<option value="${i}">${i}</option>`;
+  }
 }
 
-function filtrar(){
-  const registros = JSON.parse(localStorage.getItem("movimientos")||"[]");
-  lista.innerHTML="";
-  let ing=0, egr=0;
+/* CARGAR DATOS */
+function cargar(){
+  lista.innerHTML = "";
+  let ing = 0, egr = 0;
 
-  registros.forEach(r=>{
-    const f = new Date(r.fecha);
-    if((!mesFiltro.value || f.getMonth()+1==mesFiltro.value) &&
-       (!anioFiltro.value || f.getFullYear()==anioFiltro.value)){
+  db.collection("movimientos")
+    .where("uid","==",user.uid)
+    .get()
+    .then(snap=>{
+      snap.forEach(doc=>{
+        const r = doc.data();
+        const f = new Date(r.fecha);
 
-      lista.innerHTML+=`
-        <div>${r.fecha} - ${r.tipo} - ${r.categoria} - $${r.monto.toLocaleString("es-CO")}</div>
-      `;
+        if(
+          (!mesFiltro.value || f.getMonth()+1 == mesFiltro.value) &&
+          (!anioFiltro.value || f.getFullYear() == anioFiltro.value)
+        ){
+          lista.innerHTML += `
+            <div>
+              ${r.fecha} | ${r.tipo} | ${r.categoria} | $${r.monto.toLocaleString("es-CO")}
+            </div>
+          `;
+          r.tipo==="INGRESO" ? ing+=r.monto : egr+=r.monto;
+        }
+      });
 
-      r.tipo==="INGRESO" ? ing+=r.monto : egr+=r.monto;
-    }
-  });
-
-  totalIngresos.textContent = "$"+ing.toLocaleString("es-CO");
-  totalEgresos.textContent = "$"+egr.toLocaleString("es-CO");
-  disponible.textContent = "$"+(ing-egr).toLocaleString("es-CO");
+      totalIngresos.textContent = "$" + ing.toLocaleString("es-CO");
+      totalEgresos.textContent = "$" + egr.toLocaleString("es-CO");
+      disponible.textContent = "$" + (ing - egr).toLocaleString("es-CO");
+    });
 }
-
-cargarFiltros();
-filtrar();
 </script>
 </body>
 </html>
+
 
