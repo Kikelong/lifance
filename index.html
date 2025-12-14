@@ -1,328 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Finanzas Personales</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Lifance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Firebase SDK (COMPAT) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f2f4f7;
-}
-.container{
-  max-width:420px;
-  margin:auto;
-  padding:20px;
-}
-.card{
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);
-  margin-bottom:15px;
-}
-h2,h3{
-  text-align:center;
-  margin:10px 0;
-}
-.input-group{
-  display:flex;
-  margin-bottom:12px;
-}
-.input-group span{
-  background:#e5e7eb;
-  padding:10px 14px;
-  border-radius:8px 0 0 8px;
-  font-weight:bold;
-}
-.input-group input{
-  flex:1;
-  padding:10px;
-  border:1px solid #ccc;
-  border-left:none;
-  border-radius:0 8px 8px 0;
-  font-size:16px;
-}
-input, select, button{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-.buttons{
-  display:flex;
-  gap:10px;
-}
-.ingreso{background:#16a34a;color:#fff;border:none;}
-.egreso{background:#dc2626;color:#fff;border:none;}
-.save{background:#2563eb;color:#fff;border:none;}
-.logout{background:#6b7280;color:#fff;border:none;}
-.summary{
-  display:flex;
-  justify-content:space-between;
-  font-weight:bold;
-  margin-top:5px;
-}
-.list{
-  font-size:14px;
-  margin-top:10px;
-}
-.list div{
-  border-bottom:1px solid #eee;
-  padding:6px 0;
-}
-</style>
+    .container {
+      max-width: 420px;
+      margin: auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .google {
+      background: #4285F4;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
 
-<!-- LOGIN -->
-<div class="card" id="loginCard">
-  <h2>🔐 Iniciar sesión</h2>
-  <button onclick="login()">Ingresar con Google</button>
-</div>
+  <div class="container">
+    <h2>Lifance</h2>
 
-<!-- APP -->
-<div id="app" style="display:none">
+    <button class="google" onclick="login()">
+      Ingresar con Google
+    </button>
+  </div>
 
-<div class="card">
-<h2>💰 Nuevo Movimiento</h2>
+  <!-- 🔥 FIREBASE SDK (COMPAT, SIN MODULE) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<div class="input-group">
-  <span>$</span>
-  <input type="text" id="monto" inputmode="numeric" placeholder="0">
-</div>
+  <script>
+    // 🔥 CONFIGURACIÓN REAL DE TU PROYECTO
+    const firebaseConfig = {
+      apiKey: "AIzaSyD01j9IrV8deYcd0fsAzmFrDNPJaU34_c",
+      authDomain: "lifance-d2316.firebaseapp.com",
+      projectId: "lifance-d2316",
+      storageBucket: "lifance-d2316.appspot.com",
+      messagingSenderId: "87725148350",
+      appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
+    };
 
-<input type="date" id="fecha">
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
 
-<div class="buttons">
-  <button class="ingreso" onclick="setTipo('INGRESO')">INGRESO</button>
-  <button class="egreso" onclick="setTipo('EGRESO')">EGRESO</button>
-</div>
+    function login() {
+      const provider = new firebase.auth.GoogleAuthProvider();
 
-<select id="categoria" style="display:none"></select>
+      firebase.auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+          alert("Login correcto:\n" + result.user.email);
+          console.log("Usuario:", result.user);
+        })
+        .catch((error) => {
+          console.error("Error Firebase:", error);
+          alert(error.message);
+        });
+    }
+  </script>
 
-<button class="save" onclick="guardar()">Guardar</button>
-<button class="logout" onclick="logout()">Cerrar sesión</button>
-</div>
-
-<div class="card">
-<h3>📊 Resumen</h3>
-
-<select id="mesFiltro" onchange="cargar()"></select>
-<select id="anioFiltro" onchange="cargar()"></select>
-
-<div class="summary">
-  <div>Ingresos:</div>
-  <div id="totalIngresos">$0</div>
-</div>
-<div class="summary">
-  <div>Egresos:</div>
-  <div id="totalEgresos">$0</div>
-</div>
-<div class="summary">
-  <div>Disponible:</div>
-  <div id="disponible">$0</div>
-</div>
-
-<div class="list" id="lista"></div>
-</div>
-
-</div>
-</div>
-
-<script>
-/* 🔥 CONFIGURACIÓN FIREBASE (TUYA) */
-const firebaseConfig = {
-  apiKey: "AIzaSyD0Lj9IrWH8deYcd0fsAzmFrDNPJaU34_c",
-  authDomain: "lifance-d2316.firebaseapp.com",
-  projectId: "lifance-d2316",
-  storageBucket: "lifance-d2316.firebasestorage.app",
-  messagingSenderId: "87725148350",
-  appId: "1:87725148350:web:9d04cf1c247d9058eeb6ef"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let user = null;
-let tipo = "";
-
-/* AUTH */
-auth.onAuthStateChanged(u=>{
-  if(u){
-    user = u;
-    loginCard.style.display = "none";
-    app.style.display = "block";
-    fecha.valueAsDate = new Date();
-    cargarFiltros();
-    cargar();
-  }else{
-    loginCard.style.display = "block";
-    app.style.display = "none";
-  }
-});
-
-function login(){
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-}
-
-function logout(){
-  auth.signOut();
-}
-
-/* FORMATO MILES */
-monto.addEventListener("input", ()=>{
-  let v = monto.value.replace(/\D/g,"");
-  monto.value = new Intl.NumberFormat("es-CO").format(v);
-});
-
-/* TIPO */
-function setTipo(t){
-  tipo = t;
-  categoria.style.display = "block";
-
-  if(t === "INGRESO"){
-    categoria.innerHTML = `
-      <option value="">Tipo ingreso</option>
-      <option>Nómina</option>
-      <option>Carreras</option>
-      <option>Préstamos</option>
-      <option>Otros Ingresos</option>
-    `;
-  }else{
-    categoria.innerHTML = `
-      <option value="">Tipo egreso</option>
-      <option>Combustible</option>
-      <option>Comisión / Peajes</option>
-      <option>Lavada</option>
-      <option>Mantenimiento</option>
-      <option>Hogar</option>
-      <option>Salidas y Compras</option>
-      <option>Gastos Menores</option>
-      <option>Deudas</option>
-      <option>Inversiones / Ahorros</option>
-      <option>Préstamos / Ajustes / GMF</option>
-    `;
-  }
-}
-
-/* GUARDAR */
-function guardar(){
-  if(!tipo || !categoria.value || !monto.value){
-    alert("Completa todos los campos");
-    return;
-  }
-
-  db.collection("movimientos").add({
-    uid: user.uid,
-    tipo: tipo,
-    categoria: categoria.value,
-    monto: Number(monto.value.replace(/\D/g,"")),
-    fecha: fecha.value,
-    creado: new Date()
-  }).then(()=>{
-    monto.value="";
-    cargar();
-  });
-}
-
-/* FILTROS */
-function cargarFiltros(){
-  mesFiltro.innerHTML = "<option value=''>Todos los meses</option>";
-  for(let i=1;i<=12;i++){
-    mesFiltro.innerHTML += `<option value="${i}">${i}</option>`;
-  }
-
-  const y = new Date().getFullYear();
-  anioFiltro.innerHTML = "";
-  for(let i=y;i>=y-5;i--){
-    anioFiltro.innerHTML += `<option value="${i}">${i}</option>`;
-  }
-}
-
-/* CARGAR DATOS */
-function cargar(){
-  lista.innerHTML = "";
-  let ing = 0, egr = 0;
-
-  db.collection("movimientos")
-    .where("uid","==",user.uid)
-    .get()
-    .then(snap=>{
-      snap.forEach(doc=>{
-        const r = doc.data();
-        const f = new Date(r.fecha);
-
-        if(
-          (!mesFiltro.value || f.getMonth()+1 == mesFiltro.value) &&
-          (!anioFiltro.value || f.getFullYear() == anioFiltro.value)
-        ){
-          lista.innerHTML += `
-            <div>
-              ${r.fecha} | ${r.tipo} | ${r.categoria} | $${r.monto.toLocaleString("es-CO")}
-            </div>
-          `;
-          r.tipo==="INGRESO" ? ing+=r.monto : egr+=r.monto;
-        }
-      });
-
-      totalIngresos.textContent = "$" + ing.toLocaleString("es-CO");
-      totalEgresos.textContent = "$" + egr.toLocaleString("es-CO");
-      disponible.textContent = "$" + (ing - egr).toLocaleString("es-CO");
-    });
-}
-</script>
-
-
-
-
-<button onclick="login()">Ingresar con Google</button>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD01j9IrV8deYcd0fsAzmFrDNPJaU34_c",
-    authDomain: "lifance-d2316.firebaseapp.com",
-    projectId: "lifance-d2316",
-    storageBucket: "lifance-d2316.appspot.com",
-    messagingSenderId: "87725148350",
-    appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  function login() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth()
-      .signInWithPopup(provider)
-      .then((result) => {
-        console.log("Login OK:", result.user.email);
-      })
-      .catch((error) => {
-        console.error("Error login:", error);
-      });
-  }
-</script>
-
-
-
-
-
-
-  
 </body>
 </html>
-
-
