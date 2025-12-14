@@ -21,7 +21,7 @@
       padding: 25px;
       width: 100%;
       max-width: 380px;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,.1);
     }
 
@@ -32,37 +32,46 @@
 
     .input-group {
       display: flex;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .input-group span {
       background: #e5e7eb;
-      padding: 10px 14px;
-      border-radius: 6px 0 0 6px;
+      padding: 12px 14px;
+      border-radius: 8px 0 0 8px;
       font-weight: bold;
+      font-size: 16px;
     }
 
     .input-group input {
       flex: 1;
       border: 1px solid #ccc;
       border-left: none;
-      border-radius: 0 6px 6px 0;
-      padding: 10px;
+      border-radius: 0 8px 8px 0;
+      padding: 12px;
       font-size: 16px;
+      outline: none;
+    }
+
+    /* Quitar flechas del input number */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
     .buttons {
       display: flex;
       gap: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     button {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       font-size: 15px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
     }
@@ -79,10 +88,11 @@
 
     select {
       width: 100%;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 12px;
+      border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 15px;
+      display: none;
     }
   </style>
 </head>
@@ -93,7 +103,12 @@
 
     <div class="input-group">
       <span>$</span>
-      <input type="number" placeholder="Ingrese el valor" min="0">
+      <input
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        placeholder="Ingrese el valor"
+      >
     </div>
 
     <div class="buttons">
@@ -101,8 +116,7 @@
       <button class="egreso" onclick="mostrarEgreso()">EGRESO</button>
     </div>
 
-    <select id="opciones" style="display:none;">
-    </select>
+    <select id="opciones"></select>
   </div>
 
   <script>
@@ -112,9 +126,9 @@
       select.style.display = "block";
       select.innerHTML = `
         <option value="">Seleccione tipo de ingreso</option>
-        <option>Nomina</option>
+        <option>Nómina</option>
         <option>Carreras</option>
-        <option>Prestamos</option>
+        <option>Préstamos</option>
         <option>Otros Ingresos</option>
       `;
     }
