@@ -1,155 +1,217 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Finanzas Personales</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Finanzas Personales</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f4f7;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background: #fff;
-      padding: 25px;
-      width: 100%;
-      max-width: 380px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .input-group {
-      display: flex;
-      margin-bottom: 18px;
-    }
-
-    .input-group span {
-      background: #e5e7eb;
-      padding: 12px 14px;
-      border-radius: 8px 0 0 8px;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .input-group input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-left: none;
-      border-radius: 0 8px 8px 0;
-      padding: 12px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    /* Quitar flechas del input number */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    button {
-      flex: 1;
-      padding: 12px;
-      font-size: 15px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .ingreso {
-      background: #16a34a;
-      color: white;
-    }
-
-    .egreso {
-      background: #dc2626;
-      color: white;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-      display: none;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f2f4f7;
+}
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  margin-bottom:15px;
+}
+h2,h3{
+  text-align:center;
+  margin:10px 0;
+}
+.input-group{
+  display:flex;
+  margin-bottom:12px;
+}
+.input-group span{
+  background:#e5e7eb;
+  padding:10px 14px;
+  border-radius:8px 0 0 8px;
+  font-weight:bold;
+}
+.input-group input{
+  flex:1;
+  padding:10px;
+  border:1px solid #ccc;
+  border-left:none;
+  border-radius:0 8px 8px 0;
+  font-size:16px;
+}
+input, select, button{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+.buttons{
+  display:flex;
+  gap:10px;
+}
+.ingreso{background:#16a34a;color:#fff;border:none;}
+.egreso{background:#dc2626;color:#fff;border:none;}
+.save{background:#2563eb;color:#fff;border:none;}
+.list{
+  font-size:14px;
+}
+.list div{
+  border-bottom:1px solid #eee;
+  padding:6px 0;
+}
+.summary{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+}
+</style>
 </head>
+
 <body>
+<div class="container">
 
-  <div class="card">
-    <h2>💰 Finanzas Personales</h2>
+<!-- REGISTRO -->
+<div class="card">
+<h2>💰 Nuevo Movimiento</h2>
 
-    <div class="input-group">
-      <span>$</span>
-      <input
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        placeholder="Ingrese el valor"
-      >
-    </div>
+<div class="input-group">
+  <span>$</span>
+  <input type="text" id="monto" inputmode="numeric" placeholder="0">
+</div>
 
-    <div class="buttons">
-      <button class="ingreso" onclick="mostrarIngreso()">INGRESO</button>
-      <button class="egreso" onclick="mostrarEgreso()">EGRESO</button>
-    </div>
+<input type="date" id="fecha">
 
-    <select id="opciones"></select>
-  </div>
+<div class="buttons">
+  <button class="ingreso" onclick="setTipo('INGRESO')">INGRESO</button>
+  <button class="egreso" onclick="setTipo('EGRESO')">EGRESO</button>
+</div>
 
-  <script>
-    const select = document.getElementById("opciones");
+<select id="categoria" style="display:none"></select>
 
-    function mostrarIngreso() {
-      select.style.display = "block";
-      select.innerHTML = `
-        <option value="">Seleccione tipo de ingreso</option>
-        <option>Nómina</option>
-        <option>Carreras</option>
-        <option>Préstamos</option>
-        <option>Otros Ingresos</option>
+<button class="save" onclick="guardar()">Guardar</button>
+</div>
+
+<!-- FILTRO -->
+<div class="card">
+<h3>📅 Movimientos</h3>
+
+<select id="mesFiltro" onchange="filtrar()"></select>
+<select id="anioFiltro" onchange="filtrar()"></select>
+
+<div class="summary">
+  <div>Ingresos: <span id="totalIngresos">$0</span></div>
+  <div>Egresos: <span id="totalEgresos">$0</span></div>
+</div>
+<div class="summary">
+  <div>Disponible:</div>
+  <div id="disponible">$0</div>
+</div>
+
+<div class="list" id="lista"></div>
+</div>
+
+</div>
+
+<script>
+let tipo = "";
+const montoInput = document.getElementById("monto");
+const fechaInput = document.getElementById("fecha");
+const categoria = document.getElementById("categoria");
+
+fechaInput.valueAsDate = new Date();
+
+/* Formato miles */
+montoInput.addEventListener("input", ()=>{
+  let valor = montoInput.value.replace(/\D/g,"");
+  montoInput.value = new Intl.NumberFormat("es-CO").format(valor);
+});
+
+function setTipo(t){
+  tipo = t;
+  categoria.style.display="block";
+
+  if(t==="INGRESO"){
+    categoria.innerHTML=`
+      <option value="">Tipo ingreso</option>
+      <option>Nómina</option>
+      <option>Carreras</option>
+      <option>Préstamos</option>
+      <option>Otros Ingresos</option>`;
+  }else{
+    categoria.innerHTML=`
+      <option value="">Tipo egreso</option>
+      <option>Combustible</option>
+      <option>Comisión / Peajes</option>
+      <option>Lavada</option>
+      <option>Mantenimiento</option>
+      <option>Hogar</option>
+      <option>Salidas y Compras</option>
+      <option>Gastos Menores</option>
+      <option>Deudas</option>
+      <option>Inversiones / Ahorros</option>
+      <option>Préstamos / Ajustes / GMF</option>`;
+  }
+}
+
+function guardar(){
+  if(!tipo || !categoria.value || !montoInput.value) return alert("Completa todos los campos");
+
+  const registros = JSON.parse(localStorage.getItem("movimientos")||"[]");
+
+  registros.push({
+    tipo,
+    categoria:categoria.value,
+    monto:Number(montoInput.value.replace(/\D/g,"")),
+    fecha:fechaInput.value
+  });
+
+  localStorage.setItem("movimientos",JSON.stringify(registros));
+  montoInput.value="";
+  filtrar();
+}
+
+function cargarFiltros(){
+  const anio = new Date().getFullYear();
+  mesFiltro.innerHTML="<option value=''>Todos los meses</option>";
+  for(let i=1;i<=12;i++) mesFiltro.innerHTML+=`<option value="${i}">${i}</option>`;
+
+  anioFiltro.innerHTML="";
+  for(let i=anio;i>=anio-5;i--) anioFiltro.innerHTML+=`<option>${i}</option>`;
+}
+
+function filtrar(){
+  const registros = JSON.parse(localStorage.getItem("movimientos")||"[]");
+  lista.innerHTML="";
+  let ing=0, egr=0;
+
+  registros.forEach(r=>{
+    const f = new Date(r.fecha);
+    if((!mesFiltro.value || f.getMonth()+1==mesFiltro.value) &&
+       (!anioFiltro.value || f.getFullYear()==anioFiltro.value)){
+
+      lista.innerHTML+=`
+        <div>${r.fecha} - ${r.tipo} - ${r.categoria} - $${r.monto.toLocaleString("es-CO")}</div>
       `;
-    }
 
-    function mostrarEgreso() {
-      select.style.display = "block";
-      select.innerHTML = `
-        <option value="">Seleccione tipo de egreso</option>
-        <option>Combustible</option>
-        <option>Comisión / Peajes</option>
-        <option>Lavada</option>
-        <option>Mantenimiento</option>
-        <option>Hogar</option>
-        <option>Salidas y Compras (ocio)</option>
-        <option>Gastos Menores</option>
-        <option>Deudas</option>
-        <option>Inversiones / Ahorros</option>
-        <option>Préstamos / Ajustes / GMF / Intereses</option>
-      `;
+      r.tipo==="INGRESO" ? ing+=r.monto : egr+=r.monto;
     }
-  </script>
+  });
 
+  totalIngresos.textContent = "$"+ing.toLocaleString("es-CO");
+  totalEgresos.textContent = "$"+egr.toLocaleString("es-CO");
+  disponible.textContent = "$"+(ing-egr).toLocaleString("es-CO");
+}
+
+cargarFiltros();
+filtrar();
+</script>
 </body>
 </html>
+
