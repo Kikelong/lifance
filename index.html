@@ -24,8 +24,8 @@
     h2 { text-align: center; color: var(--primary); margin-top: 0; }
     h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
 
-    input, select, button { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-    input:focus, select:focus { outline: none; border-color: var(--primary); }
+    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
 
     .row { display: flex; gap: 10px; }
     
@@ -39,7 +39,6 @@
     .logout { background: #95a5a6; color: white; font-size: 0.8rem; padding: 8px; width: auto; float: right; }
 
     .hidden { display: none; }
-    .selected { box-shadow: inset 0 0 0 3px rgba(0,0,0,0.2); }
 
     /* Resumen */
     .resumen {
@@ -53,8 +52,10 @@
     .card {
       background: white; padding: 12px; margin-top: 10px;
       border-radius: 8px; border: 1px solid #eee;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; flex-direction: column; /* Cambiado para permitir el comentario abajo */
     }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
 
@@ -69,6 +70,19 @@
     .card-actions button {
       width: auto; padding: 5px 10px; margin: 0 0 0 5px;
       background: #f1f1f1; color: #333; font-size: 1.2rem;
+    }
+
+    /* Estilos del comentario desplegable */
+    .comentario-box {
+        display: none; /* Oculto por defecto */
+        background: #fff3cd;
+        color: #856404;
+        padding: 8px;
+        margin-top: 8px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-style: italic;
+        border-left: 3px solid #ffeeba;
     }
   </style>
 </head>
@@ -101,6 +115,9 @@
     </div>
 
     <select id="categoria" class="hidden"></select>
+    
+    <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
+
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Guardar Movimiento</button>
 
     <h3>Historial</h3>
@@ -139,7 +156,6 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // VARIABLES GLOBALES
   let usuarioActual = null;
   let tipoSeleccionado = "";
   const categorias = {
@@ -147,7 +163,6 @@
     egreso: ["Combustible", "Comisión/Peajes", "Lavada", "Mantenimiento", "Hogar", "Ocio", "Gastos Menores", "Deudas", "Ahorros"]
   };
 
-  // ESTADO DE AUTENTICACIÓN
   auth.onAuthStateChanged(user => {
     if (user) {
       usuarioActual = user;
@@ -165,11 +180,9 @@
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // UI & FORMATO
   function inicializarFechas() {
-    // Solución Zona Horaria: Usar YYYY-MM-DD local
     const hoy = new Date();
-    const localIso = hoy.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD
+    const localIso = hoy.toLocaleDateString('en-CA');
     document.getElementById("fecha").value = localIso;
   }
 
@@ -182,7 +195,6 @@
   function setTipo(tipo) {
     tipoSeleccionado = tipo;
     
-    // Toggle visual de botones
     document.getElementById("btnIngreso").style.opacity = tipo === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgreso").style.opacity = tipo === 'egreso' ? '1' : '0.4';
 
@@ -195,16 +207,19 @@
     });
     
     catSelect.classList.remove("hidden");
+    document.getElementById("nota").classList.remove("hidden"); // Mostrar input comentario
     document.getElementById("btnGuardar").classList.remove("hidden");
   }
 
-  // OPERACIONES CRUD
   async function guardarMovimiento() {
     const montoInput = document.getElementById("monto");
+    const notaInput = document.getElementById("nota"); // Capturar nota
+    
     const val = Number(montoInput.value.replace(/\D/g, ""));
     const fechaVal = document.getElementById("fecha").value;
+    const notaVal = notaInput.value.trim(); // Texto limpio
 
-    if (!val || !tipoSeleccionado || !fechaVal) { alert("Completa los datos"); return; }
+    if (!val || !tipoSeleccionado || !fechaVal) { alert("Completa el monto y fecha"); return; }
 
     try {
       document.getElementById("btnGuardar").disabled = true;
@@ -216,10 +231,12 @@
         categoria: document.getElementById("categoria").value,
         monto: val,
         fecha: fechaVal,
-        creado: firebase.firestore.FieldValue.serverTimestamp() // Para orden absoluto
+        nota: notaVal, // Guardamos la nota
+        creado: firebase.firestore.FieldValue.serverTimestamp()
       });
 
       montoInput.value = "";
+      notaInput.value = ""; // Limpiar nota
       cargarMovimientos();
     } catch (e) {
       console.error(e);
@@ -238,15 +255,13 @@
     mesFiltro.innerHTML = "";
     anioFiltro.innerHTML = "";
 
-    // Meses
     for (let m = 0; m < 12; m++) {
       let opt = document.createElement("option");
       opt.value = m + 1;
-      opt.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" }); // Truco para nombres
+      opt.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
       if (m === hoy.getMonth()) opt.selected = true;
       mesFiltro.appendChild(opt);
     }
-    // Años
     for (let a = hoy.getFullYear() - 2; a <= hoy.getFullYear() + 1; a++) {
       let opt = document.createElement("option");
       opt.value = a;
@@ -265,10 +280,7 @@
 
     const mes = parseInt(document.getElementById("mesFiltro").value);
     const anio = parseInt(document.getElementById("anioFiltro").value);
-
-    // Lógica correcta para primer y último día del mes
     const primerDia = `${anio}-${String(mes).padStart(2, '0')}-01`;
-    // Truco JS: día 0 del siguiente mes es el último día del mes actual
     const ultimoDiaNum = new Date(anio, mes, 0).getDate(); 
     const ultimoDia = `${anio}-${String(mes).padStart(2, '0')}-${ultimoDiaNum}`;
 
@@ -276,8 +288,8 @@
       .where("uid", "==", usuarioActual.uid)
       .where("fecha", ">=", primerDia)
       .where("fecha", "<=", ultimoDia)
-      .orderBy("fecha", "desc") // Ordenar del más nuevo al viejo
-      .orderBy("creado", "desc") // Orden secundario por si las fechas son iguales
+      .orderBy("fecha", "desc")
+      .orderBy("creado", "desc")
       .get()
       .then(snap => {
         let ing = 0, egr = 0;
@@ -289,17 +301,29 @@
           
           const item = document.createElement("div");
           item.className = `card ${esIngreso ? "ingreso-item" : "egreso-item"}`;
+          
+          // Preparamos el HTML, incluimos el ojito solo si hay nota (o siempre visible si prefieres)
+          // Aquí lo dejo siempre visible para que veas que funciona, o puedes poner estilo disable si d.nota está vacío.
+          
+          const notaTexto = d.nota ? d.nota : "Sin comentario";
+
           item.innerHTML = `
-            <div class="card-info">
-              <div class="card-cat">${d.categoria}</div>
-              <div class="card-date">${d.fecha}</div>
+            <div class="card-top">
+                <div class="card-info">
+                <div class="card-cat">${d.categoria}</div>
+                <div class="card-date">${d.fecha}</div>
+                </div>
+                <div class="card-monto ${esIngreso ? "text-ingreso" : "text-egreso"}">
+                $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
+                </div>
+                <div class="card-actions">
+                <button onclick="toggleComentario('${doc.id}')" title="Ver comentario">👁️</button>
+                <button onclick="borrarMovimiento('${doc.id}')">✕</button>
+                </div>
             </div>
-            <div class="card-monto ${esIngreso ? "text-ingreso" : "text-egreso"}">
-               $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
-            </div>
-            <div class="card-actions">
-              <button onclick="editarMovimiento('${doc.id}', ${d.monto}, '${d.fecha}')">✎</button>
-              <button onclick="borrarMovimiento('${doc.id}')">✕</button>
+            
+            <div id="coment-${doc.id}" class="comentario-box">
+                📝 ${notaTexto}
             </div>
           `;
           lista.appendChild(item);
@@ -312,8 +336,18 @@
       })
       .catch(err => {
         console.error("Error al cargar:", err);
-        loader.textContent = "Error cargando datos. Revisa la consola.";
+        loader.textContent = "Error o falta crear índice en Firebase (ver consola).";
       });
+  }
+
+  // NUEVA FUNCIÓN: MOSTRAR/OCULTAR COMENTARIO
+  function toggleComentario(id) {
+    const caja = document.getElementById(`coment-${id}`);
+    if (caja.style.display === "block") {
+        caja.style.display = "none";
+    } else {
+        caja.style.display = "block";
+    }
   }
 
   function borrarMovimiento(id) {
@@ -321,23 +355,6 @@
     db.collection("movimientos").doc(id).delete().then(cargarMovimientos);
   }
 
-  function editarMovimiento(id, montoAnt, fechaAnt) {
-    // Mejora simple al prompt: validación
-    let nuevoMonto = prompt("Nuevo monto:", montoAnt);
-    if(nuevoMonto === null) return; // Cancelar
-    
-    // Limpiar caracteres no numéricos
-    nuevoMonto = Number(nuevoMonto.toString().replace(/\D/g, ""));
-    if(!nuevoMonto) return alert("Monto inválido");
-
-    let nuevaFecha = prompt("Nueva fecha (YYYY-MM-DD):", fechaAnt);
-    if(!nuevaFecha) return;
-
-    db.collection("movimientos").doc(id).update({
-      monto: nuevoMonto,
-      fecha: nuevaFecha
-    }).then(cargarMovimientos);
-  }
 </script>
 
 </body>
