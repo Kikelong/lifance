@@ -43,6 +43,66 @@
       padding: 6px 0;
       font-weight: bold;
     }
+
+
+
+
+
+
+
+
+
+.ingreso-item {
+  border-left: 4px solid #2ecc71;
+}
+
+.egreso-item {
+  border-left: 4px solid #e74c3c;
+  color: #c0392b;
+}
+
+.monto-egreso {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.monto-ingreso {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.card-actions button {
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
   </style>
 </head>
 
@@ -222,34 +282,98 @@
   }
 
   function cargarMovimientos() {
-    listaMovimientos.innerHTML = "";
-    let ingresos = 0, egresos = 0;
+  listaMovimientos.innerHTML = "";
+  let ingresos = 0, egresos = 0;
 
-    const mes = mesFiltro.value.padStart(2, "0");
-    const anio = anioFiltro.value;
+  const mes = mesFiltro.value.padStart(2, "0");
+  const anio = anioFiltro.value;
 
-    db.collection("movimientos")
-      .where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", `${anio}-${mes}-01`)
-      .where("fecha", "<=", `${anio}-${mes}-31`)
-      .get()
-      .then(snap => {
-        snap.forEach(doc => {
-          const d = doc.data();
-          if (d.tipo === "ingreso") ingresos += d.monto;
-          else egresos += d.monto;
+  db.collection("movimientos")
+    .where("uid", "==", usuarioActual.uid)
+    .where("fecha", ">=", `${anio}-${mes}-01`)
+    .where("fecha", "<=", `${anio}-${mes}-31`)
+    .get()
+    .then(snap => {
+      snap.forEach(doc => {
+        const d = doc.data();
 
-          const div = document.createElement("div");
-          div.className = "card";
-          div.textContent = `${d.fecha} | ${d.categoria} | $ ${new Intl.NumberFormat("es-CO").format(d.monto)}`;
-          listaMovimientos.appendChild(div);
-        });
+        const esIngreso = d.tipo === "ingreso";
+        const montoTexto = new Intl.NumberFormat("es-CO").format(d.monto);
 
-        totalIngresos.textContent = new Intl.NumberFormat("es-CO").format(ingresos);
-        totalEgresos.textContent = new Intl.NumberFormat("es-CO").format(egresos);
-        disponible.textContent = new Intl.NumberFormat("es-CO").format(ingresos - egresos);
+        if (esIngreso) ingresos += d.monto;
+        else egresos += d.monto;
+
+        const div = document.createElement("div");
+        div.className = `card ${esIngreso ? "ingreso-item" : "egreso-item"}`;
+
+        div.innerHTML = `
+          <div>
+            <strong>${d.categoria}</strong><br>
+            ${d.fecha} |
+            <span class="${esIngreso ? "monto-ingreso" : "monto-egreso"}">
+              ${esIngreso ? "+ $" : "- $"} ${montoTexto}
+            </span>
+          </div>
+
+          <div class="card-actions">
+            <button onclick="editarMovimiento('${doc.id}', ${d.monto}, '${d.categoria}', '${d.tipo}', '${d.fecha}')">✏️</button>
+            <button onclick="eliminarMovimiento('${doc.id}')">🗑️</button>
+          </div>
+        `;
+
+        listaMovimientos.appendChild(div);
       });
-  }
+
+      totalIngresos.textContent = new Intl.NumberFormat("es-CO").format(ingresos);
+      totalEgresos.textContent = new Intl.NumberFormat("es-CO").format(egresos);
+      disponible.textContent = new Intl.NumberFormat("es-CO").format(ingresos - egresos);
+    });
+}
+
+
+
+function eliminarMovimiento(id) {
+  if (!confirm("¿Eliminar este movimiento?")) return;
+
+  db.collection("movimientos").doc(id).delete()
+    .then(() => {
+      cargarMovimientos();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error al eliminar");
+    });
+}
+
+
+
+
+
+
+
+  function editarMovimiento(id, monto, categoriaMov, tipo, fechaMov) {
+  const nuevoMonto = prompt("Nuevo monto:", monto);
+  if (!nuevoMonto) return;
+
+  const nuevaFecha = prompt("Nueva fecha (YYYY-MM-DD):", fechaMov);
+  if (!nuevaFecha) return;
+
+  db.collection("movimientos").doc(id).update({
+    monto: Number(nuevoMonto),
+    fecha: nuevaFecha
+  })
+  .then(() => {
+    cargarMovimientos();
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error al editar");
+  });
+}
+
+
+
+  
 </script>
 
 </body>
