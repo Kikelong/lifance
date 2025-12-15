@@ -172,20 +172,32 @@
   }
 
   function guardarMovimiento() {
-    const monto = Number(monto.value.replace(/\D/g, ""));
-    if (!monto || !tipoSeleccionado) return alert("Datos incompletos");
+  const montoInput = document.getElementById("monto");
+  const montoValor = Number(montoInput.value.replace(/\D/g, ""));
 
-    db.collection("movimientos").add({
-      uid: usuarioActual.uid,
-      tipo: tipoSeleccionado,
-      categoria: categoria.value,
-      monto: monto,
-      fecha: fecha.value
-    }).then(() => {
-      monto.value = "";
-      cargarMovimientos();
-    });
+  if (!montoValor || !tipoSeleccionado) {
+    alert("Datos incompletos");
+    return;
   }
+
+  db.collection("movimientos").add({
+    uid: usuarioActual.uid,
+    tipo: tipoSeleccionado,
+    categoria: categoria.value,
+    monto: montoValor,
+    fecha: fecha.value,
+    creado: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    montoInput.value = "";
+    cargarMovimientos();
+  })
+  .catch(err => {
+    console.error("ERROR AL GUARDAR:", err);
+    alert("Error al guardar");
+  });
+}
+
 
   function inicializarFiltros() {
     const hoy = new Date();
