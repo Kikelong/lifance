@@ -3,26 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Lifance - Control de Gastos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     :root {
       --primary: #2c3e50;
       --ingreso: #27ae60;
       --egreso: #c0392b;
       --bg: #f4f6f8;
+      --nav-height: 60px;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     
-    body { background: var(--bg); padding: 10px; margin: 0; }
+    body { background: var(--bg); padding: 0; margin: 0; padding-bottom: var(--nav-height); }
     
     .container {
-      max-width: 450px; margin: auto; background: #fff;
-      padding: 20px; border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      max-width: 480px; margin: auto; background: #fff;
+      min-height: 100vh;
+      padding: 20px; 
+      padding-bottom: 80px; /* Espacio para el menú */
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+      position: relative;
     }
 
-    h2 { text-align: center; color: var(--primary); margin-top: 0; }
+    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
     h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
+    p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
 
     input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
@@ -36,11 +41,11 @@
     .btn-egreso { background: var(--egreso); color: white; }
     .btn-google { background: #4285F4; color: white; }
     .btn-main { background: var(--primary); color: white; margin-top: 15px; }
-    .logout { background: #95a5a6; color: white; font-size: 0.8rem; padding: 8px; width: auto; float: right; }
+    .logout { background: #e74c3c; color: white; margin-top: 20px; }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
-    /* Resumen */
+    /* Resumen Cards */
     .resumen {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
       gap: 5px; background: #ecf0f1; padding: 15px;
@@ -48,60 +53,81 @@
     }
     .resumen span { display: block; font-size: 1rem; font-weight: bold; margin-top: 5px; }
     
-    /* Lista de tarjetas */
+    /* Lista de tarjetas HOME */
     .card {
       background: white; padding: 12px; margin-top: 10px;
       border-radius: 8px; border: 1px solid #eee;
-      display: flex; flex-direction: column; /* Cambiado para permitir el comentario abajo */
+      display: flex; flex-direction: column;
     }
     .card-top { display: flex; justify-content: space-between; align-items: center; }
-    
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
-
     .card-info { flex-grow: 1; }
     .card-cat { font-weight: bold; font-size: 0.95rem; color: #333; }
     .card-date { font-size: 0.75rem; color: #888; }
-    
     .card-monto { font-weight: bold; font-size: 1rem; }
     .text-ingreso { color: var(--ingreso); }
     .text-egreso { color: var(--egreso); }
+    .card-actions button { width: auto; padding: 5px 10px; margin: 0 0 0 5px; background: #f1f1f1; color: #333; font-size: 1.2rem; }
 
-    .card-actions button {
-      width: auto; padding: 5px 10px; margin: 0 0 0 5px;
-      background: #f1f1f1; color: #333; font-size: 1.2rem;
-    }
-
-    /* Estilos del comentario desplegable */
     .comentario-box {
-        display: none; /* Oculto por defecto */
-        background: #fff3cd;
-        color: #856404;
-        padding: 8px;
-        margin-top: 8px;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-style: italic;
-        border-left: 3px solid #ffeeba;
+        display: none; background: #fff3cd; color: #856404;
+        padding: 8px; margin-top: 8px; border-radius: 6px;
+        font-size: 0.9rem; font-style: italic; border-left: 3px solid #ffeeba;
     }
+
+    /* ESTILOS NUEVA SECCIÓN ESTADÍSTICAS */
+    .stat-row {
+        display: flex; justify-content: space-between; padding: 10px 0;
+        border-bottom: 1px solid #eee; font-size: 0.95rem;
+    }
+    .stat-cat { font-weight: 500; }
+    .stat-val { font-weight: bold; }
+    .stat-header { background: #f8f9fa; padding: 8px; font-weight: bold; margin-top: 15px; border-radius: 4px; color: #666; }
+
+    /* MENU INFERIOR (Estilo Instagram) */
+    .bottom-nav {
+        position: fixed; bottom: 0; left: 0; width: 100%;
+        height: var(--nav-height); background: white;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        display: flex; justify-content: space-around; align-items: center;
+        z-index: 1000;
+    }
+    .nav-item {
+        flex: 1; text-align: center; color: #95a5a6;
+        cursor: pointer; padding: 10px 0; font-size: 0.8rem;
+    }
+    .nav-item i { display: block; font-size: 1.5rem; margin-bottom: 2px; font-style: normal; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
+
   </style>
 </head>
 <body>
 
-<div class="container">
+<div id="loginBox" class="container" style="display:flex; flex-direction:column; justify-content:center;">
+  <h2>Bienvenido a Lifance</h2>
+  <p style="text-align:center; color:#666;">Tu control financiero personal</p>
+  <button class="btn-google" onclick="login()">🔵 Ingresar con Google</button>
+</div>
+
+<div id="appContainer" class="container hidden">
   
-  <div id="loginBox">
-    <h2>Bienvenido a Lifance</h2>
-    <p style="text-align:center; color:#666;">Tu control financiero personal</p>
-    <button class="btn-google" onclick="login()">🔵 Ingresar con Google</button>
+  <h2 id="headerTitle">Lifance</h2>
+  <p class="subtitle" id="userSubtitle">Cargando...</p>
+
+  <div id="view-stats" class="view-section hidden">
+    <h3>Resumen por Categorías</h3>
+    <div class="row">
+        <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
+        <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
+    </div>
+    
+    <div id="loadingStats" style="text-align:center; padding:20px; display:none;">Calculando...</div>
+    <div id="statsContent">
+        </div>
   </div>
 
-  <div id="walletBox" class="hidden">
-    <div style="overflow: hidden; margin-bottom: 10px;">
-      <h2 style="float:left; margin:0;">Lifance</h2>
-      <button class="logout" onclick="logout()">Salir</button>
-    </div>
-
+  <div id="view-home" class="view-section">
     <h3>Nuevo Movimiento</h3>
     
     <div class="row">
@@ -115,9 +141,7 @@
     </div>
 
     <select id="categoria" class="hidden"></select>
-    
     <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
-
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Guardar Movimiento</button>
 
     <h3>Historial</h3>
@@ -135,6 +159,31 @@
     <div id="loading" style="text-align:center; padding:20px; color:#888; display:none;">Cargando...</div>
     <div id="listaMovimientos"></div>
   </div>
+
+  <div id="view-settings" class="view-section hidden">
+    <h3>Mi Perfil</h3>
+    
+    <label>Nombre a mostrar:</label>
+    <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
+    
+    <button class="btn-main" onclick="actualizarPerfil()">Guardar Cambios</button>
+
+    <br><hr><br>
+    <button class="logout" onclick="logout()">Cerrar Sesión</button>
+  </div>
+
+</div>
+
+<div id="bottomNav" class="bottom-nav hidden">
+    <div class="nav-item" onclick="cambiarVista('stats')">
+        <i>📊</i> Resumen
+    </div>
+    <div class="nav-item active" onclick="cambiarVista('home')">
+        <i>🏠</i> Inicio
+    </div>
+    <div class="nav-item" onclick="cambiarVista('settings')">
+        <i>⚙️</i> Config
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -142,7 +191,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // CONFIGURACIÓN (Tus claves originales)
+  // TUS CLAVES ORIGINALES
   const firebaseConfig = {
     apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
     authDomain: "lifance-d2316.firebaseapp.com",
@@ -163,27 +212,104 @@
     egreso: ["Combustible/Transporte", "Comisión/Peaje - Carro", "Wash/Mant - Carro", "Hogar", "Salida/Compra/Ocio", "Gasto Menor", "Deuda", "Serv Publicos", "Arriendo","Inversion/Ahorro", "Préstamo/Ajuste/GMF"]
   };
 
+  // --- AUTENTICACIÓN ---
   auth.onAuthStateChanged(user => {
     if (user) {
       usuarioActual = user;
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("walletBox").classList.remove("hidden");
+      document.getElementById("loginBox").style.display = 'none';
+      document.getElementById("appContainer").classList.remove("hidden");
+      document.getElementById("bottomNav").classList.remove("hidden");
+      
+      // Cargar nombre del usuario
+      actualizarHeaderNombre();
+
       inicializarFechas();
-      inicializarFiltros();
+      inicializarFiltros("mesFiltro", "anioFiltro"); // Para Home
+      inicializarFiltros("mesFiltroStats", "anioFiltroStats"); // Para Stats
       cargarMovimientos();
     } else {
-      document.getElementById("loginBox").classList.remove("hidden");
-      document.getElementById("walletBox").classList.add("hidden");
+      document.getElementById("loginBox").style.display = 'flex';
+      document.getElementById("appContainer").classList.add("hidden");
+      document.getElementById("bottomNav").classList.add("hidden");
     }
   });
 
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
+  // --- NAVEGACIÓN SPA ---
+  function cambiarVista(vista) {
+    // 1. Ocultar todas las secciones
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    
+    // 2. Mostrar la seleccionada
+    document.getElementById(`view-${vista}`).classList.remove('hidden');
+
+    // 3. Actualizar estado iconos
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    // Encontrar el index basado en la vista (manualmente o por orden)
+    if(vista === 'stats') document.querySelectorAll('.nav-item')[0].classList.add('active');
+    if(vista === 'home') document.querySelectorAll('.nav-item')[1].classList.add('active');
+    if(vista === 'settings') document.querySelectorAll('.nav-item')[2].classList.add('active');
+
+    // 4. Si entra a stats, cargar datos
+    if(vista === 'stats') cargarEstadisticas();
+    
+    // 5. Scroll arriba
+    window.scrollTo(0,0);
+  }
+
+  // --- LOGICA DEL PERFIL ---
+  function actualizarHeaderNombre() {
+      const nombre = usuarioActual.displayName ? usuarioActual.displayName : usuarioActual.email;
+      document.getElementById("headerTitle").textContent = `Lifance de ${nombre.split(' ')[0]}`; // Solo primer nombre
+      document.getElementById("userSubtitle").textContent = usuarioActual.email;
+      document.getElementById("inputNombreUsuario").value = usuarioActual.displayName || "";
+  }
+
+  function actualizarPerfil() {
+      const nuevoNombre = document.getElementById("inputNombreUsuario").value;
+      if(!nuevoNombre) return alert("Escribe un nombre");
+
+      usuarioActual.updateProfile({
+          displayName: nuevoNombre
+      }).then(() => {
+          alert("Perfil actualizado");
+          actualizarHeaderNombre();
+      }).catch(err => {
+          alert("Error: " + err.message);
+      });
+  }
+
+  // --- LOGICA GENERAL Y HOME ---
   function inicializarFechas() {
     const hoy = new Date();
-    const localIso = hoy.toLocaleDateString('en-CA');
+    const localIso = hoy.toLocaleDateString('en-CA'); 
     document.getElementById("fecha").value = localIso;
+  }
+
+  function inicializarFiltros(idMes, idAnio) {
+    const hoy = new Date();
+    const mesSelect = document.getElementById(idMes);
+    const anioSelect = document.getElementById(idAnio);
+    
+    mesSelect.innerHTML = "";
+    anioSelect.innerHTML = "";
+
+    for (let m = 0; m < 12; m++) {
+      let opt = document.createElement("option");
+      opt.value = m + 1;
+      opt.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
+      if (m === hoy.getMonth()) opt.selected = true;
+      mesSelect.appendChild(opt);
+    }
+    for (let a = hoy.getFullYear() - 2; a <= hoy.getFullYear() + 1; a++) {
+      let opt = document.createElement("option");
+      opt.value = a;
+      opt.textContent = a;
+      if (a === hoy.getFullYear()) opt.selected = true;
+      anioSelect.appendChild(opt);
+    }
   }
 
   function formatearMonto(input) {
@@ -194,10 +320,8 @@
 
   function setTipo(tipo) {
     tipoSeleccionado = tipo;
-    
     document.getElementById("btnIngreso").style.opacity = tipo === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgreso").style.opacity = tipo === 'egreso' ? '1' : '0.4';
-
     const catSelect = document.getElementById("categoria");
     catSelect.innerHTML = "";
     categorias[tipo].forEach(c => {
@@ -205,108 +329,66 @@
       opt.textContent = c;
       catSelect.appendChild(opt);
     });
-    
     catSelect.classList.remove("hidden");
-    document.getElementById("nota").classList.remove("hidden"); // Mostrar input comentario
+    document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
   }
 
   async function guardarMovimiento() {
     const montoInput = document.getElementById("monto");
-    const notaInput = document.getElementById("nota"); // Capturar nota
-    
+    const notaInput = document.getElementById("nota");
     const val = Number(montoInput.value.replace(/\D/g, ""));
     const fechaVal = document.getElementById("fecha").value;
-    const notaVal = notaInput.value.trim(); // Texto limpio
+    const notaVal = notaInput.value.trim();
 
     if (!val || !tipoSeleccionado || !fechaVal) { alert("Completa el monto y fecha"); return; }
 
     try {
       document.getElementById("btnGuardar").disabled = true;
       document.getElementById("btnGuardar").textContent = "Guardando...";
-
       await db.collection("movimientos").add({
         uid: usuarioActual.uid,
         tipo: tipoSeleccionado,
         categoria: document.getElementById("categoria").value,
         monto: val,
         fecha: fechaVal,
-        nota: notaVal, // Guardamos la nota
+        nota: notaVal,
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
-
       montoInput.value = "";
-      notaInput.value = ""; // Limpiar nota
+      notaInput.value = "";
       cargarMovimientos();
-    } catch (e) {
-      console.error(e);
-      alert("Error al guardar");
-    } finally {
+    } catch (e) { console.error(e); alert("Error al guardar"); } 
+    finally {
       document.getElementById("btnGuardar").disabled = false;
       document.getElementById("btnGuardar").textContent = "Guardar Movimiento";
-    }
-  }
-
-  function inicializarFiltros() {
-    const hoy = new Date();
-    const mesFiltro = document.getElementById("mesFiltro");
-    const anioFiltro = document.getElementById("anioFiltro");
-    
-    mesFiltro.innerHTML = "";
-    anioFiltro.innerHTML = "";
-
-    for (let m = 0; m < 12; m++) {
-      let opt = document.createElement("option");
-      opt.value = m + 1;
-      opt.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
-      if (m === hoy.getMonth()) opt.selected = true;
-      mesFiltro.appendChild(opt);
-    }
-    for (let a = hoy.getFullYear() - 2; a <= hoy.getFullYear() + 1; a++) {
-      let opt = document.createElement("option");
-      opt.value = a;
-      opt.textContent = a;
-      if (a === hoy.getFullYear()) opt.selected = true;
-      anioFiltro.appendChild(opt);
     }
   }
 
   function cargarMovimientos() {
     const lista = document.getElementById("listaMovimientos");
     const loader = document.getElementById("loading");
-    
     lista.innerHTML = "";
     loader.style.display = "block";
 
     const mes = parseInt(document.getElementById("mesFiltro").value);
     const anio = parseInt(document.getElementById("anioFiltro").value);
-    const primerDia = `${anio}-${String(mes).padStart(2, '0')}-01`;
-    const ultimoDiaNum = new Date(anio, mes, 0).getDate(); 
-    const ultimoDia = `${anio}-${String(mes).padStart(2, '0')}-${ultimoDiaNum}`;
+    const { primerDia, ultimoDia } = obtenerRangoFechas(mes, anio);
 
     db.collection("movimientos")
       .where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", primerDia)
-      .where("fecha", "<=", ultimoDia)
-      .orderBy("fecha", "desc")
-      .orderBy("creado", "desc")
-      .get()
-      .then(snap => {
+      .where("fecha", ">=", primerDia).where("fecha", "<=", ultimoDia)
+      .orderBy("fecha", "desc").orderBy("creado", "desc")
+      .get().then(snap => {
         let ing = 0, egr = 0;
-        
         snap.forEach(doc => {
           const d = doc.data();
           const esIngreso = d.tipo === "ingreso";
           if (esIngreso) ing += d.monto; else egr += d.monto;
           
+          const notaTexto = d.nota ? d.nota : "Sin comentario";
           const item = document.createElement("div");
           item.className = `card ${esIngreso ? "ingreso-item" : "egreso-item"}`;
-          
-          // Preparamos el HTML, incluimos el ojito solo si hay nota (o siempre visible si prefieres)
-          // Aquí lo dejo siempre visible para que veas que funciona, o puedes poner estilo disable si d.nota está vacío.
-          
-          const notaTexto = d.nota ? d.nota : "Sin comentario";
-
           item.innerHTML = `
             <div class="card-top">
                 <div class="card-info">
@@ -317,44 +399,117 @@
                 $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
                 </div>
                 <div class="card-actions">
-                <button onclick="toggleComentario('${doc.id}')" title="Ver comentario">👁️</button>
+                <button onclick="toggleComentario('${doc.id}')">👁️</button>
                 <button onclick="borrarMovimiento('${doc.id}')">✕</button>
                 </div>
             </div>
-            
-            <div id="coment-${doc.id}" class="comentario-box">
-                📝 ${notaTexto}
-            </div>
+            <div id="coment-${doc.id}" class="comentario-box">📝 ${notaTexto}</div>
           `;
           lista.appendChild(item);
         });
-
         document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(ing);
         document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(egr);
         document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(ing - egr);
         loader.style.display = "none";
-      })
-      .catch(err => {
-        console.error("Error al cargar:", err);
-        loader.textContent = "Error o falta crear índice en Firebase (ver consola).";
       });
   }
 
-  // NUEVA FUNCIÓN: MOSTRAR/OCULTAR COMENTARIO
+  // --- LOGICA DE LA PESTAÑA RESUMEN / ESTADISTICAS ---
+  function cargarEstadisticas() {
+      const container = document.getElementById("statsContent");
+      const loader = document.getElementById("loadingStats");
+      container.innerHTML = "";
+      loader.style.display = "block";
+
+      const mes = parseInt(document.getElementById("mesFiltroStats").value);
+      const anio = parseInt(document.getElementById("anioFiltroStats").value);
+      const { primerDia, ultimoDia } = obtenerRangoFechas(mes, anio);
+
+      db.collection("movimientos")
+      .where("uid", "==", usuarioActual.uid)
+      .where("fecha", ">=", primerDia).where("fecha", "<=", ultimoDia)
+      .get().then(snap => {
+          
+          // Objetos para acumular sumas
+          let sumasIngreso = {};
+          let sumasEgreso = {};
+          let totalIng = 0;
+          let totalEgr = 0;
+
+          // Inicializar categorias en 0 para que salgan aunque no haya gastos (opcional)
+          // Si prefieres solo mostrar las que tienen gastos, borra los forEach siguientes.
+          // categorias.egreso.forEach(c => sumasEgreso[c] = 0);
+          // categorias.ingreso.forEach(c => sumasIngreso[c] = 0);
+
+          snap.forEach(doc => {
+              const d = doc.data();
+              if(d.tipo === 'ingreso') {
+                  if(!sumasIngreso[d.categoria]) sumasIngreso[d.categoria] = 0;
+                  sumasIngreso[d.categoria] += d.monto;
+                  totalIng += d.monto;
+              } else {
+                  if(!sumasEgreso[d.categoria]) sumasEgreso[d.categoria] = 0;
+                  sumasEgreso[d.categoria] += d.monto;
+                  totalEgr += d.monto;
+              }
+          });
+
+          // Renderizar Ingresos
+          let html = `<div class="stat-header text-ingreso">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalIng)})</div>`;
+          for (const [cat, val] of Object.entries(sumasIngreso)) {
+              if(val > 0) { // Solo mostrar si hay dinero
+                  html += `
+                  <div class="stat-row">
+                      <span class="stat-cat">${cat}</span>
+                      <span class="stat-val text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span>
+                  </div>`;
+              }
+          }
+
+          // Renderizar Egresos
+          html += `<div class="stat-header text-egreso">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalEgr)})</div>`;
+          for (const [cat, val] of Object.entries(sumasEgreso)) {
+              if(val > 0) {
+                   html += `
+                  <div class="stat-row">
+                      <span class="stat-cat">${cat}</span>
+                      <span class="stat-val text-egreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span>
+                  </div>`;
+              }
+          }
+          
+          // Balance Final en Resumen
+          const balance = totalIng - totalEgr;
+          let colorBalance = balance >= 0 ? 'text-ingreso' : 'text-egreso';
+          html += `<div class="stat-header" style="color:#333; font-size:1.1rem; border:1px solid #ddd; background:white; margin-top:20px;">
+                      BALANCE: <span class="${colorBalance}">$ ${new Intl.NumberFormat("es-CO").format(balance)}</span>
+                   </div>`;
+
+          container.innerHTML = html;
+          loader.style.display = "none";
+      });
+  }
+
+  // Utilidad para fechas
+  function obtenerRangoFechas(mes, anio) {
+    const primerDia = `${anio}-${String(mes).padStart(2, '0')}-01`;
+    const ultimoDiaNum = new Date(anio, mes, 0).getDate(); 
+    const ultimoDia = `${anio}-${String(mes).padStart(2, '0')}-${ultimoDiaNum}`;
+    return { primerDia, ultimoDia };
+  }
+
   function toggleComentario(id) {
     const caja = document.getElementById(`coment-${id}`);
-    if (caja.style.display === "block") {
-        caja.style.display = "none";
-    } else {
-        caja.style.display = "block";
-    }
+    caja.style.display = caja.style.display === "block" ? "none" : "block";
   }
 
   function borrarMovimiento(id) {
     if(!confirm("¿Borrar este movimiento?")) return;
-    db.collection("movimientos").doc(id).delete().then(cargarMovimientos);
+    db.collection("movimientos").doc(id).delete().then(() => {
+        cargarMovimientos();
+        // Si estuviéramos en stats, habría que recargar, pero es poco probable borrar desde stats
+    });
   }
-
 </script>
 
 </body>
