@@ -322,7 +322,7 @@ auth.onAuthStateChanged(async user => {
   function actualizarPerfil() {
     const n = document.getElementById("inputNombreUsuario").value;
     if(!n) return;
-    usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Ok"); actualizarHeaderNombre(); });
+    usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Nombre Actualizado"); actualizarHeaderNombre(); });
   }
 
   function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
