@@ -77,7 +77,42 @@
     background: #ebf2f7;
     color: var(--primary);
 }
-  
+
+
+
+.balance-card {
+    background: var(--primary);
+    color: white;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.balance-card span {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800; /* Negrita extra */
+}
+.resumen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #ecf0f1;
+    border-radius: 0 0 8px 8px;
+    border: 1px solid #ddd;
+}
+.resumen-item {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.8rem;
+    border-right: 1px solid #ddd;
+}
+.resumen-item span {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700; /* Negrita */
+}
+    
+    
   </style>
 </head>
 <body>
@@ -93,6 +128,18 @@
   <p class="subtitle" id="userSubtitle">Cargando...</p>
 
   <div id="view-stats" class="view-section hidden">
+
+    <div class="resumen-container" style="margin-top:15px;">
+    <div class="balance-card">
+        Balance Final <span id="disponible">$ 0</span>
+    </div>
+    <div class="resumen-grid">
+        <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
+        <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
+    </div>
+</div>
+
+    
     <h3>Resumen por Categorías</h3>
     <div class="row">
         <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
