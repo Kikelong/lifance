@@ -88,13 +88,13 @@
     <h3>Resumen por Categorías</h3>
 
 <div class="resumen-container">
-        <div class="balance-card">
-            Disponible <span id="disponible">$ 0</span>
-        </div>
-        <div class="resumen-grid">
-            <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
-            <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
-        </div>
+    <div class="balance-card">
+        Disponible <span id="disponible-stats">$ 0</span>
+    </div>
+    <div class="resumen-grid">
+        <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
+        <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
+    </div>
 </div>
 
     
@@ -342,7 +342,9 @@
     cargarMovimientos();
   }
 
-  function cargarMovimientos() {
+  
+
+function cargarMovimientos() {
     const lista = document.getElementById("listaMovimientos");
     lista.innerHTML = "";
     const m = parseInt(document.getElementById("mesFiltro").value);
@@ -357,18 +359,61 @@
         snap.forEach(doc => {
           const d = doc.data();
           d.tipo === "ingreso" ? iT += d.monto : eT += d.monto;
+          
           const div = document.createElement("div");
           div.className = `card ${d.tipo}-item`;
-          div.innerHTML = `<div class="card-top"><div class="card-info"><div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div><div class="card-date">${d.fecha}</div></div><div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div><div class="card-actions"><button onclick="toggleComent('${doc.id}')">👁️</button><button onclick="borrarMov('${doc.id}')">✕</button></div></div><div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>`;
+          div.innerHTML = `
+            <div class="card-top">
+                <div class="card-info">
+                    <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
+                    <div class="card-date">${d.fecha}</div>
+                </div>
+                <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
+                <div class="card-actions">
+                    <button onclick="toggleComent('${doc.id}')">👁️</button>
+                    <button onclick="borrarMov('${doc.id}')">✕</button>
+                </div>
+            </div>
+            <div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>`;
           lista.appendChild(div);
         });
-        const bal = iT - eT;
-        document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
-        document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
-        const disp = document.getElementById("disponible");
-        disp.textContent = "$ " + new Intl.NumberFormat("es-CO").format(bal);
-        disp.style.color = bal < 0 ? "#e74c3c" : "white";
+
+        // --- AQUÍ ES DONDE VA EL CAMBIO QUE TE PASÉ ---
+        const formato = new Intl.NumberFormat("es-CO");
+        const balance = iT - eT;
+
+        // Actualizar sección INICIO
+        document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
+        document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
+        document.getElementById("disponible").textContent = "$ " + formato.format(balance);
+
+        // Actualizar sección RESUMEN (Stats)
+        // Asegúrate de haber puesto los IDs con "-stats" en el HTML de esa sección
+        if(document.getElementById("totalIngresos-stats")){
+            document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
+            document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
+            document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
+        }
+
+        // Color rojo si es negativo
+        const colorBalance = balance < 0 ? "#e74c3c" : "white";
+        document.getElementById("disponible").style.color = colorBalance;
+        if(document.getElementById("disponible-stats")){
+            document.getElementById("disponible-stats").style.color = colorBalance;
+        }
       });
+}
+
+
+
+
+
+
+
+
+
+
+  
   }
 
   function cargarEstadisticas() {
