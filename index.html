@@ -166,23 +166,48 @@
     egreso: ["Combustible/Transporte", "Comisión/Peaje - Carro", "Wash/Mant - Carro", "Hogar", "Salida/Compra/Ocio", "Gasto Menor", "Deuda", "Serv Publicos", "Arriendo","Inversion/Ahorro", "Préstamo/Ajuste/GMF"]
   };
 
-  auth.onAuthStateChanged(user => {
+  
+
+
+auth.onAuthStateChanged(async user => {
     if (user) {
       usuarioActual = user;
       document.getElementById("loginBox").style.display = 'none';
       document.getElementById("appContainer").classList.remove("hidden");
       document.getElementById("bottomNav").classList.remove("hidden");
+      
       actualizarHeaderNombre();
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      cargarCategoriasDB().then(() => { cargarMovimientos(); });
+      
+      // El "truco" del delay:
+      setTimeout(async () => {
+          try {
+              await cargarCategoriasDB();
+              cargarMovimientos();
+          } catch (e) {
+              console.error("Error al iniciar datos:", e);
+          }
+      }, 500); 
+
     } else {
+      usuarioActual = null;
       document.getElementById("loginBox").style.display = 'flex';
       document.getElementById("appContainer").classList.add("hidden");
       document.getElementById("bottomNav").classList.add("hidden");
     }
   });
+
+
+
+
+
+
+
+
+
+  
 
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
