@@ -13,28 +13,15 @@
       --nav-height: 60px;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    
     body { background: var(--bg); padding: 0; margin: 0; padding-bottom: var(--nav-height); }
-    
-    .container {
-      max-width: 480px; margin: auto; background: #fff;
-      min-height: 100vh;
-      padding: 20px; 
-      padding-bottom: 80px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.05);
-      position: relative;
-    }
-
+    .container { max-width: 480px; margin: auto; background: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative; }
     h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
     h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
     h4 { margin-bottom: 10px; color: var(--primary); }
     p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
-
     input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
-
     .row { display: flex; gap: 10px; }
-    
     button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
     button:active { opacity: 0.8; }
     .btn-ingreso { background: var(--ingreso); color: white; }
@@ -42,21 +29,10 @@
     .btn-google { background: #4285F4; color: white; }
     .btn-main { background: var(--primary); color: white; margin-top: 15px; }
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
-
     .hidden { display: none !important; }
-
-    .resumen {
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 5px; background: #ecf0f1; padding: 15px;
-      border-radius: 8px; text-align: center; font-size: 0.85rem;
-    }
+    .resumen { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; background: #ecf0f1; padding: 15px; border-radius: 8px; text-align: center; font-size: 0.85rem; }
     .resumen span { display: block; font-size: 1rem; font-weight: bold; margin-top: 5px; }
-    
-    .card {
-      background: white; padding: 12px; margin-top: 10px;
-      border-radius: 8px; border: 1px solid #eee;
-      display: flex; flex-direction: column;
-    }
+    .card { background: white; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; }
     .card-top { display: flex; justify-content: space-between; align-items: center; }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
@@ -67,40 +43,16 @@
     .text-ingreso { color: var(--ingreso); }
     .text-egreso { color: var(--egreso); }
     .card-actions button { width: auto; padding: 5px 10px; margin: 0 0 0 5px; background: #f1f1f1; color: #333; font-size: 1.2rem; }
-
-    .comentario-box {
-        display: none; background: #fff3cd; color: #856404;
-        padding: 8px; margin-top: 8px; border-radius: 6px;
-        font-size: 0.9rem; font-style: italic; border-left: 3px solid #ffeeba;
-    }
-
-    .stat-row {
-        display: flex; justify-content: space-between; padding: 10px 0;
-        border-bottom: 1px solid #eee; font-size: 0.95rem;
-    }
+    .comentario-box { display: none; background: #fff3cd; color: #856404; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; border-left: 3px solid #ffeeba; }
+    .stat-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
     .stat-cat { font-weight: 500; }
     .stat-val { font-weight: bold; }
     .stat-header { background: #f8f9fa; padding: 8px; font-weight: bold; margin-top: 15px; border-radius: 4px; color: #666; }
-
-    .bottom-nav {
-        position: fixed; bottom: 0; left: 0; width: 100%;
-        height: var(--nav-height); background: white;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        display: flex; justify-content: space-around; align-items: center;
-        z-index: 1000;
-    }
-    .nav-item {
-        flex: 1; text-align: center; color: #95a5a6;
-        cursor: pointer; padding: 10px 0; font-size: 0.8rem;
-    }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; padding: 10px 0; font-size: 0.8rem; }
     .nav-item i { display: block; font-size: 1.5rem; margin-bottom: 2px; font-style: normal; }
     .nav-item.active { color: var(--primary); font-weight: bold; }
-
-    .cat-tag {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 8px; background: #fff; border: 1px solid #eee;
-        margin-bottom: 5px; border-radius: 6px;
-    }
+    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -112,7 +64,6 @@
 </div>
 
 <div id="appContainer" class="container hidden">
-  
   <h2 id="headerTitle">Lifance</h2>
   <p class="subtitle" id="userSubtitle">Cargando...</p>
 
@@ -128,26 +79,21 @@
 
   <div id="view-home" class="view-section">
     <h3>Nuevo Movimiento</h3>
-    
     <div class="row">
       <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)" autocomplete="off">
       <input type="date" id="fecha">
     </div>
-
     <div class="row">
       <button id="btnIngreso" class="btn-ingreso" onclick="setTipo('ingreso')">INGRESO</button>
       <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
     </div>
-
     <select id="categoria" class="hidden"></select>
-    
     <div id="metodoPagoContainer" class="hidden">
         <select id="metodoPago">
             <option value="CASH">💵 CASH</option>
             <option value="BANK">💳 BANK</option>
         </select>
     </div>
-
     <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
 
@@ -156,13 +102,11 @@
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
-
     <div class="resumen" style="margin-top:15px;">
       <div>Ingresos <span id="totalIngresos" class="text-ingreso">$0</span></div>
       <div>Egresos <span id="totalEgresos" class="text-egreso">$0</span></div>
       <div>Total <span id="disponible" style="color:#333">$0</span></div>
     </div>
-
     <div id="loading" style="text-align:center; padding:20px; color:#888; display:none;">Cargando...</div>
     <div id="listaMovimientos"></div>
   </div>
@@ -183,28 +127,16 @@
             <input type="text" id="nombreNuevaCat" placeholder="Nombre Ej: Gimnasio">
         </div>
         <button class="btn-ingreso" onclick="crearCategoria()" style="margin-top:10px;">+ Añadir Categoría</button>
-        <div id="listaCategoriasEdit" style="margin-top:15px; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
-            </div>
+        <div id="listaCategoriasEdit" style="margin-top:15px; font-size: 0.85rem; max-height: 300px; overflow-y: auto;"></div>
     </div>
-
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <div style="text-align: center; margin-top: 30px; color: #bdc3c7; font-size: 0.8rem;">
-      Versión 2.0 (Categorías Dinámicas)
-    </div>
   </div>
-
 </div>
 
 <div id="bottomNav" class="bottom-nav hidden">
-    <div class="nav-item" onclick="cambiarVista('stats')">
-        <i>📊</i> Resumen
-    </div>
-    <div class="nav-item active" onclick="cambiarVista('home')">
-        <i>🏠</i> Inicio
-    </div>
-    <div class="nav-item" onclick="cambiarVista('settings')">
-        <i>⚙️</i> Config
-    </div>
+    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i> Resumen</div>
+    <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i> Inicio</div>
+    <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i> Config</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -240,17 +172,11 @@
       document.getElementById("loginBox").style.display = 'none';
       document.getElementById("appContainer").classList.remove("hidden");
       document.getElementById("bottomNav").classList.remove("hidden");
-      
       actualizarHeaderNombre();
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      
-      // CARGAR CATEGORÍAS Y LUEGO MOVIMIENTOS
-      cargarCategoriasDB().then(() => {
-          cargarMovimientos();
-      });
-
+      cargarCategoriasDB().then(() => { cargarMovimientos(); });
     } else {
       document.getElementById("loginBox").style.display = 'flex';
       document.getElementById("appContainer").classList.add("hidden");
@@ -261,318 +187,188 @@
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // --- CATEGORÍAS DINÁMICAS ---
   async function cargarCategoriasDB() {
-    if (!usuarioActual) return; // Seguridad extra: si no hay usuario, no busca nada
-
+    if (!usuarioActual) return;
     try {
-        const snap = await db.collection("categorias")
-                               .where("uid", "==", usuarioActual.uid)
-                               .get();
-        
-        if (snap.empty) {
-            console.log("Creando categorías iniciales...");
-            const batch = db.batch();
-            
-            categoriasPorDefecto.ingreso.forEach(n => {
-                const ref = db.collection("categorias").doc();
-                batch.set(ref, { uid: usuarioActual.uid, tipo: 'ingreso', nombre: n });
-            });
-            
-            categoriasPorDefecto.egreso.forEach(n => {
-                const ref = db.collection("categorias").doc();
-                batch.set(ref, { uid: usuarioActual.uid, tipo: 'egreso', nombre: n });
-            });
-
-            await batch.commit();
-            return cargarCategoriasDB(); // Reintentar carga tras crear
-        }
-
-        misCategorias = { ingreso: [], egreso: [] };
-        snap.forEach(doc => {
-            const d = doc.data();
-            misCategorias[d.tipo].push({ id: doc.id, nombre: d.nombre });
+      const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
+      if (snap.empty) {
+        const batch = db.batch();
+        categoriasPorDefecto.ingreso.forEach(n => {
+          const ref = db.collection("categorias").doc();
+          batch.set(ref, { uid: usuarioActual.uid, tipo: 'ingreso', nombre: n });
         });
-        actualizarListaCategoriasEdit();
-        
-    } catch (error) {
-        console.error("Error cargando categorías:", error);
-    }
-}
-
+        categoriasPorDefecto.egreso.forEach(n => {
+          const ref = db.collection("categorias").doc();
+          batch.set(ref, { uid: usuarioActual.uid, tipo: 'egreso', nombre: n });
+        });
+        await batch.commit();
+        return cargarCategoriasDB();
+      }
       misCategorias = { ingreso: [], egreso: [] };
       snap.forEach(doc => {
-          const d = doc.data();
-          misCategorias[d.tipo].push({ id: doc.id, nombre: d.nombre });
+        const d = doc.data();
+        misCategorias[d.tipo].push({ id: doc.id, nombre: d.nombre });
       });
       actualizarListaCategoriasEdit();
+    } catch (e) { console.error(e); }
   }
 
   async function crearCategoria() {
-      const tipo = document.getElementById("tipoNuevaCat").value;
-      const nombre = document.getElementById("nombreNuevaCat").value.trim();
-      if(!nombre) return alert("Escribe un nombre");
-
-      await db.collection("categorias").add({
-          uid: usuarioActual.uid,
-          tipo: tipo,
-          nombre: nombre
-      });
-      document.getElementById("nombreNuevaCat").value = "";
-      cargarCategoriasDB();
+    const tipo = document.getElementById("tipoNuevaCat").value;
+    const nombre = document.getElementById("nombreNuevaCat").value.trim();
+    if(!nombre) return alert("Escribe un nombre");
+    await db.collection("categorias").add({ uid: usuarioActual.uid, tipo: tipo, nombre: nombre });
+    document.getElementById("nombreNuevaCat").value = "";
+    cargarCategoriasDB();
   }
 
   function actualizarListaCategoriasEdit() {
-      const cont = document.getElementById("listaCategoriasEdit");
-      cont.innerHTML = "<strong>Tus categorías actuales:</strong><br>";
-      
-      const todas = [
-          ...misCategorias.ingreso.map(c => ({...c, t:'Ingreso'})), 
-          ...misCategorias.egreso.map(c => ({...c, t:'Egreso'}))
-      ];
-
-      todas.forEach(c => {
-          const div = document.createElement("div");
-          div.className = "cat-tag";
-          div.innerHTML = `<span>${c.nombre} <small>(${c.t})</small></span> 
-                           <button onclick="borrarCategoria('${c.id}')" style="background:none; color:red; padding:0; margin:0;">✕</button>`;
-          cont.appendChild(div);
-      });
+    const cont = document.getElementById("listaCategoriasEdit");
+    cont.innerHTML = "<strong>Tus categorías actuales:</strong><br>";
+    const todas = [...misCategorias.ingreso.map(c=>({...c,t:'Ingreso'})), ...misCategorias.egreso.map(c=>({...c,t:'Egreso'}))];
+    todas.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "cat-tag";
+      div.innerHTML = `<span>${c.nombre} <small>(${c.t})</small></span><button onclick="borrarCategoria('${c.id}')" style="background:none; color:red; width:auto; margin:0;">✕</button>`;
+      cont.appendChild(div);
+    });
   }
 
   async function borrarCategoria(id) {
-      if(!confirm("¿Borrar esta categoría? No afectará a los movimientos ya registrados.")) return;
-      await db.collection("categorias").doc(id).delete();
-      cargarCategoriasDB();
+    if(!confirm("¿Borrar categoría?")) return;
+    await db.collection("categorias").doc(id).delete();
+    cargarCategoriasDB();
   }
 
-  // --- NAVEGACIÓN ---
   function cambiarVista(vista) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(`view-${vista}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    if(vista === 'stats') document.querySelectorAll('.nav-item')[0].classList.add('active');
-    if(vista === 'home') document.querySelectorAll('.nav-item')[1].classList.add('active');
-    if(vista === 'settings') document.querySelectorAll('.nav-item')[2].classList.add('active');
-
+    const idx = vista === 'stats' ? 0 : (vista === 'home' ? 1 : 2);
+    document.querySelectorAll('.nav-item')[idx].classList.add('active');
     if(vista === 'stats') cargarEstadisticas();
     window.scrollTo(0,0);
   }
 
   function actualizarHeaderNombre() {
-      const nombre = usuarioActual.displayName ? usuarioActual.displayName : usuarioActual.email;
-      document.getElementById("headerTitle").textContent = `Lifance de ${nombre.split(' ')[0]}`;
-      document.getElementById("userSubtitle").textContent = usuarioActual.email;
-      document.getElementById("inputNombreUsuario").value = usuarioActual.displayName || "";
+    const nombre = usuarioActual.displayName || usuarioActual.email;
+    document.getElementById("headerTitle").textContent = `Lifance de ${nombre.split(' ')[0]}`;
+    document.getElementById("userSubtitle").textContent = usuarioActual.email;
   }
 
   function actualizarPerfil() {
-      const nuevoNombre = document.getElementById("inputNombreUsuario").value;
-      if(!nuevoNombre) return alert("Escribe un nombre");
-      usuarioActual.updateProfile({ displayName: nuevoNombre }).then(() => {
-          alert("Perfil actualizado");
-          actualizarHeaderNombre();
-      });
+    const n = document.getElementById("inputNombreUsuario").value;
+    if(!n) return;
+    usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Ok"); actualizarHeaderNombre(); });
   }
 
-  function inicializarFechas() {
-    const hoy = new Date();
-    document.getElementById("fecha").value = hoy.toLocaleDateString('en-CA');
-  }
+  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
 
-  function inicializarFiltros(idMes, idAnio) {
+  function inicializarFiltros(idM, idA) {
     const hoy = new Date();
-    const mesSelect = document.getElementById(idMes);
-    const anioSelect = document.getElementById(idAnio);
-    mesSelect.innerHTML = ""; anioSelect.innerHTML = "";
-
+    const selM = document.getElementById(idM);
+    const selA = document.getElementById(idA);
+    selM.innerHTML = ""; selA.innerHTML = "";
     for (let m = 0; m < 12; m++) {
-      let opt = document.createElement("option");
-      opt.value = m + 1;
-      opt.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
-      if (m === hoy.getMonth()) opt.selected = true;
-      mesSelect.appendChild(opt);
+      let o = document.createElement("option"); o.value = m + 1;
+      o.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
+      if (m === hoy.getMonth()) o.selected = true;
+      selM.appendChild(o);
     }
-    for (let a = hoy.getFullYear() - 2; a <= hoy.getFullYear() + 1; a++) {
-      let opt = document.createElement("option");
-      opt.value = a;
-      opt.textContent = a;
-      if (a === hoy.getFullYear()) opt.selected = true;
-      anioSelect.appendChild(opt);
+    for (let a = hoy.getFullYear() - 1; a <= hoy.getFullYear() + 1; a++) {
+      let o = document.createElement("option"); o.value = a; o.textContent = a;
+      if (a === hoy.getFullYear()) o.selected = true;
+      selA.appendChild(o);
     }
   }
 
   function formatearMonto(input) {
     let v = input.value.replace(/\D/g, "");
-    if(v === "") { input.value = ""; return; }
-    input.value = "$ " + new Intl.NumberFormat("es-CO").format(v);
+    input.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
   }
 
-  function setTipo(tipo) {
-    tipoSeleccionado = tipo;
-    document.getElementById("btnIngreso").style.opacity = tipo === 'ingreso' ? '1' : '0.4';
-    document.getElementById("btnEgreso").style.opacity = tipo === 'egreso' ? '1' : '0.4';
-    
-    const catSelect = document.getElementById("categoria");
-    catSelect.innerHTML = "";
-    
-    misCategorias[tipo].forEach(c => {
-      let opt = document.createElement("option");
-      opt.value = c.nombre;
-      opt.textContent = c.nombre;
-      catSelect.appendChild(opt);
-    });
-    
-    catSelect.classList.remove("hidden");
+  function setTipo(t) {
+    tipoSeleccionado = t;
+    document.getElementById("btnIngreso").style.opacity = t === 'ingreso' ? '1' : '0.4';
+    document.getElementById("btnEgreso").style.opacity = t === 'egreso' ? '1' : '0.4';
+    const catS = document.getElementById("categoria");
+    catS.innerHTML = "";
+    misCategorias[t].forEach(c => { let o = document.createElement("option"); o.value = o.textContent = c.nombre; catS.appendChild(o); });
+    catS.classList.remove("hidden");
     document.getElementById("metodoPagoContainer").classList.remove("hidden");
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
   }
 
   async function guardarMovimiento() {
-    const montoInput = document.getElementById("monto");
-    const val = Number(montoInput.value.replace(/\D/g, ""));
-    const fechaVal = document.getElementById("fecha").value;
-    const metodoVal = document.getElementById("metodoPago").value;
-
-    if (!val || !tipoSeleccionado || !fechaVal) { alert("Completa el monto y fecha"); return; }
-
-    try {
-      document.getElementById("btnGuardar").disabled = true;
-      await db.collection("movimientos").add({
-        uid: usuarioActual.uid,
-        tipo: tipoSeleccionado,
-        categoria: document.getElementById("categoria").value,
-        monto: val,
-        fecha: fechaVal,
-        metodo: metodoVal,
-        nota: document.getElementById("nota").value.trim(),
-        creado: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      montoInput.value = "";
-      document.getElementById("nota").value = "";
-      cargarMovimientos();
-    } catch (e) { alert("Error al guardar"); } 
-    finally { document.getElementById("btnGuardar").disabled = false; }
+    const mInput = document.getElementById("monto");
+    const val = Number(mInput.value.replace(/\D/g, ""));
+    const fec = document.getElementById("fecha").value;
+    if (!val || !tipoSeleccionado || !fec) return alert("Faltan datos");
+    document.getElementById("btnGuardar").disabled = true;
+    await db.collection("movimientos").add({
+      uid: usuarioActual.uid, tipo: tipoSeleccionado,
+      categoria: document.getElementById("categoria").value,
+      monto: val, fecha: fec, metodo: document.getElementById("metodoPago").value,
+      nota: document.getElementById("nota").value.trim(),
+      creado: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    mInput.value = ""; document.getElementById("nota").value = "";
+    cargarMovimientos();
+    document.getElementById("btnGuardar").disabled = false;
   }
 
   function cargarMovimientos() {
     const lista = document.getElementById("listaMovimientos");
-    const loader = document.getElementById("loading");
-    lista.innerHTML = "";
-    loader.style.display = "block";
-
-    const mes = parseInt(document.getElementById("mesFiltro").value);
-    const anio = parseInt(document.getElementById("anioFiltro").value);
-    const { primerDia, ultimoDia } = obtenerRangoFechas(mes, anio);
-
-    db.collection("movimientos")
-      .where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", primerDia).where("fecha", "<=", ultimoDia)
-      .orderBy("fecha", "desc").orderBy("creado", "desc")
-      .get().then(snap => {
-        let ing = 0, egr = 0;
+    lista.innerHTML = ""; document.getElementById("loading").style.display = "block";
+    const m = parseInt(document.getElementById("mesFiltro").value);
+    const a = parseInt(document.getElementById("anioFiltro").value);
+    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
+    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid)
+      .where("fecha", ">=", pD).where("fecha", "<=", uD)
+      .orderBy("fecha", "desc").get().then(snap => {
+        let iT = 0, eT = 0;
         snap.forEach(doc => {
           const d = doc.data();
-          const esIngreso = d.tipo === "ingreso";
-          if (esIngreso) ing += d.monto; else egr += d.monto;
-          
-          const iconMetodo = d.metodo === "CASH" ? "💵" : "💳";
-          const notaTexto = d.nota ? d.nota : "Sin comentario";
-          const item = document.createElement("div");
-          item.className = `card ${esIngreso ? "ingreso-item" : "egreso-item"}`;
-          item.innerHTML = `
-            <div class="card-top">
-                <div class="card-info">
-                    <div class="card-cat">${d.categoria} <small style="font-weight:normal; opacity:0.6;">${iconMetodo}</small></div>
-                    <div class="card-date">${d.fecha}</div>
-                </div>
-                <div class="card-monto ${esIngreso ? "text-ingreso" : "text-egreso"}">
-                    $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
-                </div>
-                <div class="card-actions">
-                    <button onclick="toggleComentario('${doc.id}')">👁️</button>
-                    <button onclick="borrarMovimiento('${doc.id}')">✕</button>
-                </div>
-            </div>
-            <div id="coment-${doc.id}" class="comentario-box">📝 ${notaTexto}</div>
-          `;
-          lista.appendChild(item);
+          d.tipo === "ingreso" ? iT += d.monto : eT += d.monto;
+          const icon = d.metodo === "CASH" ? "💵" : "💳";
+          const div = document.createElement("div");
+          div.className = `card ${d.tipo}-item`;
+          div.innerHTML = `<div class="card-top"><div class="card-info"><div class="card-cat">${d.categoria} <small>${icon}</small></div><div class="card-date">${d.fecha}</div></div><div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div><div class="card-actions"><button onclick="toggleComentario('${doc.id}')">👁️</button><button onclick="borrarMovimiento('${doc.id}')">✕</button></div></div><div id="coment-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>`;
+          lista.appendChild(div);
         });
-        document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(ing);
-        document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(egr);
-        document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(ing - egr);
-        loader.style.display = "none";
+        document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
+        document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
+        document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT - eT);
+        document.getElementById("loading").style.display = "none";
       });
   }
 
   function cargarEstadisticas() {
-      const container = document.getElementById("statsContent");
-      const loader = document.getElementById("loadingStats");
-      container.innerHTML = ""; loader.style.display = "block";
-
-      const mes = parseInt(document.getElementById("mesFiltroStats").value);
-      const anio = parseInt(document.getElementById("anioFiltroStats").value);
-      const { primerDia, ultimoDia } = obtenerRangoFechas(mes, anio);
-
-      db.collection("movimientos")
-      .where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", primerDia).where("fecha", "<=", ultimoDia)
-      .get().then(snap => {
-          let sumasIngreso = {}; let sumasEgreso = {};
-          let totalIng = 0; let totalEgr = 0;
-
-          snap.forEach(doc => {
-              const d = doc.data();
-              if(d.tipo === 'ingreso') {
-                  if(!sumasIngreso[d.categoria]) sumasIngreso[d.categoria] = 0;
-                  sumasIngreso[d.categoria] += d.monto;
-                  totalIng += d.monto;
-              } else {
-                  if(!sumasEgreso[d.categoria]) sumasEgreso[d.categoria] = 0;
-                  sumasEgreso[d.categoria] += d.monto;
-                  totalEgr += d.monto;
-              }
-          });
-
-          let html = `<div class="stat-header text-ingreso">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalIng)})</div>`;
-          for (const [cat, val] of Object.entries(sumasIngreso)) {
-              html += `<div class="stat-row"><span class="stat-cat">${cat}</span><span class="stat-val text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span></div>`;
-          }
-
-          html += `<div class="stat-header text-egreso">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalEgr)})</div>`;
-          for (const [cat, val] of Object.entries(sumasEgreso)) {
-              html += `<div class="stat-row"><span class="stat-cat">${cat}</span><span class="stat-val text-egreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span></div>`;
-          }
-          
-          const balance = totalIng - totalEgr;
-          html += `<div class="stat-header" style="color:#333; font-size:1.1rem; border:1px solid #ddd; background:white; margin-top:20px;">
-                      BALANCE: <span class="${balance >= 0 ? 'text-ingreso' : 'text-egreso'}">$ ${new Intl.NumberFormat("es-CO").format(balance)}</span>
-                   </div>`;
-
-          container.innerHTML = html;
-          loader.style.display = "none";
+    const cont = document.getElementById("statsContent");
+    cont.innerHTML = ""; document.getElementById("loadingStats").style.display = "block";
+    const m = parseInt(document.getElementById("mesFiltroStats").value);
+    const a = parseInt(document.getElementById("anioFiltroStats").value);
+    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
+    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+      let sI = {}, sE = {}, tI = 0, tE = 0;
+      snap.forEach(doc => {
+        const d = doc.data();
+        if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
+        else { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
       });
+      let h = `<div class="stat-header text-ingreso">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
+      for(let [c,v] of Object.entries(sI)) h += `<div class="stat-row"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+      h += `<div class="stat-header text-egreso">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
+      for(let [c,v] of Object.entries(sE)) h += `<div class="stat-row"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+      cont.innerHTML = h; document.getElementById("loadingStats").style.display = "none";
+    });
   }
 
-  function obtenerRangoFechas(mes, anio) {
-    const primerDia = `${anio}-${String(mes).padStart(2, '0')}-01`;
-    const ultimoDiaNum = new Date(anio, mes, 0).getDate(); 
-    const ultimoDia = `${anio}-${String(mes).padStart(2, '0')}-${ultimoDiaNum}`;
-    return { primerDia, ultimoDia };
-  }
-
-  function toggleComentario(id) {
-    const caja = document.getElementById(`coment-${id}`);
-    caja.style.display = caja.style.display === "block" ? "none" : "block";
-  }
-
-  function borrarMovimiento(id) {
-    if(!confirm("¿Borrar este movimiento?")) return;
-    db.collection("movimientos").doc(id).delete().then(() => cargarMovimientos());
-  }
+  function toggleComentario(id) { const c = document.getElementById(`coment-${id}`); c.style.display = c.style.display === "block" ? "none" : "block"; }
+  function borrarMovimiento(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
 </script>
-
 </body>
 </html>
