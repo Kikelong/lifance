@@ -88,12 +88,25 @@
       <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
     </div>
     <select id="categoria" class="hidden"></select>
-    <div id="metodoPagoContainer" class="hidden">
-        <select id="metodoPago">
-            <option value="CASH">💵 CASH</option>
-            <option value="BANK">💳 BANK</option>
-        </select>
+
+
+<div id="metodoPagoContainer" class="hidden">
+    <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; color: #666;">Método de Pago:</p>
+    <div class="metodo-selector">
+        <div class="metodo-option active" id="optCash" onclick="seleccionarMetodo('CASH')">
+            💵 CASH
+        </div>
+        <div class="metodo-option" id="optBank" onclick="seleccionarMetodo('BANK')">
+            💳 BANK
+        </div>
     </div>
+    <input type="hidden" id="metodoPago" value="CASH">
+</div>
+
+
+    
+
+    
     <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
 
