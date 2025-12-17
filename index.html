@@ -131,7 +131,7 @@
 
     <div class="resumen-container" style="margin-top:15px;">
     <div class="balance-card">
-        Balance Final <span id="disponible">$ 0</span>
+        Disponible <span id="disponible">$ 0</span>
     </div>
     <div class="resumen-grid">
         <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
@@ -187,11 +187,21 @@
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
-    <div class="resumen" style="margin-top:15px;">
-      <div>Ingresos <span id="totalIngresos" class="text-ingreso">$0</span></div>
-      <div>Egresos <span id="totalEgresos" class="text-egreso">$0</span></div>
-      <div>Total <span id="disponible" style="color:#333">$0</span></div>
+    
+<div class="resumen-container" style="margin-top:15px; margin-bottom:15px;">
+    <div class="balance-card">
+        Disponible <span id="disponible">$ 0</span>
     </div>
+    <div class="resumen-grid">
+        <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
+        <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
+    </div>
+</div>
+    
+
+
+
+    
     <div id="loading" style="text-align:center; padding:20px; color:#888; display:none;">Cargando...</div>
     <div id="listaMovimientos"></div>
   </div>
