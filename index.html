@@ -35,7 +35,18 @@
     .hidden { display: none !important; }
 
     /* Nuevo Diseño de Balance */
-    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; }
+    .resumen-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    
+    /* ESTO HACE LA MAGIA */
+    position: sticky;
+    top: 10px; /* Se detendrá a 10px del borde superior */
+    z-index: 100; /* Para que pase por encima de las tarjetas de movimientos */
+}
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
     .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
     .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
