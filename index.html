@@ -86,6 +86,18 @@
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
+
+<div class="resumen-container">
+        <div class="balance-card">
+            Disponible <span id="disponible">$ 0</span>
+        </div>
+        <div class="resumen-grid">
+            <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
+            <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
+        </div>
+</div>
+
+    
     <div class="row">
         <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
@@ -126,7 +138,7 @@
 
     <div class="resumen-container">
         <div class="balance-card">
-            Balance Final <span id="disponible">$ 0</span>
+            Disponible <span id="disponible">$ 0</span>
         </div>
         <div class="resumen-grid">
             <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
@@ -159,7 +171,7 @@
 </div>
 
 <div id="bottomNav" class="bottom-nav hidden">
-    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Resumen</div>
+    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Balance</div>
     <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i>Inicio</div>
     <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Config</div>
 </div>
