@@ -263,21 +263,42 @@
 
   // --- CATEGORÍAS DINÁMICAS ---
   async function cargarCategoriasDB() {
-      const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
-      
-      if (snap.empty) {
-          const batch = db.batch();
-          categoriasPorDefecto.ingreso.forEach(n => {
-              const ref = db.collection("categorias").doc();
-              batch.set(ref, { uid: usuarioActual.uid, tipo: 'ingreso', nombre: n });
-          });
-          categoriasPorDefecto.egreso.forEach(n => {
-              const ref = db.collection("categorias").doc();
-              batch.set(ref, { uid: usuarioActual.uid, tipo: 'egreso', nombre: n });
-          });
-          await batch.commit();
-          return cargarCategoriasDB();
-      }
+    if (!usuarioActual) return; // Seguridad extra: si no hay usuario, no busca nada
+
+    try {
+        const snap = await db.collection("categorias")
+                               .where("uid", "==", usuarioActual.uid)
+                               .get();
+        
+        if (snap.empty) {
+            console.log("Creando categorías iniciales...");
+            const batch = db.batch();
+            
+            categoriasPorDefecto.ingreso.forEach(n => {
+                const ref = db.collection("categorias").doc();
+                batch.set(ref, { uid: usuarioActual.uid, tipo: 'ingreso', nombre: n });
+            });
+            
+            categoriasPorDefecto.egreso.forEach(n => {
+                const ref = db.collection("categorias").doc();
+                batch.set(ref, { uid: usuarioActual.uid, tipo: 'egreso', nombre: n });
+            });
+
+            await batch.commit();
+            return cargarCategoriasDB(); // Reintentar carga tras crear
+        }
+
+        misCategorias = { ingreso: [], egreso: [] };
+        snap.forEach(doc => {
+            const d = doc.data();
+            misCategorias[d.tipo].push({ id: doc.id, nombre: d.nombre });
+        });
+        actualizarListaCategoriasEdit();
+        
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+}
 
       misCategorias = { ingreso: [], egreso: [] };
       snap.forEach(doc => {
