@@ -20,13 +20,14 @@
       max-width: 480px; margin: auto; background: #fff;
       min-height: 100vh;
       padding: 20px; 
-      padding-bottom: 80px; /* Espacio para el menú */
+      padding-bottom: 80px;
       box-shadow: 0 0 15px rgba(0,0,0,0.05);
       position: relative;
     }
 
     h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
     h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
+    h4 { margin-bottom: 10px; color: var(--primary); }
     p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
 
     input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
@@ -34,7 +35,6 @@
 
     .row { display: flex; gap: 10px; }
     
-    /* Botones */
     button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
     button:active { opacity: 0.8; }
     .btn-ingreso { background: var(--ingreso); color: white; }
@@ -45,7 +45,6 @@
 
     .hidden { display: none !important; }
 
-    /* Resumen Cards */
     .resumen {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
       gap: 5px; background: #ecf0f1; padding: 15px;
@@ -53,7 +52,6 @@
     }
     .resumen span { display: block; font-size: 1rem; font-weight: bold; margin-top: 5px; }
     
-    /* Lista de tarjetas HOME */
     .card {
       background: white; padding: 12px; margin-top: 10px;
       border-radius: 8px; border: 1px solid #eee;
@@ -76,7 +74,6 @@
         font-size: 0.9rem; font-style: italic; border-left: 3px solid #ffeeba;
     }
 
-    /* ESTILOS NUEVA SECCIÓN ESTADÍSTICAS */
     .stat-row {
         display: flex; justify-content: space-between; padding: 10px 0;
         border-bottom: 1px solid #eee; font-size: 0.95rem;
@@ -85,7 +82,6 @@
     .stat-val { font-weight: bold; }
     .stat-header { background: #f8f9fa; padding: 8px; font-weight: bold; margin-top: 15px; border-radius: 4px; color: #666; }
 
-    /* MENU INFERIOR (Estilo Instagram) */
     .bottom-nav {
         position: fixed; bottom: 0; left: 0; width: 100%;
         height: var(--nav-height); background: white;
@@ -100,6 +96,11 @@
     .nav-item i { display: block; font-size: 1.5rem; margin-bottom: 2px; font-style: normal; }
     .nav-item.active { color: var(--primary); font-weight: bold; }
 
+    .cat-tag {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px; background: #fff; border: 1px solid #eee;
+        margin-bottom: 5px; border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -121,10 +122,8 @@
         <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
     </div>
-    
     <div id="loadingStats" style="text-align:center; padding:20px; display:none;">Calculando...</div>
-    <div id="statsContent">
-        </div>
+    <div id="statsContent"></div>
   </div>
 
   <div id="view-home" class="view-section">
@@ -141,6 +140,14 @@
     </div>
 
     <select id="categoria" class="hidden"></select>
+    
+    <div id="metodoPagoContainer" class="hidden">
+        <select id="metodoPago">
+            <option value="CASH">💵 CASH</option>
+            <option value="BANK">💳 BANK</option>
+        </select>
+    </div>
+
     <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
 
@@ -162,16 +169,27 @@
 
   <div id="view-settings" class="view-section hidden">
     <h3>Mi Perfil</h3>
-    
     <label>Nombre a mostrar:</label>
     <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
-    
     <button class="btn-main" onclick="actualizarPerfil()">Guardar Cambios</button>
 
-    <br><hr><br>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 25px; border: 1px solid #eee;">
+        <h4>Gestionar Categorías</h4>
+        <div class="row">
+            <select id="tipoNuevaCat">
+                <option value="ingreso">Ingreso</option>
+                <option value="egreso" selected>Egreso</option>
+            </select>
+            <input type="text" id="nombreNuevaCat" placeholder="Nombre Ej: Gimnasio">
+        </div>
+        <button class="btn-ingreso" onclick="crearCategoria()" style="margin-top:10px;">+ Añadir Categoría</button>
+        <div id="listaCategoriasEdit" style="margin-top:15px; font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+            </div>
+    </div>
+
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
     <div style="text-align: center; margin-top: 30px; color: #bdc3c7; font-size: 0.8rem;">
-      Versión 1.5
+      Versión 2.0 (Categorías Dinámicas)
     </div>
   </div>
 
@@ -194,7 +212,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // TUS CLAVES ORIGINALES
   const firebaseConfig = {
     apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
     authDomain: "lifance-d2316.firebaseapp.com",
@@ -210,12 +227,13 @@
 
   let usuarioActual = null;
   let tipoSeleccionado = "";
-  const categorias = {
+  let misCategorias = { ingreso: [], egreso: [] };
+
+  const categoriasPorDefecto = {
     ingreso: ["Carrera", "Salario", "Préstamo", "Otro ingreso", "Uti. Mes Ant."],
     egreso: ["Combustible/Transporte", "Comisión/Peaje - Carro", "Wash/Mant - Carro", "Hogar", "Salida/Compra/Ocio", "Gasto Menor", "Deuda", "Serv Publicos", "Arriendo","Inversion/Ahorro", "Préstamo/Ajuste/GMF"]
   };
 
-  // --- AUTENTICACIÓN ---
   auth.onAuthStateChanged(user => {
     if (user) {
       usuarioActual = user;
@@ -223,13 +241,16 @@
       document.getElementById("appContainer").classList.remove("hidden");
       document.getElementById("bottomNav").classList.remove("hidden");
       
-      // Cargar nombre del usuario
       actualizarHeaderNombre();
-
       inicializarFechas();
-      inicializarFiltros("mesFiltro", "anioFiltro"); // Para Home
-      inicializarFiltros("mesFiltroStats", "anioFiltroStats"); // Para Stats
-      cargarMovimientos();
+      inicializarFiltros("mesFiltro", "anioFiltro");
+      inicializarFiltros("mesFiltroStats", "anioFiltroStats");
+      
+      // CARGAR CATEGORÍAS Y LUEGO MOVIMIENTOS
+      cargarCategoriasDB().then(() => {
+          cargarMovimientos();
+      });
+
     } else {
       document.getElementById("loginBox").style.display = 'flex';
       document.getElementById("appContainer").classList.add("hidden");
@@ -240,32 +261,87 @@
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // --- NAVEGACIÓN SPA ---
-  function cambiarVista(vista) {
-    // 1. Ocultar todas las secciones
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    
-    // 2. Mostrar la seleccionada
-    document.getElementById(`view-${vista}`).classList.remove('hidden');
+  // --- CATEGORÍAS DINÁMICAS ---
+  async function cargarCategoriasDB() {
+      const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
+      
+      if (snap.empty) {
+          const batch = db.batch();
+          categoriasPorDefecto.ingreso.forEach(n => {
+              const ref = db.collection("categorias").doc();
+              batch.set(ref, { uid: usuarioActual.uid, tipo: 'ingreso', nombre: n });
+          });
+          categoriasPorDefecto.egreso.forEach(n => {
+              const ref = db.collection("categorias").doc();
+              batch.set(ref, { uid: usuarioActual.uid, tipo: 'egreso', nombre: n });
+          });
+          await batch.commit();
+          return cargarCategoriasDB();
+      }
 
-    // 3. Actualizar estado iconos
+      misCategorias = { ingreso: [], egreso: [] };
+      snap.forEach(doc => {
+          const d = doc.data();
+          misCategorias[d.tipo].push({ id: doc.id, nombre: d.nombre });
+      });
+      actualizarListaCategoriasEdit();
+  }
+
+  async function crearCategoria() {
+      const tipo = document.getElementById("tipoNuevaCat").value;
+      const nombre = document.getElementById("nombreNuevaCat").value.trim();
+      if(!nombre) return alert("Escribe un nombre");
+
+      await db.collection("categorias").add({
+          uid: usuarioActual.uid,
+          tipo: tipo,
+          nombre: nombre
+      });
+      document.getElementById("nombreNuevaCat").value = "";
+      cargarCategoriasDB();
+  }
+
+  function actualizarListaCategoriasEdit() {
+      const cont = document.getElementById("listaCategoriasEdit");
+      cont.innerHTML = "<strong>Tus categorías actuales:</strong><br>";
+      
+      const todas = [
+          ...misCategorias.ingreso.map(c => ({...c, t:'Ingreso'})), 
+          ...misCategorias.egreso.map(c => ({...c, t:'Egreso'}))
+      ];
+
+      todas.forEach(c => {
+          const div = document.createElement("div");
+          div.className = "cat-tag";
+          div.innerHTML = `<span>${c.nombre} <small>(${c.t})</small></span> 
+                           <button onclick="borrarCategoria('${c.id}')" style="background:none; color:red; padding:0; margin:0;">✕</button>`;
+          cont.appendChild(div);
+      });
+  }
+
+  async function borrarCategoria(id) {
+      if(!confirm("¿Borrar esta categoría? No afectará a los movimientos ya registrados.")) return;
+      await db.collection("categorias").doc(id).delete();
+      cargarCategoriasDB();
+  }
+
+  // --- NAVEGACIÓN ---
+  function cambiarVista(vista) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`view-${vista}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    // Encontrar el index basado en la vista (manualmente o por orden)
+    
     if(vista === 'stats') document.querySelectorAll('.nav-item')[0].classList.add('active');
     if(vista === 'home') document.querySelectorAll('.nav-item')[1].classList.add('active');
     if(vista === 'settings') document.querySelectorAll('.nav-item')[2].classList.add('active');
 
-    // 4. Si entra a stats, cargar datos
     if(vista === 'stats') cargarEstadisticas();
-    
-    // 5. Scroll arriba
     window.scrollTo(0,0);
   }
 
-  // --- LOGICA DEL PERFIL ---
   function actualizarHeaderNombre() {
       const nombre = usuarioActual.displayName ? usuarioActual.displayName : usuarioActual.email;
-      document.getElementById("headerTitle").textContent = `Lifance de ${nombre.split(' ')[0]}`; // Solo primer nombre
+      document.getElementById("headerTitle").textContent = `Lifance de ${nombre.split(' ')[0]}`;
       document.getElementById("userSubtitle").textContent = usuarioActual.email;
       document.getElementById("inputNombreUsuario").value = usuarioActual.displayName || "";
   }
@@ -273,31 +349,22 @@
   function actualizarPerfil() {
       const nuevoNombre = document.getElementById("inputNombreUsuario").value;
       if(!nuevoNombre) return alert("Escribe un nombre");
-
-      usuarioActual.updateProfile({
-          displayName: nuevoNombre
-      }).then(() => {
+      usuarioActual.updateProfile({ displayName: nuevoNombre }).then(() => {
           alert("Perfil actualizado");
           actualizarHeaderNombre();
-      }).catch(err => {
-          alert("Error: " + err.message);
       });
   }
 
-  // --- LOGICA GENERAL Y HOME ---
   function inicializarFechas() {
     const hoy = new Date();
-    const localIso = hoy.toLocaleDateString('en-CA'); 
-    document.getElementById("fecha").value = localIso;
+    document.getElementById("fecha").value = hoy.toLocaleDateString('en-CA');
   }
 
   function inicializarFiltros(idMes, idAnio) {
     const hoy = new Date();
     const mesSelect = document.getElementById(idMes);
     const anioSelect = document.getElementById(idAnio);
-    
-    mesSelect.innerHTML = "";
-    anioSelect.innerHTML = "";
+    mesSelect.innerHTML = ""; anioSelect.innerHTML = "";
 
     for (let m = 0; m < 12; m++) {
       let opt = document.createElement("option");
@@ -325,47 +392,48 @@
     tipoSeleccionado = tipo;
     document.getElementById("btnIngreso").style.opacity = tipo === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgreso").style.opacity = tipo === 'egreso' ? '1' : '0.4';
+    
     const catSelect = document.getElementById("categoria");
     catSelect.innerHTML = "";
-    categorias[tipo].forEach(c => {
+    
+    misCategorias[tipo].forEach(c => {
       let opt = document.createElement("option");
-      opt.textContent = c;
+      opt.value = c.nombre;
+      opt.textContent = c.nombre;
       catSelect.appendChild(opt);
     });
+    
     catSelect.classList.remove("hidden");
+    document.getElementById("metodoPagoContainer").classList.remove("hidden");
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
   }
 
   async function guardarMovimiento() {
     const montoInput = document.getElementById("monto");
-    const notaInput = document.getElementById("nota");
     const val = Number(montoInput.value.replace(/\D/g, ""));
     const fechaVal = document.getElementById("fecha").value;
-    const notaVal = notaInput.value.trim();
+    const metodoVal = document.getElementById("metodoPago").value;
 
     if (!val || !tipoSeleccionado || !fechaVal) { alert("Completa el monto y fecha"); return; }
 
     try {
       document.getElementById("btnGuardar").disabled = true;
-      document.getElementById("btnGuardar").textContent = "Guardando...";
       await db.collection("movimientos").add({
         uid: usuarioActual.uid,
         tipo: tipoSeleccionado,
         categoria: document.getElementById("categoria").value,
         monto: val,
         fecha: fechaVal,
-        nota: notaVal,
+        metodo: metodoVal,
+        nota: document.getElementById("nota").value.trim(),
         creado: firebase.firestore.FieldValue.serverTimestamp()
       });
       montoInput.value = "";
-      notaInput.value = "";
+      document.getElementById("nota").value = "";
       cargarMovimientos();
-    } catch (e) { console.error(e); alert("Error al guardar"); } 
-    finally {
-      document.getElementById("btnGuardar").disabled = false;
-      document.getElementById("btnGuardar").textContent = "Registrar Movimiento";
-    }
+    } catch (e) { alert("Error al guardar"); } 
+    finally { document.getElementById("btnGuardar").disabled = false; }
   }
 
   function cargarMovimientos() {
@@ -389,21 +457,22 @@
           const esIngreso = d.tipo === "ingreso";
           if (esIngreso) ing += d.monto; else egr += d.monto;
           
+          const iconMetodo = d.metodo === "CASH" ? "💵" : "💳";
           const notaTexto = d.nota ? d.nota : "Sin comentario";
           const item = document.createElement("div");
           item.className = `card ${esIngreso ? "ingreso-item" : "egreso-item"}`;
           item.innerHTML = `
             <div class="card-top">
                 <div class="card-info">
-                <div class="card-cat">${d.categoria}</div>
-                <div class="card-date">${d.fecha}</div>
+                    <div class="card-cat">${d.categoria} <small style="font-weight:normal; opacity:0.6;">${iconMetodo}</small></div>
+                    <div class="card-date">${d.fecha}</div>
                 </div>
                 <div class="card-monto ${esIngreso ? "text-ingreso" : "text-egreso"}">
-                $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
+                    $ ${new Intl.NumberFormat("es-CO").format(d.monto)}
                 </div>
                 <div class="card-actions">
-                <button onclick="toggleComentario('${doc.id}')">👁️</button>
-                <button onclick="borrarMovimiento('${doc.id}')">✕</button>
+                    <button onclick="toggleComentario('${doc.id}')">👁️</button>
+                    <button onclick="borrarMovimiento('${doc.id}')">✕</button>
                 </div>
             </div>
             <div id="coment-${doc.id}" class="comentario-box">📝 ${notaTexto}</div>
@@ -417,12 +486,10 @@
       });
   }
 
-  // --- LOGICA DE LA PESTAÑA RESUMEN / ESTADISTICAS ---
   function cargarEstadisticas() {
       const container = document.getElementById("statsContent");
       const loader = document.getElementById("loadingStats");
-      container.innerHTML = "";
-      loader.style.display = "block";
+      container.innerHTML = ""; loader.style.display = "block";
 
       const mes = parseInt(document.getElementById("mesFiltroStats").value);
       const anio = parseInt(document.getElementById("anioFiltroStats").value);
@@ -432,17 +499,8 @@
       .where("uid", "==", usuarioActual.uid)
       .where("fecha", ">=", primerDia).where("fecha", "<=", ultimoDia)
       .get().then(snap => {
-          
-          // Objetos para acumular sumas
-          let sumasIngreso = {};
-          let sumasEgreso = {};
-          let totalIng = 0;
-          let totalEgr = 0;
-
-          // Inicializar categorias en 0 para que salgan aunque no haya gastos (opcional)
-          // Si prefieres solo mostrar las que tienen gastos, borra los forEach siguientes.
-          // categorias.egreso.forEach(c => sumasEgreso[c] = 0);
-          // categorias.ingreso.forEach(c => sumasIngreso[c] = 0);
+          let sumasIngreso = {}; let sumasEgreso = {};
+          let totalIng = 0; let totalEgr = 0;
 
           snap.forEach(doc => {
               const d = doc.data();
@@ -457,35 +515,19 @@
               }
           });
 
-          // Renderizar Ingresos
           let html = `<div class="stat-header text-ingreso">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalIng)})</div>`;
           for (const [cat, val] of Object.entries(sumasIngreso)) {
-              if(val > 0) { // Solo mostrar si hay dinero
-                  html += `
-                  <div class="stat-row">
-                      <span class="stat-cat">${cat}</span>
-                      <span class="stat-val text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span>
-                  </div>`;
-              }
+              html += `<div class="stat-row"><span class="stat-cat">${cat}</span><span class="stat-val text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span></div>`;
           }
 
-          // Renderizar Egresos
           html += `<div class="stat-header text-egreso">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(totalEgr)})</div>`;
           for (const [cat, val] of Object.entries(sumasEgreso)) {
-              if(val > 0) {
-                   html += `
-                  <div class="stat-row">
-                      <span class="stat-cat">${cat}</span>
-                      <span class="stat-val text-egreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span>
-                  </div>`;
-              }
+              html += `<div class="stat-row"><span class="stat-cat">${cat}</span><span class="stat-val text-egreso">$ ${new Intl.NumberFormat("es-CO").format(val)}</span></div>`;
           }
           
-          // Balance Final en Resumen
           const balance = totalIng - totalEgr;
-          let colorBalance = balance >= 0 ? 'text-ingreso' : 'text-egreso';
           html += `<div class="stat-header" style="color:#333; font-size:1.1rem; border:1px solid #ddd; background:white; margin-top:20px;">
-                      BALANCE: <span class="${colorBalance}">$ ${new Intl.NumberFormat("es-CO").format(balance)}</span>
+                      BALANCE: <span class="${balance >= 0 ? 'text-ingreso' : 'text-egreso'}">$ ${new Intl.NumberFormat("es-CO").format(balance)}</span>
                    </div>`;
 
           container.innerHTML = html;
@@ -493,7 +535,6 @@
       });
   }
 
-  // Utilidad para fechas
   function obtenerRangoFechas(mes, anio) {
     const primerDia = `${anio}-${String(mes).padStart(2, '0')}-01`;
     const ultimoDiaNum = new Date(anio, mes, 0).getDate(); 
@@ -508,10 +549,7 @@
 
   function borrarMovimiento(id) {
     if(!confirm("¿Borrar este movimiento?")) return;
-    db.collection("movimientos").doc(id).delete().then(() => {
-        cargarMovimientos();
-        // Si estuviéramos en stats, habría que recargar, pero es poco probable borrar desde stats
-    });
+    db.collection("movimientos").doc(id).delete().then(() => cargarMovimientos());
   }
 </script>
 
