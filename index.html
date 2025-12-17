@@ -25,7 +25,6 @@
     input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
     .row { display: flex; gap: 10px; }
     
-    /* Botones y Selectores */
     button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
     .btn-ingreso { background: var(--ingreso); color: white; }
     .btn-egreso { background: var(--egreso); color: white; }
@@ -34,19 +33,17 @@
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* Nuevo Diseño de Balance */
+    /* Balance Fijo */
     .resumen-container {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin: 15px 0;
-    border: 1px solid #ddd;
-    
-    /* ESTO HACE LA MAGIA */
-    position: sticky;
-    top: 10px; /* Se detendrá a 10px del borde superior */
-    z-index: 100; /* Para que pase por encima de las tarjetas de movimientos */
-}
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 15px 0;
+        border: 1px solid #ddd;
+        position: sticky;
+        top: 10px;
+        z-index: 100;
+    }
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
     .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
     .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
@@ -54,23 +51,66 @@
     .resumen-item:last-child { border-right: none; }
     .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
-    /* Método Pago Radio Buttons */
+    /* Métodos de Pago */
     .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
     .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
     .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
 
-    /* Cards Historial */
-    .card { background: white; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; }
-    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    /* --- NUEVO SISTEMA DE SLIDE --- */
+    .movimiento-wrapper {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+
+    .card {
+        min-width: 100%;
+        scroll-snap-align: start;
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 2;
+        cursor: pointer;
+    }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
+    
+    .card-swipe-actions {
+        display: flex;
+        scroll-snap-align: end;
+    }
+    .btn-swipe {
+        border: none;
+        color: white;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-top: 0;
+        border-radius: 0;
+        width: 70px;
+    }
+    .btn-edit { background: #3498db; }
+    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
     .card-info { flex-grow: 1; }
     .card-cat { font-weight: bold; font-size: 0.95rem; }
     .card-date { font-size: 0.75rem; color: #888; }
     .card-monto { font-weight: bold; font-size: 1rem; }
     .text-ingreso { color: var(--ingreso); }
     .text-egreso { color: var(--egreso); }
-    .card-actions button { width: auto; padding: 5px 10px; margin-left: 5px; background: #f1f1f1; font-size: 1.2rem; }
     .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
 
     /* Configuración Categorías */
@@ -97,18 +137,13 @@
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
-
-<div class="resumen-container">
-    <div class="balance-card">
-        Disponible <span id="disponible-stats">$ 0</span>
+    <div class="resumen-container">
+        <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
+        <div class="resumen-grid">
+            <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
+            <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
+        </div>
     </div>
-    <div class="resumen-grid">
-        <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
-        <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
-    </div>
-</div>
-
-    
     <div class="row">
         <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
@@ -117,7 +152,7 @@
   </div>
 
   <div id="view-home" class="view-section">
-    <h3>Nuevo Movimiento</h3>
+    <h3 id="formTitle">Nuevo Movimiento</h3>
     <div class="row">
       <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)" autocomplete="off">
       <input type="date" id="fecha">
@@ -140,17 +175,17 @@
 
     <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
     <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
+    <button id="btnCancelarEdit" class="logout hidden" onclick="cancelarEdicion()">Cancelar Edición</button>
 
     <h3>Historial</h3>
+    <p style="font-size: 0.7rem; color: #999; margin-top: -10px;">(Desliza un movimiento a la izquierda para editar o borrar)</p>
     <div class="row">
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
 
     <div class="resumen-container">
-        <div class="balance-card">
-            Disponible <span id="disponible">$ 0</span>
-        </div>
+        <div class="balance-card">Disponible <span id="disponible">$ 0</span></div>
         <div class="resumen-grid">
             <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
             <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
@@ -208,6 +243,7 @@
   let usuarioActual = null;
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
+  let editandoID = null;
 
   const catDefault = {
     ingreso: ["Salario", "Venta", "Préstamo", "Uti. Mes Ant."],
@@ -353,11 +389,9 @@
     cargarMovimientos();
   }
 
-  
-
-function cargarMovimientos() {
-    const lista = document.getElementById("listaMovimientos");
-    lista.innerHTML = "";
+  function cargarMovimientos() {
+    const listaCont = document.getElementById("listaMovimientos");
+    listaCont.innerHTML = "";
     const m = parseInt(document.getElementById("mesFiltro").value);
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
@@ -371,58 +405,85 @@ function cargarMovimientos() {
           const d = doc.data();
           d.tipo === "ingreso" ? iT += d.monto : eT += d.monto;
           
-          const div = document.createElement("div");
-          div.className = `card ${d.tipo}-item`;
-          div.innerHTML = `
-            <div class="card-top">
-                <div class="card-info">
-                    <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
-                    <div class="card-date">${d.fecha}</div>
+          const wrapper = document.createElement("div");
+          wrapper.className = "movimiento-wrapper";
+          wrapper.innerHTML = `
+            <div class="card ${d.tipo}-item" onclick="toggleComent('${doc.id}')">
+                <div class="card-top">
+                    <div class="card-info">
+                        <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
+                        <div class="card-date">${d.fecha}</div>
+                    </div>
+                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
+                    <div style="color: #ccc; font-size: 0.8rem; margin-left: 10px;">❮</div>
                 </div>
-                <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
-                <div class="card-actions">
-                    <button onclick="toggleComent('${doc.id}')">👁️</button>
-                    <button onclick="borrarMov('${doc.id}')">✕</button>
-                </div>
+                <div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
-            <div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>`;
-          lista.appendChild(div);
+            <div class="card-swipe-actions">
+                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${doc.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
+                <button class="btn-swipe btn-delete" onclick="borrarMov('${doc.id}')">✕</button>
+            </div>
+          `;
+          listaCont.appendChild(wrapper);
         });
 
-        // --- AQUÍ ES DONDE VA EL CAMBIO QUE TE PASÉ ---
         const formato = new Intl.NumberFormat("es-CO");
         const balance = iT - eT;
-
-        // Actualizar sección INICIO
         document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
         document.getElementById("disponible").textContent = "$ " + formato.format(balance);
-
-        // Actualizar sección RESUMEN (Stats)
-        // Asegúrate de haber puesto los IDs con "-stats" en el HTML de esa sección
         if(document.getElementById("totalIngresos-stats")){
             document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
             document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
             document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
         }
-
-        // Color rojo si es negativo
         const colorBalance = balance < 0 ? "#e74c3c" : "white";
         document.getElementById("disponible").style.color = colorBalance;
-        if(document.getElementById("disponible-stats")){
-            document.getElementById("disponible-stats").style.color = colorBalance;
-        }
       });
-}
+  }
 
+  function prepararEdicion(id, data) {
+    editandoID = id;
+    document.getElementById("formTitle").textContent = "Editando Movimiento";
+    document.getElementById("monto").value = data.monto;
+    formatearMonto(document.getElementById("monto"));
+    document.getElementById("fecha").value = data.fecha;
+    document.getElementById("nota").value = data.nota || "";
+    setTipo(data.tipo);
+    document.getElementById("categoria").value = data.categoria;
+    seleccionarMetodo(data.metodo);
 
+    const btn = document.getElementById("btnGuardar");
+    btn.textContent = "Guardar Cambios";
+    btn.onclick = () => actualizarMovimiento(id);
+    document.getElementById("btnCancelarEdit").classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
+  async function actualizarMovimiento(id) {
+    const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
+    const data = {
+        monto: val,
+        fecha: document.getElementById("fecha").value,
+        categoria: document.getElementById("categoria").value,
+        metodo: document.getElementById("metodoPago").value,
+        nota: document.getElementById("nota").value.trim()
+    };
+    await db.collection("movimientos").doc(id).update(data);
+    cancelarEdicion();
+    cargarMovimientos();
+  }
 
-
-
-
-
-
+  function cancelarEdicion() {
+    editandoID = null;
+    document.getElementById("formTitle").textContent = "Nuevo Movimiento";
+    document.getElementById("monto").value = "";
+    document.getElementById("nota").value = "";
+    document.getElementById("btnCancelarEdit").classList.add("hidden");
+    const btn = document.getElementById("btnGuardar");
+    btn.textContent = "Registrar Movimiento";
+    btn.onclick = guardarMovimiento;
+  }
 
   function cargarEstadisticas() {
     const cont = document.getElementById("statsContent");
