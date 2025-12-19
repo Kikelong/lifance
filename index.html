@@ -56,7 +56,7 @@
     .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
     .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
 
-    /* --- NUEVO SISTEMA DE SLIDE --- */
+    /* --- SISTEMA DE SLIDE --- */
     .movimiento-wrapper {
         display: flex;
         overflow-x: auto;
@@ -113,7 +113,6 @@
     .text-egreso { color: var(--egreso); }
     .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
 
-    /* Configuración Categorías */
     .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
 
     /* Nav Inferior */
@@ -149,24 +148,6 @@
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
     </div>
     <div id="statsContent"></div>
-
-    <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
-        <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 150px;">
-            <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Saldos Detallados</div>
-            <div style="margin-bottom: 8px;">
-                <small>💵 CASH</small>
-                <div id="saldo-cash" style="font-weight: bold; color: var(--primary);">$ 0</div>
-            </div>
-            <div>
-                <small>💳 BANK</small>
-                <div id="saldo-bank" style="font-weight: bold; color: var(--primary);">$ 0</div>
-            </div>
-        </div>
-        <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">
-            💰
-        </button>
-    </div>
-
   </div>
 
   <div id="view-home" class="view-section">
@@ -231,6 +212,23 @@
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
+  </div>
+
+  <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
+      <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 150px;">
+          <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Saldos Detallados</div>
+          <div style="margin-bottom: 8px;">
+              <small>💵 CASH</small>
+              <div id="saldo-cash" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
+          </div>
+          <div>
+              <small>💳 BANK</small>
+              <div id="saldo-bank" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
+          </div>
+      </div>
+      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">
+          💰
+      </button>
   </div>
 </div>
 
@@ -419,21 +417,20 @@
       .where("fecha", ">=", pD).where("fecha", "<=", uD)
       .orderBy("fecha", "desc").get().then(snap => {
         let iT = 0, eT = 0;
-        let cashTotal = 0, bankTotal = 0; // Variables para el desglose
+        let cashTotal = 0, bankTotal = 0;
 
         snap.forEach(doc => {
           const d = doc.data();
           const monto = d.monto;
-
-          // Lógica de totales generales y por método
+          
           if (d.tipo === "ingreso") {
-            iT += monto;
-            if (d.metodo === 'CASH') cashTotal += monto;
-            else bankTotal += monto;
+              iT += monto;
+              if (d.metodo === 'CASH') cashTotal += monto;
+              else bankTotal += monto;
           } else {
-            eT += monto;
-            if (d.metodo === 'CASH') cashTotal -= monto;
-            else bankTotal -= monto;
+              eT += monto;
+              if (d.metodo === 'CASH') cashTotal -= monto;
+              else bankTotal -= monto;
           }
           
           const wrapper = document.createElement("div");
@@ -460,47 +457,28 @@
 
         const formato = new Intl.NumberFormat("es-CO");
         const balance = iT - eT;
-
-        // 1. Actualizar Resumen Principal (HOME)
+        
         document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
-        const disponibleEl = document.getElementById("disponible");
-        disponibleEl.textContent = "$ " + formato.format(balance);
-        disponibleEl.style.color = balance < 0 ? "#e74c3c" : "white";
+        const disp = document.getElementById("disponible");
+        disp.textContent = "$ " + formato.format(balance);
+        disp.style.color = balance < 0 ? "#e74c3c" : "white";
 
-        // 2. Actualizar Resumen en pestaña STATS (si existe el elemento)
         if(document.getElementById("totalIngresos-stats")){
             document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
             document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
             document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
         }
 
-        // 3. Actualizar el Botón Flotante (Desglose por método)
+        // Actualizar Flotante
         const cashEl = document.getElementById("saldo-cash");
         const bankEl = document.getElementById("saldo-bank");
         if(cashEl && bankEl) {
             cashEl.textContent = "$ " + formato.format(cashTotal);
             bankEl.textContent = "$ " + formato.format(bankTotal);
-            
-            // Opcional: poner el monto en rojo si es negativo en el flotante
             cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
             bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
         }
-      });
-
-
-        const formato = new Intl.NumberFormat("es-CO");
-        const balance = iT - eT;
-        document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
-        document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
-        document.getElementById("disponible").textContent = "$ " + formato.format(balance);
-        if(document.getElementById("totalIngresos-stats")){
-            document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
-            document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
-            document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
-        }
-        const colorBalance = balance < 0 ? "#e74c3c" : "white";
-        document.getElementById("disponible").style.color = colorBalance;
       });
   }
 
@@ -545,6 +523,11 @@
     const btn = document.getElementById("btnGuardar");
     btn.textContent = "Registrar Movimiento";
     btn.onclick = guardarMovimiento;
+  }
+
+  function toggleBalancePopover() {
+      const popover = document.getElementById("balance-popover");
+      popover.classList.toggle("hidden");
   }
 
   function cargarEstadisticas() {
@@ -611,20 +594,6 @@
       const n = document.getElementById("inputNombreUsuario").value;
       if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
   }
-
-
-function toggleBalancePopover() {
-    const popover = document.getElementById("balance-popover");
-    if (popover.classList.contains("hidden")) {
-        popover.classList.remove("hidden");
-        // Se cierra automáticamente tras 5 segundos si no se toca
-        setTimeout(() => popover.classList.add("hidden"), 5000);
-    } else {
-        popover.classList.add("hidden");
-    }
-}
-
-  
 </script>
 </body>
 </html>
