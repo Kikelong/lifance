@@ -149,6 +149,24 @@
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
     </div>
     <div id="statsContent"></div>
+
+    <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
+        <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 150px;">
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Saldos Detallados</div>
+            <div style="margin-bottom: 8px;">
+                <small>💵 CASH</small>
+                <div id="saldo-cash" style="font-weight: bold; color: var(--primary);">$ 0</div>
+            </div>
+            <div>
+                <small>💳 BANK</small>
+                <div id="saldo-bank" style="font-weight: bold; color: var(--primary);">$ 0</div>
+            </div>
+        </div>
+        <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">
+            💰
+        </button>
+    </div>
+
   </div>
 
   <div id="view-home" class="view-section">
@@ -401,9 +419,22 @@
       .where("fecha", ">=", pD).where("fecha", "<=", uD)
       .orderBy("fecha", "desc").get().then(snap => {
         let iT = 0, eT = 0;
+        let cashTotal = 0, bankTotal = 0; // Variables para el desglose
+
         snap.forEach(doc => {
           const d = doc.data();
-          d.tipo === "ingreso" ? iT += d.monto : eT += d.monto;
+          const monto = d.monto;
+
+          // Lógica de totales generales y por método
+          if (d.tipo === "ingreso") {
+            iT += monto;
+            if (d.metodo === 'CASH') cashTotal += monto;
+            else bankTotal += monto;
+          } else {
+            eT += monto;
+            if (d.metodo === 'CASH') cashTotal -= monto;
+            else bankTotal -= monto;
+          }
           
           const wrapper = document.createElement("div");
           wrapper.className = "movimiento-wrapper";
@@ -414,7 +445,7 @@
                         <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
                         <div class="card-date">${d.fecha}</div>
                     </div>
-                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
+                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(monto)}</div>
                     <div style="color: #ccc; font-size: 0.8rem; margin-left: 10px;">❮</div>
                 </div>
                 <div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
@@ -426,6 +457,37 @@
           `;
           listaCont.appendChild(wrapper);
         });
+
+        const formato = new Intl.NumberFormat("es-CO");
+        const balance = iT - eT;
+
+        // 1. Actualizar Resumen Principal (HOME)
+        document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
+        document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
+        const disponibleEl = document.getElementById("disponible");
+        disponibleEl.textContent = "$ " + formato.format(balance);
+        disponibleEl.style.color = balance < 0 ? "#e74c3c" : "white";
+
+        // 2. Actualizar Resumen en pestaña STATS (si existe el elemento)
+        if(document.getElementById("totalIngresos-stats")){
+            document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
+            document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
+            document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
+        }
+
+        // 3. Actualizar el Botón Flotante (Desglose por método)
+        const cashEl = document.getElementById("saldo-cash");
+        const bankEl = document.getElementById("saldo-bank");
+        if(cashEl && bankEl) {
+            cashEl.textContent = "$ " + formato.format(cashTotal);
+            bankEl.textContent = "$ " + formato.format(bankTotal);
+            
+            // Opcional: poner el monto en rojo si es negativo en el flotante
+            cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
+            bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
+        }
+      });
+
 
         const formato = new Intl.NumberFormat("es-CO");
         const balance = iT - eT;
@@ -549,6 +611,20 @@
       const n = document.getElementById("inputNombreUsuario").value;
       if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
   }
+
+
+function toggleBalancePopover() {
+    const popover = document.getElementById("balance-popover");
+    if (popover.classList.contains("hidden")) {
+        popover.classList.remove("hidden");
+        // Se cierra automáticamente tras 5 segundos si no se toca
+        setTimeout(() => popover.classList.add("hidden"), 5000);
+    } else {
+        popover.classList.add("hidden");
+    }
+}
+
+  
 </script>
 </body>
 </html>
