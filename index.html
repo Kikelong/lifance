@@ -34,9 +34,9 @@
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* Estilos Pasivos */
+    /* Estilos Pasivos / Pendientes */
     .pasivo-card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--pendiente); }
-    .pasivo-card.pagado { border-left-color: #bdc3c7; opacity: 0.7; text-decoration: line-through; }
+    .pasivo-card.pagado { border-left-color: #bdc3c7; opacity: 0.6; text-decoration: line-through; }
     .pasivo-info { flex-grow: 1; }
     .pasivo-nombre { font-weight: bold; font-size: 1rem; }
     .pasivo-meta { font-size: 0.8rem; color: #888; }
@@ -83,7 +83,6 @@
     .card-monto { font-weight: bold; font-size: 1rem; }
     .text-ingreso { color: var(--ingreso); }
     .text-egreso { color: var(--egreso); }
-    .text-transferencia { color: #3498db; }
     .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
     .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
 
@@ -133,7 +132,7 @@
       <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
     </div>
 
-    <select id="categoria" class="hidden" onchange="verificarCategoriaDeuda(this.value)"></select>
+    <select id="categoria" class="hidden" onchange="actualizarSelectorVinculo()"></select>
     
     <div id="vinculoDeudaContainer" class="hidden" style="background: #fff4e5; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #ffe0b2;">
         <p style="margin:0; font-size:0.8rem; font-weight:bold; color: #e67e22;">¿Pagar compromiso pendiente?</p>
@@ -180,12 +179,14 @@
     <h3>Compromisos Pendientes</h3>
     <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
         <h4>Agregar Pendiente</h4>
-        <input type="text" id="pasivoNombre" placeholder="Ej: Pago de Internet">
+        <input type="text" id="pasivoNombre" placeholder="Ej: Pago de Luz">
         <div class="row">
             <input type="text" id="pasivoMonto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)">
             <input type="date" id="pasivoFecha">
         </div>
-        <button class="btn-ingreso" onclick="crearPasivo()" style="background: var(--pendiente);">+ Guardar Pendiente</button>
+        <p style="margin: 10px 0 0 0; font-size: 0.8rem; color: #666;">Vincular a categoría:</p>
+        <select id="pasivoCategoria"></select>
+        <button class="btn-ingreso" onclick="crearPasivo()" style="background: var(--pendiente); margin-top: 15px;">+ Guardar Pendiente</button>
     </div>
 
     <h3>Lista de Pagos</h3>
@@ -210,13 +211,12 @@
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.3 - Pasivos</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.5 - Pasivos Categorizados</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
     <div class="modal-content">
         <h3 style="margin-top: 0;">Transferencia Interna</h3>
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Mueve dinero entre tus bolsillos sin afectar tu disponible total.</p>
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
         <select id="transfOrigen" onchange="actualizarDestinoTransf()">
             <option value="CASH">💵 CASH (Efectivo)</option>
@@ -224,7 +224,7 @@
         </select>
         <div style="text-align: center; margin: 5px 0; font-size: 1.2rem;">⬇️</div>
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">DESTINO:</label>
-        <input type="text" id="transfDestino" value="BANK" disabled style="background: #f0f0f0; color: #555;">
+        <input type="text" id="transfDestino" value="BANK" disabled style="background: #f0f0f0;">
         <input type="text" id="montoTransf" inputmode="numeric" placeholder="Monto $ 0" oninput="formatearMonto(this)" style="margin-top: 15px; border: 2px solid var(--primary);">
         <div class="row">
             <button class="btn-main" onclick="ejecutarTransferencia()">Confirmar</button>
@@ -235,19 +235,14 @@
 
   <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
       <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 180px;">
-          <div style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Saldos Detallados</div>
-          <div style="margin-bottom: 8px;">
-              <small>💵 CASH</small>
-              <div id="saldo-cash" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
-          </div>
-          <div style="margin-bottom: 10px;">
-              <small>💳 BANK</small>
-              <div id="saldo-bank" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
-          </div>
+          <small>💵 CASH</small>
+          <div id="saldo-cash" style="font-weight: bold; font-size: 1.1rem;">$ 0</div>
+          <small>💳 BANK</small>
+          <div id="saldo-bank" style="font-weight: bold; font-size: 1.1rem;">$ 0</div>
           <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
-          <button onclick="toggleModalTransf()" style="background: #3498db; color: white; padding: 10px; font-size: 0.75rem; margin: 0; border-radius: 6px;">🔄 Transferir Dinero</button>
+          <button onclick="toggleModalTransf()" style="background: #3498db; color: white; padding: 10px; font-size: 0.75rem; border-radius: 6px;">🔄 Transferir</button>
       </div>
-      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">💰</button>
+      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer;">💰</button>
   </div>
 </div>
 
@@ -280,12 +275,7 @@
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
   let pasivosCache = [];
-  let editandoID = null;
   let movimientosCache = [];
-  const catDefault = {
-    ingreso: ["Salario", "Venta", "Préstamo", "Uti. Mes Ant."],
-    egreso: ["Hogar", "Transporte", "Comida", "Salida", "Deuda", "Servicios"]
-  };
 
   auth.onAuthStateChanged(async user => {
     if (user) {
@@ -297,11 +287,10 @@
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      setTimeout(async () => {
-          await cargarCategoriasDB();
-          cargarMovimientos();
-          cargarPasivos();
-      }, 600);
+      
+      await cargarCategoriasDB();
+      cargarMovimientos();
+      cargarPasivos();
     } else {
       document.getElementById("loginBox").style.display = 'flex';
       document.getElementById("appContainer").classList.add("hidden");
@@ -312,20 +301,19 @@
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // --- LOGICA DE PASIVOS ---
+  // --- GESTIÓN DE PENDIENTES (PASIVOS) ---
   async function crearPasivo() {
     const nombre = document.getElementById("pasivoNombre").value.trim();
     const montoStr = document.getElementById("pasivoMonto").value;
     const monto = Number(montoStr.replace(/\D/g, ""));
     const fecha = document.getElementById("pasivoFecha").value;
+    const categoria = document.getElementById("pasivoCategoria").value;
     
-    if(!nombre || !monto || !fecha) return alert("Completa todos los campos del pendiente");
+    if(!nombre || !monto || !fecha) return alert("Completa todos los campos");
     
     await db.collection("pasivos").add({
         uid: usuarioActual.uid,
-        nombre,
-        monto,
-        fecha,
+        nombre, monto, fecha, categoria,
         pagado: false,
         creado: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -340,36 +328,56 @@
     const snap = await db.collection("pasivos").where("uid", "==", usuarioActual.uid).orderBy("fecha", "asc").get();
     pasivosCache = [];
     const listaCont = document.getElementById("listaPasivos");
-    const selectVinculo = document.getElementById("selectDeudaVinculada");
-    
     listaCont.innerHTML = "";
-    selectVinculo.innerHTML = '<option value="">-- Seleccionar (Opcional) --</option>';
     
     snap.forEach(doc => {
         const d = { id: doc.id, ...doc.data() };
         pasivosCache.push(d);
         
-        // Render en la lista de la sección de pasivos
         const div = document.createElement("div");
         div.className = `pasivo-card ${d.pagado ? 'pagado' : ''}`;
         div.innerHTML = `
             <div class="pasivo-info">
                 <div class="pasivo-nombre">${d.nombre}</div>
-                <div class="pasivo-meta">Vence: ${d.fecha} • $ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
+                <div class="pasivo-meta">${d.categoria} • Vence: ${d.fecha} • $ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
             </div>
             ${!d.pagado ? `<button class="btn-check" onclick="marcarPasivoPagado('${d.id}')">✓</button>` : ''}
             <button onclick="borrarPasivo('${d.id}')" style="background:none; color:red; width:auto; margin:0; margin-left:10px;">✕</button>
         `;
         listaCont.appendChild(div);
-
-        // Añadir al selector de vínculos en el Home (solo si no está pagado)
-        if(!d.pagado) {
-            const opt = document.createElement("option");
-            opt.value = d.id;
-            opt.textContent = `${d.nombre} ($${new Intl.NumberFormat("es-CO").format(d.monto)})`;
-            selectVinculo.appendChild(opt);
-        }
     });
+    actualizarSelectorVinculo();
+  }
+
+  function actualizarSelectorVinculo() {
+      const catActual = document.getElementById("categoria").value;
+      const selectVinculo = document.getElementById("selectDeudaVinculada");
+      const container = document.getElementById("vinculoDeudaContainer");
+      
+      // Filtrar pasivos no pagados que coincidan con la categoría seleccionada en el formulario
+      const pendientesCoincidentes = pasivosCache.filter(p => !p.pagado && p.categoria === catActual);
+      
+      if(pendientesCoincidentes.length > 0 && tipoSeleccionado === 'egreso') {
+          selectVinculo.innerHTML = '<option value="">-- Seleccionar Pendiente --</option>';
+          pendientesCoincidentes.forEach(p => {
+              const opt = document.createElement("option");
+              opt.value = p.id;
+              opt.textContent = `${p.nombre} ($${new Intl.NumberFormat("es-CO").format(p.monto)})`;
+              selectVinculo.appendChild(opt);
+          });
+          container.classList.remove("hidden");
+      } else {
+          container.classList.add("hidden");
+      }
+  }
+
+  function vincularDatosDeuda(id) {
+      if(!id) return;
+      const p = pasivosCache.find(x => x.id === id);
+      if(p) {
+          document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(p.monto);
+          document.getElementById("nota").value = "Pago de: " + p.nombre;
+      }
   }
 
   async function marcarPasivoPagado(id) {
@@ -384,102 +392,26 @@
     }
   }
 
-  function verificarCategoriaDeuda(val) {
-      const container = document.getElementById("vinculoDeudaContainer");
-      if(val.toLowerCase() === 'deuda') {
-          container.classList.remove("hidden");
-      } else {
-          container.classList.add("hidden");
-          document.getElementById("selectDeudaVinculada").value = "";
-      }
-  }
-
-  function vincularDatosDeuda(id) {
-      if(!id) return;
-      const deuda = pasivosCache.find(p => p.id === id);
-      if(deuda) {
-          document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(deuda.monto);
-          document.getElementById("nota").value = "Pago de: " + deuda.nombre;
-      }
-  }
-
-  // --- LOGICA EXISTENTE ---
-
+  // --- GESTIÓN DE CATEGORÍAS ---
   async function cargarCategoriasDB() {
     if (!usuarioActual) return;
     const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
-    if (snap.empty) {
-        const batch = db.batch();
-        ['ingreso', 'egreso'].forEach(t => {
-            catDefault[t].forEach((n, idx) => {
-                const ref = db.collection("categorias").doc();
-                batch.set(ref, { uid: usuarioActual.uid, tipo: t, nombre: n, orden: idx });
-            });
-        });
-        await batch.commit();
-        return cargarCategoriasDB();
-    }
     misCategorias = { ingreso: [], egreso: [] };
     snap.forEach(doc => {
         const d = doc.data();
         misCategorias[d.tipo].push({ id: doc.id, ...d });
     });
-    actualizarListaCategoriasEdit();
-  }
-
-  function actualizarListaCategoriasEdit() {
-    const cont = document.getElementById("listaCategoriasEdit");
-    const filtro = document.getElementById("tipoNuevaCat").value;
-    cont.innerHTML = "";
-    const lista = misCategorias[filtro].sort((a,b) => (a.orden||0) - (b.orden||0));
-    lista.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "cat-tag";
-        div.innerHTML = `
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moverCat('${c.id}', -1)" style="padding:0; font-size:10px; background:#eee; width:22px; height:22px;">▲</button>
-                    <button onclick="moverCat('${c.id}', 1)" style="padding:0; font-size:10px; background:#eee; width:22px; height:22px;">▼</button>
-                </div>
-                <span style="text-transform:uppercase; font-weight:600; font-size:0.85rem;">${c.nombre}</span>
-            </div>
-            <button onclick="borrarCategoria('${c.id}')" style="background:none; color:red; width:auto; margin:0;">✕</button>
-        `;
-        cont.appendChild(div);
+    
+    // Llenar selector de categorías en la sección de Pendientes (solo egresos)
+    const pCat = document.getElementById("pasivoCategoria");
+    pCat.innerHTML = "";
+    misCategorias.egreso.forEach(c => {
+        const o = document.createElement("option");
+        o.value = o.textContent = c.nombre;
+        pCat.appendChild(o);
     });
-  }
-
-  async function moverCat(id, dir) {
-    const todas = [...misCategorias.ingreso, ...misCategorias.egreso];
-    const cat = todas.find(c => c.id === id);
-    const lista = misCategorias[cat.tipo].sort((a,b) => (a.orden||0) - (b.orden||0));
-    const idx = lista.findIndex(c => c.id === id);
-    const nuevoIdx = idx + dir;
-    if (nuevoIdx < 0 || nuevoIdx >= lista.length) return;
-    const batch = db.batch();
-    batch.update(db.collection("categorias").doc(lista[idx].id), { orden: nuevoIdx });
-    batch.update(db.collection("categorias").doc(lista[nuevoIdx].id), { orden: idx });
-    await batch.commit();
-    await cargarCategoriasDB();
-  }
-
-  async function crearCategoria() {
-    const tipo = document.getElementById("tipoNuevaCat").value;
-    const nombre = document.getElementById("nombreNuevaCat").value.trim();
-    if(!nombre) return;
-    await db.collection("categorias").add({ uid: usuarioActual.uid, tipo: tipo, nombre: nombre, orden: misCategorias[tipo].length });
-    document.getElementById("nombreNuevaCat").value = "";
-    await cargarCategoriasDB();
-  }
-
-  async function borrarCategoria(id) {
-    if(confirm("¿Borrar?")) { await db.collection("categorias").doc(id).delete(); cargarCategoriasDB(); }
-  }
-
-  function seleccionarMetodo(m) {
-    document.getElementById("metodoPago").value = m;
-    document.getElementById("optCash").classList.toggle("active", m === 'CASH');
-    document.getElementById("optBank").classList.toggle("active", m === 'BANK');
+    
+    actualizarListaCategoriasEdit();
   }
 
   function setTipo(t) {
@@ -489,40 +421,41 @@
     const catS = document.getElementById("categoria");
     catS.innerHTML = "";
     const lista = misCategorias[t].sort((a,b) => (a.orden||0) - (b.orden||0));
-    lista.forEach(c => { const o = document.createElement("option"); o.value = o.textContent = c.nombre; catS.appendChild(o); });
+    lista.forEach(c => { 
+        const o = document.createElement("option"); 
+        o.value = o.textContent = c.nombre; 
+        catS.appendChild(o); 
+    });
     catS.classList.remove("hidden");
     document.getElementById("metodoPagoContainer").classList.remove("hidden");
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
-    verificarCategoriaDeuda(catS.value);
+    actualizarSelectorVinculo();
   }
 
+  // --- REGISTRO DE MOVIMIENTOS ---
   async function guardarMovimiento() {
-    const mI = document.getElementById("monto");
-    const val = Number(mI.value.replace(/\D/g, ""));
+    const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
     const fec = document.getElementById("fecha").value;
     const pasivoID = document.getElementById("selectDeudaVinculada").value;
 
     if (!val || !tipoSeleccionado) return alert("Faltan datos");
     const ahora = new Date();
-    const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+    const hora = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
     
     await db.collection("movimientos").add({
       uid: usuarioActual.uid, tipo: tipoSeleccionado,
       categoria: document.getElementById("categoria").value,
-      monto: val, fecha: fec, hora: horaString,
+      monto: val, fecha: fec, hora,
       metodo: document.getElementById("metodoPago").value,
       nota: document.getElementById("nota").value.trim(),
       creado: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // Si había una deuda vinculada, la marcamos como pagada
-    if(pasivoID) {
-        await marcarPasivoPagado(pasivoID);
-    }
+    if(pasivoID) await marcarPasivoPagado(pasivoID);
 
-    mI.value = ""; document.getElementById("nota").value = "";
-    document.getElementById("vinculoDeudaContainer").classList.add("hidden");
+    document.getElementById("monto").value = "";
+    document.getElementById("nota").value = "";
     cargarMovimientos();
   }
 
@@ -534,10 +467,7 @@
     db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
         movimientosCache = [];
         snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
-        movimientosCache.sort((a, b) => {
-            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
-            return (b.hora || "00:00").localeCompare(a.hora || "00:00");
-        });
+        movimientosCache.sort((a, b) => b.fecha.localeCompare(a.fecha) || (b.hora||"").localeCompare(a.hora||""));
         renderizarLista(movimientosCache);
     });
   }
@@ -547,32 +477,23 @@
     listaCont.innerHTML = "";
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
     datos.forEach(d => {
-        if (d.tipo === "ingreso") {
-            iT += d.monto;
-            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
-        } else if (d.tipo === "egreso") {
-            eT += d.monto;
-            if (d.metodo === 'CASH') cashTotal -= d.monto; else bankTotal -= d.monto;
-        } else if (d.tipo === "transferencia") {
-            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
-        }
-
+        if (d.tipo === "ingreso") { iT += d.monto; d.metodo==='CASH'?cashTotal+=d.monto:bankTotal+=d.monto; }
+        else if (d.tipo === "egreso") { eT += d.monto; d.metodo==='CASH'?cashTotal-=d.monto:bankTotal-=d.monto; }
+        
         const wrapper = document.createElement("div");
         wrapper.className = "movimiento-wrapper";
         wrapper.innerHTML = `
             <div class="card ${d.tipo}-item" onclick="toggleComent('${d.id}')">
                 <div class="card-top">
                     <div class="card-info">
-                        <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
-                        <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
+                        <div class="card-cat">${d.categoria} <small>${d.metodo==='CASH'?'💵':'💳'}</small></div>
+                        <div class="card-date">${d.fecha}</div>
                     </div>
-                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
-                    <div style="color: #ccc; font-size: 0.8rem; margin-left: 10px;">❮</div>
+                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
                 </div>
                 <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
             <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${d.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
                 <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
             </div>
         `;
@@ -581,175 +502,26 @@
     actualizarResumenVisual(iT, eT, cashTotal, bankTotal);
   }
 
-  function filtrarMovimientos() {
-    const term = document.getElementById("buscador").value.toLowerCase();
-    const filtrados = movimientosCache.filter(m => m.categoria.toLowerCase().includes(term) || (m.nota && m.nota.toLowerCase().includes(term)));
-    renderizarLista(filtrados);
-  }
-
-  function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
-    const formato = new Intl.NumberFormat("es-CO");
-    const balance = iT - eT;
-    document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
-    document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
-    const disp = document.getElementById("disponible");
-    disp.textContent = "$ " + formato.format(balance);
-    disp.style.color = balance < 0 ? "#e74c3c" : "white";
-    if(document.getElementById("totalIngresos-stats")){
-        document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
-        document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
-        document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
-    }
-    const cashEl = document.getElementById("saldo-cash");
-    const bankEl = document.getElementById("saldo-bank");
-    if(cashEl && bankEl) {
-        cashEl.textContent = "$ " + formato.format(cashTotal);
-        bankEl.textContent = "$ " + formato.format(bankTotal);
-        cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
-        bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
-    }
-  }
-
-  function toggleModalTransf() {
-    document.getElementById("modalTransferencia").classList.toggle("hidden");
-    document.getElementById("balance-popover").classList.add("hidden");
-    document.getElementById("montoTransf").value = "";
-  }
-
-  function actualizarDestinoTransf() {
-    const o = document.getElementById("transfOrigen").value;
-    document.getElementById("transfDestino").value = (o === 'CASH') ? '💳 BANK' : '💵 CASH';
-  }
-
-  async function ejecutarTransferencia() {
-    const mStr = document.getElementById("montoTransf").value;
-    const val = Number(mStr.replace(/\D/g, ""));
-    if (!val || val <= 0) return alert("Monto inválido");
-    
-    const origen = document.getElementById("transfOrigen").value;
-    const destino = (origen === 'CASH') ? 'BANK' : 'CASH';
-    const fecha = new Date().toLocaleDateString('en-CA');
-    const ahora = new Date();
-    const hora = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-    try {
-        const batch = db.batch();
-        const refE = db.collection("movimientos").doc();
-        batch.set(refE, { 
-          uid: usuarioActual.uid, tipo: "transferencia", categoria: "Transferencia (Salida)", 
-          monto: -val, fecha, hora, metodo: origen, nota: `Hacia ${destino}`, 
-          creado: firebase.firestore.FieldValue.serverTimestamp() 
-        });
-        const refI = db.collection("movimientos").doc();
-        batch.set(refI, { 
-          uid: usuarioActual.uid, tipo: "transferencia", categoria: "Transferencia (Entrada)", 
-          monto: val, fecha, hora, metodo: destino, nota: `Desde ${origen}`, 
-          creado: firebase.firestore.FieldValue.serverTimestamp() 
-        });
-        await batch.commit();
-        toggleModalTransf();
-        cargarMovimientos();
-    } catch (e) { alert("Error al transferir"); }
-  }
-
-  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
-
-  function prepararEdicion(id, data) {
-    editandoID = id;
-    document.getElementById("formTitle").textContent = "Editando Movimiento";
-    document.getElementById("monto").value = Math.abs(data.monto);
-    formatearMonto(document.getElementById("monto"));
-    document.getElementById("fecha").value = data.fecha;
-    document.getElementById("nota").value = data.nota || "";
-    setTipo(data.tipo);
-    document.getElementById("categoria").value = data.categoria;
-    seleccionarMetodo(data.metodo);
-    const btn = document.getElementById("btnGuardar");
-    btn.textContent = "Guardar Cambios";
-    btn.onclick = () => actualizarMovimiento(id);
-    document.getElementById("btnCancelarEdit").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async function actualizarMovimiento(id) {
-    const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
-    const data = { monto: val, fecha: document.getElementById("fecha").value, categoria: document.getElementById("categoria").value, metodo: document.getElementById("metodoPago").value, nota: document.getElementById("nota").value.trim() };
-    await db.collection("movimientos").doc(id).update(data);
-    cancelarEdicion();
-    cargarMovimientos();
-  }
-
-  function cancelarEdicion() {
-    editandoID = null;
-    document.getElementById("formTitle").textContent = "Nuevo Movimiento";
-    document.getElementById("monto").value = "";
-    document.getElementById("nota").value = "";
-    document.getElementById("btnCancelarEdit").classList.add("hidden");
-    const btn = document.getElementById("btnGuardar");
-    btn.textContent = "Registrar Movimiento";
-    btn.onclick = guardarMovimiento;
-  }
-
-  function cargarEstadisticas() {
-    const cont = document.getElementById("statsContent");
-    const m = parseInt(document.getElementById("mesFiltroStats").value);
-    const a = parseInt(document.getElementById("anioFiltroStats").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
-    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-      let sI = {}, sE = {}, tI = 0, tE = 0;
-      snap.forEach(doc => {
-        const d = doc.data();
-        if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
-        else if(d.tipo === 'egreso') { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
-      });
-      let h = `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
-      for(let [c,v] of Object.entries(sI)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
-      h += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
-      for(let [c,v] of Object.entries(sE)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
-      cont.innerHTML = h;
-    });
+  // --- UTILIDADES ---
+  function actualizarResumenVisual(iT, eT, cash, bank) {
+    const f = new Intl.NumberFormat("es-CO");
+    document.getElementById("totalIngresos").textContent = "$ " + f.format(iT);
+    document.getElementById("totalEgresos").textContent = "$ " + f.format(eT);
+    document.getElementById("disponible").textContent = "$ " + f.format(iT - eT);
+    document.getElementById("saldo-cash").textContent = "$ " + f.format(cash);
+    document.getElementById("saldo-bank").textContent = "$ " + f.format(bank);
   }
 
   function cambiarVista(v) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(`view-${v}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    // Ajuste de indices por la nueva sección
-    let idx = 1; // Default Home
-    if(v === 'stats') idx = 0;
-    if(v === 'debts') idx = 2;
-    if(v === 'settings') idx = 3;
-    
-    document.querySelectorAll('.nav-item')[idx].classList.add('active');
-    if(v === 'stats') cargarEstadisticas();
-    if(v === 'debts') cargarPasivos();
+    const items = document.querySelectorAll('.nav-item');
+    if(v==='stats') items[0].classList.add('active');
+    if(v==='home') items[1].classList.add('active');
+    if(v==='debts') items[2].classList.add('active');
+    if(v==='settings') items[3].classList.add('active');
     window.scrollTo(0,0);
-  }
-
-  function actualizarHeaderNombre() {
-    const n = usuarioActual.displayName || usuarioActual.email;
-    document.getElementById("headerTitle").textContent = `Lifance de ${n.split(' ')[0]}`;
-    document.getElementById("userSubtitle").textContent = usuarioActual.email;
-  }
-
-  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
-  function inicializarFiltros(idM, idA) {
-    const hoy = new Date();
-    const sM = document.getElementById(idM);
-    const sA = document.getElementById(idA);
-    sM.innerHTML = ""; sA.innerHTML = "";
-    for (let m = 0; m < 12; m++) {
-      let o = document.createElement("option");
-      o.value = m + 1;
-      o.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
-      if (m === hoy.getMonth()) o.selected = true; sM.appendChild(o);
-    }
-    for (let a = hoy.getFullYear() - 1; a <= hoy.getFullYear() + 1; a++) {
-      let o = document.createElement("option");
-      o.value = a; o.textContent = a;
-      if (a === hoy.getFullYear()) o.selected = true; sA.appendChild(o);
-    }
   }
 
   function formatearMonto(i) {
@@ -757,12 +529,31 @@
     i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
   }
 
-  function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
-  function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
-  function actualizarPerfil() {
-      const n = document.getElementById("inputNombreUsuario").value;
-      if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
+  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
+  function inicializarFiltros(idM, idA) {
+    const hoy = new Date();
+    const sM = document.getElementById(idM);
+    const sA = document.getElementById(idA);
+    for (let m = 0; m < 12; m++) {
+      let o = document.createElement("option"); o.value = m + 1;
+      o.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
+      if (m === hoy.getMonth()) o.selected = true; sM.appendChild(o);
+    }
+    for (let a = hoy.getFullYear() - 1; a <= hoy.getFullYear() + 1; a++) {
+      let o = document.createElement("option"); o.value = a; o.textContent = a;
+      if (a === hoy.getFullYear()) o.selected = true; sA.appendChild(o);
+    }
   }
+
+  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
+  function seleccionarMetodo(m) {
+    document.getElementById("metodoPago").value = m;
+    document.getElementById("optCash").classList.toggle("active", m === 'CASH');
+    document.getElementById("optBank").classList.toggle("active", m === 'BANK');
+  }
+  function toggleComent(id) { const c = document.getElementById(`c-${id}`); c.style.display = c.style.display === "block" ? "none" : "block"; }
+  function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
+  function actualizarHeaderNombre() { document.getElementById("headerTitle").textContent = "Lifance de " + (usuarioActual.displayName || "Usuario"); document.getElementById("userSubtitle").textContent = usuarioActual.email; }
 </script>
 </body>
 </html>
