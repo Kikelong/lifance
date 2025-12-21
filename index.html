@@ -11,126 +11,87 @@
       --egreso: #c0392b;
       --bg: #f4f6f8;
       --nav-height: 60px;
+      --pendiente: #f39c12;
     }
-    * { box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background: var(--bg); padding: 0;
-    margin: 0; padding-bottom: var(--nav-height); }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background: var(--bg); padding: 0; margin: 0; padding-bottom: var(--nav-height); }
     
-    .container { max-width: 480px; margin: auto; background: #fff;
-    min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative;
-    }
+    .container { max-width: 480px; margin: auto; background: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative; }
     
-    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px;
-    }
-    h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px;
-    }
+    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
+    h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
     h4 { margin-bottom: 10px; color: var(--primary); }
-    p.subtitle { text-align: center; color: #888;
-    font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
+    p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
 
-    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px;
-    border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-    .row { display: flex; gap: 10px;
-    }
+    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
+    .row { display: flex; gap: 10px; }
     
-    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s;
-    }
+    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
     .btn-ingreso { background: var(--ingreso); color: white; }
-    .btn-egreso { background: var(--egreso); color: white;
-    }
+    .btn-egreso { background: var(--egreso); color: white; }
     .btn-google { background: #4285F4; color: white; }
-    .btn-main { background: var(--primary); color: white;
-    margin-top: 15px; }
-    .logout { background: #e74c3c; color: white; margin-top: 20px;
-    }
+    .btn-main { background: var(--primary); color: white; margin-top: 15px; }
+    .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
+    /* Estilos Pasivos */
+    .pasivo-card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--pendiente); }
+    .pasivo-card.pagado { border-left-color: #bdc3c7; opacity: 0.7; text-decoration: line-through; }
+    .pasivo-info { flex-grow: 1; }
+    .pasivo-nombre { font-weight: bold; font-size: 1rem; }
+    .pasivo-meta { font-size: 0.8rem; color: #888; }
+    .btn-check { width: auto; margin-top: 0; padding: 8px 12px; background: #27ae60; color: white; border-radius: 50%; }
+
     /* Buscador */
-    .search-box { margin-top: 15px;
-    position: relative; }
-    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee;
-    }
-    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem;
-    }
+    .search-box { margin-top: 15px; position: relative; }
+    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
+    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
 
     /* Balance Fijo */
-    .resumen-container { border-radius: 8px; overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100;
-    }
-    .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center;
-    }
-    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px;
-    }
-    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05);
-    }
-    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd;
-    }
+    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
+    .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
+    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
+    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
+    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd; }
     .resumen-item:last-child { border-right: none; }
-    .resumen-item span { display: block; font-size: 1.1rem;
-    font-weight: 700; margin-top: 4px; }
+    .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
     /* Métodos de Pago */
-    .metodo-selector { display: flex;
-    gap: 10px; margin-top: 8px; }
-    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd;
-    border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
-    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary);
-    }
+    .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
+    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
+    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
 
     /* Modal Transferencia */
-    .modal-overlay { position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
 
     /* Estilos de Lista */
-    .movimiento-wrapper { display: flex; overflow-x: auto;
-    scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
-    .movimiento-wrapper::-webkit-scrollbar { display: none;
-    }
-    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee;
-    display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer;
-    }
+    .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
+    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
-    .card.egreso-item { border-left: 5px solid var(--egreso);
-    }
+    .card.egreso-item { border-left: 5px solid var(--egreso); }
     .card.transferencia-item { border-left: 5px solid #3498db; }
     .card-swipe-actions { display: flex; scroll-snap-align: end; }
-    .btn-swipe { border: none; color: white;
-    padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px;
-    }
+    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
     .btn-edit { background: #3498db; }
-    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px;
-    }
-    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%;
-    }
+    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
     .card-info { flex-grow: 1; }
-    .card-cat { font-weight: bold; font-size: 0.95rem;
-    }
+    .card-cat { font-weight: bold; font-size: 0.95rem; }
     .card-date { font-size: 0.75rem; color: #888; }
-    .card-monto { font-weight: bold; font-size: 1rem;
-    }
+    .card-monto { font-weight: bold; font-size: 1rem; }
     .text-ingreso { color: var(--ingreso); }
-    .text-egreso { color: var(--egreso);
-    }
+    .text-egreso { color: var(--egreso); }
     .text-transferencia { color: #3498db; }
-    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic;
-    }
-    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee;
-    margin-bottom: 5px; border-radius: 6px; }
+    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
+    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
 
     /* Nav Inferior */
-    .bottom-nav { position: fixed;
-    bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around;
-    align-items: center; z-index: 1000; }
-    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem;
-    }
-    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px;
-    }
-    .nav-item.active { color: var(--primary); font-weight: bold;
-    }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem; }
+    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
   </style>
 </head>
 <body>
@@ -172,8 +133,15 @@
       <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
     </div>
 
-    <select id="categoria" class="hidden"></select>
+    <select id="categoria" class="hidden" onchange="verificarCategoriaDeuda(this.value)"></select>
     
+    <div id="vinculoDeudaContainer" class="hidden" style="background: #fff4e5; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #ffe0b2;">
+        <p style="margin:0; font-size:0.8rem; font-weight:bold; color: #e67e22;">¿Pagar compromiso pendiente?</p>
+        <select id="selectDeudaVinculada" onchange="vincularDatosDeuda(this.value)">
+            <option value="">-- Seleccionar (Opcional) --</option>
+        </select>
+    </div>
+
     <div id="metodoPagoContainer" class="hidden">
         <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #666;">Método:</p>
         <div class="metodo-selector">
@@ -208,6 +176,22 @@
     <div id="listaMovimientos"></div>
   </div>
 
+  <div id="view-debts" class="view-section hidden">
+    <h3>Compromisos Pendientes</h3>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+        <h4>Agregar Pendiente</h4>
+        <input type="text" id="pasivoNombre" placeholder="Ej: Pago de Internet">
+        <div class="row">
+            <input type="text" id="pasivoMonto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)">
+            <input type="date" id="pasivoFecha">
+        </div>
+        <button class="btn-ingreso" onclick="crearPasivo()" style="background: var(--pendiente);">+ Guardar Pendiente</button>
+    </div>
+
+    <h3>Lista de Pagos</h3>
+    <div id="listaPasivos"></div>
+  </div>
+
   <div id="view-settings" class="view-section hidden">
     <h3>Mi Perfil</h3>
     <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
@@ -226,27 +210,22 @@
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.2</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.3 - Pasivos</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
     <div class="modal-content">
         <h3 style="margin-top: 0;">Transferencia Interna</h3>
         <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Mueve dinero entre tus bolsillos sin afectar tu disponible total.</p>
-        
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
         <select id="transfOrigen" onchange="actualizarDestinoTransf()">
             <option value="CASH">💵 CASH (Efectivo)</option>
             <option value="BANK">💳 BANK (Banco/Tarjeta)</option>
         </select>
-
         <div style="text-align: center; margin: 5px 0; font-size: 1.2rem;">⬇️</div>
-
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">DESTINO:</label>
         <input type="text" id="transfDestino" value="BANK" disabled style="background: #f0f0f0; color: #555;">
-
         <input type="text" id="montoTransf" inputmode="numeric" placeholder="Monto $ 0" oninput="formatearMonto(this)" style="margin-top: 15px; border: 2px solid var(--primary);">
-        
         <div class="row">
             <button class="btn-main" onclick="ejecutarTransferencia()">Confirmar</button>
             <button class="logout" onclick="toggleModalTransf()" style="background: #95a5a6; margin-top: 15px;">Cerrar</button>
@@ -268,15 +247,14 @@
           <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
           <button onclick="toggleModalTransf()" style="background: #3498db; color: white; padding: 10px; font-size: 0.75rem; margin: 0; border-radius: 6px;">🔄 Transferir Dinero</button>
       </div>
-      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">
-          💰
-      </button>
+      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">💰</button>
   </div>
 </div>
 
 <div id="bottomNav" class="bottom-nav hidden">
     <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Balance</div>
     <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i>Inicio</div>
+    <div class="nav-item" onclick="cambiarVista('debts')"><i>⏳</i>Pendientes</div>
     <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Config</div>
 </div>
 
@@ -301,12 +279,14 @@
   let usuarioActual = null;
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
+  let pasivosCache = [];
   let editandoID = null;
   let movimientosCache = [];
   const catDefault = {
     ingreso: ["Salario", "Venta", "Préstamo", "Uti. Mes Ant."],
     egreso: ["Hogar", "Transporte", "Comida", "Salida", "Deuda", "Servicios"]
   };
+
   auth.onAuthStateChanged(async user => {
     if (user) {
       usuarioActual = user;
@@ -320,6 +300,7 @@
       setTimeout(async () => {
           await cargarCategoriasDB();
           cargarMovimientos();
+          cargarPasivos();
       }, 600);
     } else {
       document.getElementById("loginBox").style.display = 'flex';
@@ -327,8 +308,102 @@
       document.getElementById("bottomNav").classList.add("hidden");
     }
   });
+
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
+
+  // --- LOGICA DE PASIVOS ---
+  async function crearPasivo() {
+    const nombre = document.getElementById("pasivoNombre").value.trim();
+    const montoStr = document.getElementById("pasivoMonto").value;
+    const monto = Number(montoStr.replace(/\D/g, ""));
+    const fecha = document.getElementById("pasivoFecha").value;
+    
+    if(!nombre || !monto || !fecha) return alert("Completa todos los campos del pendiente");
+    
+    await db.collection("pasivos").add({
+        uid: usuarioActual.uid,
+        nombre,
+        monto,
+        fecha,
+        pagado: false,
+        creado: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    document.getElementById("pasivoNombre").value = "";
+    document.getElementById("pasivoMonto").value = "";
+    cargarPasivos();
+  }
+
+  async function cargarPasivos() {
+    if(!usuarioActual) return;
+    const snap = await db.collection("pasivos").where("uid", "==", usuarioActual.uid).orderBy("fecha", "asc").get();
+    pasivosCache = [];
+    const listaCont = document.getElementById("listaPasivos");
+    const selectVinculo = document.getElementById("selectDeudaVinculada");
+    
+    listaCont.innerHTML = "";
+    selectVinculo.innerHTML = '<option value="">-- Seleccionar (Opcional) --</option>';
+    
+    snap.forEach(doc => {
+        const d = { id: doc.id, ...doc.data() };
+        pasivosCache.push(d);
+        
+        // Render en la lista de la sección de pasivos
+        const div = document.createElement("div");
+        div.className = `pasivo-card ${d.pagado ? 'pagado' : ''}`;
+        div.innerHTML = `
+            <div class="pasivo-info">
+                <div class="pasivo-nombre">${d.nombre}</div>
+                <div class="pasivo-meta">Vence: ${d.fecha} • $ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
+            </div>
+            ${!d.pagado ? `<button class="btn-check" onclick="marcarPasivoPagado('${d.id}')">✓</button>` : ''}
+            <button onclick="borrarPasivo('${d.id}')" style="background:none; color:red; width:auto; margin:0; margin-left:10px;">✕</button>
+        `;
+        listaCont.appendChild(div);
+
+        // Añadir al selector de vínculos en el Home (solo si no está pagado)
+        if(!d.pagado) {
+            const opt = document.createElement("option");
+            opt.value = d.id;
+            opt.textContent = `${d.nombre} ($${new Intl.NumberFormat("es-CO").format(d.monto)})`;
+            selectVinculo.appendChild(opt);
+        }
+    });
+  }
+
+  async function marcarPasivoPagado(id) {
+    await db.collection("pasivos").doc(id).update({ pagado: true });
+    cargarPasivos();
+  }
+
+  async function borrarPasivo(id) {
+    if(confirm("¿Eliminar este pendiente?")) {
+        await db.collection("pasivos").doc(id).delete();
+        cargarPasivos();
+    }
+  }
+
+  function verificarCategoriaDeuda(val) {
+      const container = document.getElementById("vinculoDeudaContainer");
+      if(val.toLowerCase() === 'deuda') {
+          container.classList.remove("hidden");
+      } else {
+          container.classList.add("hidden");
+          document.getElementById("selectDeudaVinculada").value = "";
+      }
+  }
+
+  function vincularDatosDeuda(id) {
+      if(!id) return;
+      const deuda = pasivosCache.find(p => p.id === id);
+      if(deuda) {
+          document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(deuda.monto);
+          document.getElementById("nota").value = "Pago de: " + deuda.nombre;
+      }
+  }
+
+  // --- LOGICA EXISTENTE ---
 
   async function cargarCategoriasDB() {
     if (!usuarioActual) return;
@@ -363,8 +438,7 @@
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:10px;">
                 <div style="display:flex; flex-direction:column; gap:2px;">
-                    <button onclick="moverCat('${c.id}', -1)" style="padding:0; font-size:10px; 
-                    background:#eee; width:22px; height:22px;">▲</button>
+                    <button onclick="moverCat('${c.id}', -1)" style="padding:0; font-size:10px; background:#eee; width:22px; height:22px;">▲</button>
                     <button onclick="moverCat('${c.id}', 1)" style="padding:0; font-size:10px; background:#eee; width:22px; height:22px;">▼</button>
                 </div>
                 <span style="text-transform:uppercase; font-weight:600; font-size:0.85rem;">${c.nombre}</span>
@@ -420,15 +494,19 @@
     document.getElementById("metodoPagoContainer").classList.remove("hidden");
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
+    verificarCategoriaDeuda(catS.value);
   }
 
   async function guardarMovimiento() {
     const mI = document.getElementById("monto");
     const val = Number(mI.value.replace(/\D/g, ""));
     const fec = document.getElementById("fecha").value;
+    const pasivoID = document.getElementById("selectDeudaVinculada").value;
+
     if (!val || !tipoSeleccionado) return alert("Faltan datos");
     const ahora = new Date();
     const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+    
     await db.collection("movimientos").add({
       uid: usuarioActual.uid, tipo: tipoSeleccionado,
       categoria: document.getElementById("categoria").value,
@@ -437,7 +515,14 @@
       nota: document.getElementById("nota").value.trim(),
       creado: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    // Si había una deuda vinculada, la marcamos como pagada
+    if(pasivoID) {
+        await marcarPasivoPagado(pasivoID);
+    }
+
     mI.value = ""; document.getElementById("nota").value = "";
+    document.getElementById("vinculoDeudaContainer").classList.add("hidden");
     cargarMovimientos();
   }
 
@@ -462,17 +547,13 @@
     listaCont.innerHTML = "";
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
     datos.forEach(d => {
-        // Cálculo de saldos por bolsillo (CASH/BANK) - Se calculan para TODOS los tipos
         if (d.tipo === "ingreso") {
-            iT += d.monto; // Solo suma a Ingresos si es tipo ingreso
+            iT += d.monto;
             if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
         } else if (d.tipo === "egreso") {
-            eT += d.monto; // Solo suma a Egresos si es tipo egreso
+            eT += d.monto;
             if (d.metodo === 'CASH') cashTotal -= d.monto; else bankTotal -= d.monto;
         } else if (d.tipo === "transferencia") {
-            // No afecta iT ni eT. Solo afecta el saldo del bolsillo específico
-            // El signo se determina por la categoría o nota, pero aquí usamos el método guardado
-            // En ejecutarTransferencia, la salida se guarda con monto negativo para el bolsillo
             if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
         }
 
@@ -550,43 +631,27 @@
     const fecha = new Date().toLocaleDateString('en-CA');
     const ahora = new Date();
     const hora = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-    
     try {
         const batch = db.batch();
-        // 1. Salida (Tipo transferencia, monto negativo para el bolsillo origen)
         const refE = db.collection("movimientos").doc();
         batch.set(refE, { 
-          uid: usuarioActual.uid, 
-          tipo: "transferencia", 
-          categoria: "Transferencia (Salida)", 
-          monto: -val, 
-          fecha, hora, 
-          metodo: origen, 
-          nota: `Hacia ${destino}`, 
+          uid: usuarioActual.uid, tipo: "transferencia", categoria: "Transferencia (Salida)", 
+          monto: -val, fecha, hora, metodo: origen, nota: `Hacia ${destino}`, 
           creado: firebase.firestore.FieldValue.serverTimestamp() 
         });
-        
-        // 2. Entrada (Tipo transferencia, monto positivo para el bolsillo destino)
         const refI = db.collection("movimientos").doc();
         batch.set(refI, { 
-          uid: usuarioActual.uid, 
-          tipo: "transferencia", 
-          categoria: "Transferencia (Entrada)", 
-          monto: val, 
-          fecha, hora, 
-          metodo: destino, 
-          nota: `Desde ${origen}`, 
+          uid: usuarioActual.uid, tipo: "transferencia", categoria: "Transferencia (Entrada)", 
+          monto: val, fecha, hora, metodo: destino, nota: `Desde ${origen}`, 
           creado: firebase.firestore.FieldValue.serverTimestamp() 
         });
-        
         await batch.commit();
         toggleModalTransf();
         cargarMovimientos();
     } catch (e) { alert("Error al transferir"); }
   }
 
-  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden");
-  }
+  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 
   function prepararEdicion(id, data) {
     editandoID = id;
@@ -649,9 +714,16 @@
     document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(`view-${v}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    const idx = v === 'stats' ? 0 : (v === 'home' ? 1 : 2);
+    
+    // Ajuste de indices por la nueva sección
+    let idx = 1; // Default Home
+    if(v === 'stats') idx = 0;
+    if(v === 'debts') idx = 2;
+    if(v === 'settings') idx = 3;
+    
     document.querySelectorAll('.nav-item')[idx].classList.add('active');
     if(v === 'stats') cargarEstadisticas();
+    if(v === 'debts') cargarPasivos();
     window.scrollTo(0,0);
   }
 
@@ -661,8 +733,7 @@
     document.getElementById("userSubtitle").textContent = usuarioActual.email;
   }
 
-  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA');
-  }
+  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
   function inicializarFiltros(idM, idA) {
     const hoy = new Date();
     const sM = document.getElementById(idM);
@@ -683,14 +754,11 @@
 
   function formatearMonto(i) {
     let v = i.value.replace(/\D/g, "");
-    i.value = v ?
-    "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
+    i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
   }
 
-  function toggleComent(id) { const c = document.getElementById(`c-${id}`);
-  if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
-  function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos());
-  }
+  function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
+  function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
   function actualizarPerfil() {
       const n = document.getElementById("inputNombreUsuario").value;
       if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
