@@ -18,105 +18,78 @@
     
     .container { max-width: 480px; margin: auto; background: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative; }
     
-    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
+    h2 { text-align: center; color: var(--primary); margin-top: 0; }
     h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
-    h4 { margin-bottom: 10px; color: var(--primary); }
-    p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
-
-    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
+    
+    input, select, button { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
     .row { display: flex; gap: 10px; }
     
-    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
+    button { cursor: pointer; font-weight: 600; border: none; }
     .btn-ingreso { background: var(--ingreso); color: white; }
     .btn-egreso { background: var(--egreso); color: white; }
     .btn-google { background: #4285F4; color: white; }
-    .btn-main { background: var(--primary); color: white; margin-top: 15px; }
+    .btn-main { background: var(--primary); color: white; }
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* Estilos Pendientes */
+    /* Pendientes */
     .pasivo-card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--pendiente); }
-    .pasivo-card.pagado { border-left-color: #bdc3c7; opacity: 0.6; text-decoration: line-through; }
     .pasivo-info { flex-grow: 1; }
-    .pasivo-nombre { font-weight: bold; font-size: 1rem; }
-    .pasivo-meta { font-size: 0.8rem; color: #888; }
-    .btn-check { width: auto; margin-top: 0; padding: 8px 12px; background: #27ae60; color: white; border-radius: 50%; }
-
-    /* Listado de movimientos */
-    .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
-    .movimiento-wrapper::-webkit-scrollbar { display: none; }
-    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
-    .card.ingreso-item { border-left: 5px solid var(--ingreso); }
-    .card.egreso-item { border-left: 5px solid var(--egreso); }
-    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-    .card-info { flex-grow: 1; }
-    .card-cat { font-weight: bold; font-size: 0.95rem; }
-    .card-date { font-size: 0.75rem; color: #888; }
-    .card-monto { font-weight: bold; font-size: 1rem; }
-    .text-ingreso { color: var(--ingreso); }
-    .text-egreso { color: var(--egreso); }
-    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
-    
-    .card-swipe-actions { display: flex; scroll-snap-align: end; }
-    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
-    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+    .btn-check { width: auto; margin: 0; padding: 8px 12px; background: #27ae60; color: white; border-radius: 50%; }
 
     /* Resumen */
-    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
+    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; }
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
-    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
-    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
-    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd; }
-    .resumen-item:last-child { border-right: none; }
-    .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
+    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; }
+    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; }
+    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; border-right: 1px solid #ddd; }
 
-    /* Métodos Pago */
-    .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
-    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
-    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
+    /* Historial */
+    .movimiento-wrapper { display: flex; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+    .card { width: 100%; background: white; padding: 12px; display: flex; flex-direction: column; }
+    .ingreso-item { border-left: 5px solid var(--ingreso); }
+    .egreso-item { border-left: 5px solid var(--egreso); }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    .text-ingreso { color: var(--ingreso); }
+    .text-egreso { color: var(--egreso); }
+
+    /* Botón Flotante */
+    #fab-container { position: fixed; bottom: 80px; right: 20px; z-index: 1001; }
+    #balance-popover { background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 180px; }
+    .fab { width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
     /* Nav */
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
     .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem; }
-    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
     .nav-item.active { color: var(--primary); font-weight: bold; }
-    
-    /* Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
   </style>
 </head>
 <body>
 
 <div id="loginBox" class="container" style="display:flex; flex-direction:column; justify-content:center;">
-  <h2>Bienvenido a Lifance</h2>
+  <h2>Lifance</h2>
   <button class="btn-google" onclick="login()">🔵 Ingresar con Google</button>
 </div>
 
 <div id="appContainer" class="container hidden">
   <h2 id="headerTitle">Lifance</h2>
-  <p class="subtitle" id="userSubtitle">Cargando...</p>
 
   <div id="view-stats" class="view-section hidden">
-    <h3>Resumen Mensual</h3>
-    <div class="resumen-container">
-        <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
-        <div class="resumen-grid">
-            <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
-            <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
-        </div>
-    </div>
+    <h3>Estadísticas Mensuales</h3>
     <div class="row">
         <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
         <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
+    </div>
+    <div class="resumen-container">
+        <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
     </div>
     <div id="statsContent"></div>
   </div>
 
   <div id="view-home" class="view-section">
-    <h3 id="formTitle">Nuevo Movimiento</h3>
+    <h3>Nuevo Movimiento</h3>
     <div class="row">
-      <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)" autocomplete="off">
+      <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)">
       <input type="date" id="fecha">
     </div>
     <div class="row">
@@ -126,70 +99,60 @@
 
     <select id="categoria" class="hidden" onchange="actualizarSelectorVinculo()"></select>
     
-    <div id="vinculoDeudaContainer" class="hidden" style="background: #fff4e5; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #ffe0b2;">
-        <p style="margin:0; font-size:0.8rem; font-weight:bold; color: #e67e22;">¿Pagar compromiso pendiente?</p>
-        <select id="selectDeudaVinculada" onchange="vincularDatosDeuda(this.value)">
-            <option value="">-- Seleccionar --</option>
+    <div id="vinculoDeudaContainer" class="hidden" style="background: #fff4e5; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #f39c12;">
+        <p style="margin:0 0 5px 0; font-size:0.8rem; font-weight:bold; color: #e67e22;">⚠️ Tienes un pendiente en esta categoría:</p>
+        <select id="selectDeudaVinculada" onchange="vincularDatosDeuda(this.value)" style="border: 1px solid #f39c12; background: #fff;">
         </select>
     </div>
 
     <div id="metodoPagoContainer" class="hidden">
-        <div class="metodo-selector">
-            <div class="metodo-option active" id="optCash" onclick="seleccionarMetodo('CASH')">💵 CASH</div>
-            <div class="metodo-option" id="optBank" onclick="seleccionarMetodo('BANK')">💳 BANK</div>
+        <div class="row">
+            <select id="metodoPago">
+                <option value="CASH">💵 CASH</option>
+                <option value="BANK">💳 BANK</option>
+            </select>
         </div>
-        <input type="hidden" id="metodoPago" value="CASH">
+        <input type="text" id="nota" placeholder="Nota opcional...">
+        <button class="btn-main" onclick="guardarMovimiento()" style="margin-top:10px;">Registrar Movimiento</button>
     </div>
-
-    <input type="text" id="nota" class="hidden" placeholder="Comentario (opcional)...">
-    <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
 
     <h3>Historial</h3>
     <div class="row">
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
-
-    <div class="resumen-container">
-        <div class="balance-card">Disponible <span id="disponible">$ 0</span></div>
-        <div class="resumen-grid">
-            <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
-            <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
-        </div>
-    </div>
     <div id="listaMovimientos"></div>
   </div>
 
   <div id="view-debts" class="view-section hidden">
     <h3>Compromisos Pendientes</h3>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-        <h4>Agregar Pendiente</h4>
-        <input type="text" id="pasivoNombre" placeholder="Ej: Pago de Luz">
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        <input type="text" id="pasivoNombre" placeholder="Nombre (Ej: Recibo Luz)">
         <div class="row">
             <input type="text" id="pasivoMonto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)">
             <input type="date" id="pasivoFecha">
         </div>
-        <p style="margin: 10px 0 0 0; font-size: 0.8rem; color: #666;">Categoría vinculada:</p>
         <select id="pasivoCategoria"></select>
-        <button class="btn-ingreso" onclick="crearPasivo()" style="background: var(--pendiente); margin-top: 15px;">+ Guardar Pendiente</button>
+        <button class="btn-ingreso" onclick="crearPasivo()" style="background: var(--pendiente); margin-top:10px;">+ Guardar Pendiente</button>
     </div>
     <h3>Lista de Pagos</h3>
     <div id="listaPasivos"></div>
   </div>
 
-  <div id="view-settings" class="view-section hidden">
-    <h3>Configuración</h3>
-    <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.6</p>
+  <div id="fab-container">
+      <div id="balance-popover" class="hidden">
+          <small>💵 CASH</small> <div id="saldo-cash" style="font-weight:bold;">$ 0</div>
+          <small>💳 BANK</small> <div id="saldo-bank" style="font-weight:bold;">$ 0</div>
+      </div>
+      <div class="fab" onclick="toggleBalancePopover()">💰</div>
   </div>
 
-</div>
-
-<div id="bottomNav" class="bottom-nav hidden">
-    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Balance</div>
-    <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i>Inicio</div>
-    <div class="nav-item" onclick="cambiarVista('debts')"><i>⏳</i>Pendientes</div>
-    <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Config</div>
+  <div id="bottomNav" class="bottom-nav">
+      <div class="nav-item" onclick="cambiarVista('stats')">📊 Balance</div>
+      <div class="nav-item active" onclick="cambiarVista('home')">🏠 Inicio</div>
+      <div class="nav-item" onclick="cambiarVista('debts')">⏳ Pendientes</div>
+      <div class="nav-item" onclick="logout()">🚪 Salir</div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -205,7 +168,6 @@
     messagingSenderId: "87725148350",
     appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef"
   };
-
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
@@ -214,98 +176,109 @@
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
   let pasivosCache = [];
-  let movimientosCache = [];
 
   auth.onAuthStateChanged(async user => {
     if (user) {
       usuarioActual = user;
-      document.getElementById("loginBox").style.display = 'none';
+      document.getElementById("loginBox").classList.add("hidden");
       document.getElementById("appContainer").classList.remove("hidden");
-      document.getElementById("bottomNav").classList.remove("hidden");
-      
-      // Inicializar todo
-      inicializarFechas();
-      inicializarFiltros("mesFiltro", "anioFiltro");
-      inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      
+      inicializarFiltros();
       await cargarCategoriasDB();
       cargarMovimientos();
       cargarPasivos();
-    } else {
-      document.getElementById("loginBox").style.display = 'flex';
-      document.getElementById("appContainer").classList.add("hidden");
-      document.getElementById("bottomNav").classList.add("hidden");
     }
   });
 
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-  function logout() { auth.signOut(); }
+  function logout() { auth.signOut(); location.reload(); }
 
-  // --- LOGICA PENDIENTES ---
-  async function cargarPasivos() {
-    if(!usuarioActual) return;
-    const snap = await db.collection("pasivos").where("uid", "==", usuarioActual.uid).orderBy("fecha", "asc").get();
-    pasivosCache = [];
-    const listaCont = document.getElementById("listaPasivos");
-    listaCont.innerHTML = "";
-    
+  // --- CATEGORÍAS ---
+  async function cargarCategoriasDB() {
+    const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
+    misCategorias = { ingreso: [], egreso: [] };
     snap.forEach(doc => {
-        const d = { id: doc.id, ...doc.data() };
-        pasivosCache.push(d);
-        const div = document.createElement("div");
-        div.className = `pasivo-card ${d.pagado ? 'pagado' : ''}`;
-        div.innerHTML = `
-            <div class="pasivo-info">
-                <div class="pasivo-nombre">${d.nombre}</div>
-                <div class="pasivo-meta">${d.categoria} • Vence: ${d.fecha} • $ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
-            </div>
-            ${!d.pagado ? `<button class="btn-check" onclick="marcarPasivoPagado('${d.id}')">✓</button>` : ''}
-            <button onclick="borrarPasivo('${d.id}')" style="background:none; color:red; width:auto; margin:0; margin-left:10px;">✕</button>
-        `;
-        listaCont.appendChild(div);
+      const d = doc.data();
+      misCategorias[d.tipo].push(d.nombre);
     });
+    // Llenar selector de pendientes
+    const pCat = document.getElementById("pasivoCategoria");
+    pCat.innerHTML = '<option value="">Selecciona Categoría</option>';
+    misCategorias.egreso.forEach(c => {
+      const o = document.createElement("option"); o.value = o.textContent = c; pCat.appendChild(o);
+    });
+  }
+
+  function setTipo(t) {
+    tipoSeleccionado = t;
+    const catS = document.getElementById("categoria");
+    catS.innerHTML = '<option value="">-- Selecciona Categoría --</option>';
+    misCategorias[t].forEach(c => {
+      const o = document.createElement("option"); o.value = o.textContent = c; catS.appendChild(o);
+    });
+    catS.classList.remove("hidden");
+    document.getElementById("metodoPagoContainer").classList.remove("hidden");
+    document.getElementById("btnIngreso").style.opacity = t === 'ingreso' ? '1' : '0.4';
+    document.getElementById("btnEgreso").style.opacity = t === 'egreso' ? '1' : '0.4';
     actualizarSelectorVinculo();
   }
 
+  // --- PENDIENTES ---
   async function crearPasivo() {
-    const nombre = document.getElementById("pasivoNombre").value.trim();
+    const nombre = document.getElementById("pasivoNombre").value;
     const monto = Number(document.getElementById("pasivoMonto").value.replace(/\D/g, ""));
     const fecha = document.getElementById("pasivoFecha").value;
     const categoria = document.getElementById("pasivoCategoria").value;
-    if(!nombre || !monto || !fecha) return alert("Completa los datos");
-    
+    if(!nombre || !monto || !categoria) return alert("Faltan datos");
+
     await db.collection("pasivos").add({
-        uid: usuarioActual.uid, nombre, monto, fecha, categoria,
-        pagado: false, creado: firebase.firestore.FieldValue.serverTimestamp()
+      uid: usuarioActual.uid, nombre, monto, fecha, categoria, pagado: false
     });
     document.getElementById("pasivoNombre").value = "";
     document.getElementById("pasivoMonto").value = "";
     cargarPasivos();
   }
 
+  async function cargarPasivos() {
+    const snap = await db.collection("pasivos").where("uid", "==", usuarioActual.uid).get();
+    pasivosCache = [];
+    const lista = document.getElementById("listaPasivos");
+    lista.innerHTML = "";
+    snap.forEach(doc => {
+      const d = { id: doc.id, ...doc.data() };
+      pasivosCache.push(d);
+      if(!d.pagado) {
+          const div = document.createElement("div");
+          div.className = "pasivo-card";
+          div.innerHTML = `<div><b>${d.nombre}</b><br><small>${d.categoria} - $${new Intl.NumberFormat("es-CO").format(d.monto)}</small></div>
+                           <button class="btn-check" onclick="marcarPagado('${d.id}')">✓</button>`;
+          lista.appendChild(div);
+      }
+    });
+    actualizarSelectorVinculo();
+  }
+
   function actualizarSelectorVinculo() {
-    const catForm = document.getElementById("categoria").value;
-    const selectV = document.getElementById("selectDeudaVinculada");
-    const container = document.getElementById("vinculoDeudaContainer");
+    const catSel = document.getElementById("categoria").value;
+    const cont = document.getElementById("vinculoDeudaContainer");
+    const sel = document.getElementById("selectDeudaVinculada");
     
-    const pendientes = pasivosCache.filter(p => !p.pagado && p.categoria === catForm);
+    const pendientes = pasivosCache.filter(p => !p.pagado && p.categoria === catSel);
     
     if(pendientes.length > 0 && tipoSeleccionado === 'egreso') {
-        selectV.innerHTML = '<option value="">-- Seleccionar Pendiente --</option>';
+        sel.innerHTML = '<option value="">-- Seleccionar Pendiente --</option>';
         pendientes.forEach(p => {
             const o = document.createElement("option");
             o.value = p.id;
             o.textContent = `${p.nombre} ($${new Intl.NumberFormat("es-CO").format(p.monto)})`;
-            selectV.appendChild(o);
+            sel.appendChild(o);
         });
-        container.classList.remove("hidden");
+        cont.classList.remove("hidden");
     } else {
-        container.classList.add("hidden");
+        cont.classList.add("hidden");
     }
   }
 
   function vincularDatosDeuda(id) {
-    if(!id) return;
     const p = pasivosCache.find(x => x.id === id);
     if(p) {
         document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(p.monto);
@@ -313,184 +286,117 @@
     }
   }
 
-  async function marcarPasivoPagado(id) {
-    await db.collection("pasivos").doc(id).update({ pagado: true });
-    cargarPasivos();
+  async function marcarPagado(id) {
+      await db.collection("pasivos").doc(id).update({ pagado: true });
+      cargarPasivos();
   }
 
-  async function borrarPasivo(id) {
-    if(confirm("¿Borrar pendiente?")) { await db.collection("pasivos").doc(id).delete(); cargarPasivos(); }
-  }
-
-  // --- LOGICA MOVIMIENTOS ---
-  function cargarMovimientos() {
-    const m = parseInt(document.getElementById("mesFiltro").value);
-    const a = parseInt(document.getElementById("anioFiltro").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
-    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-        movimientosCache = [];
-        snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
-        movimientosCache.sort((a, b) => b.fecha.localeCompare(a.fecha));
-        renderizarLista(movimientosCache);
-    });
-  }
-
-  function renderizarLista(datos) {
-    const listaCont = document.getElementById("listaMovimientos");
-    listaCont.innerHTML = "";
-    let iT = 0, eT = 0;
-    
-    datos.forEach(d => {
-        if (d.tipo === "ingreso") iT += d.monto;
-        else if (d.tipo === "egreso") eT += d.monto;
-        
-        const wrapper = document.createElement("div");
-        wrapper.className = "movimiento-wrapper";
-        wrapper.innerHTML = `
-            <div class="card ${d.tipo}-item" onclick="toggleComent('${d.id}')">
-                <div class="card-top">
-                    <div class="card-info">
-                        <div class="card-cat">${d.categoria} <small>${d.metodo==='CASH'?'💵':'💳'}</small></div>
-                        <div class="card-date">${d.fecha}</div>
-                    </div>
-                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
-                </div>
-                <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
-            </div>
-            <div class="card-swipe-actions">
-                <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
-            </div>
-        `;
-        listaCont.appendChild(wrapper);
-    });
-    actualizarResumenVisual(iT, eT);
-  }
-
+  // --- MOVIMIENTOS ---
   async function guardarMovimiento() {
-    const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
-    const fec = document.getElementById("fecha").value;
+    const monto = Number(document.getElementById("monto").value.replace(/\D/g, ""));
+    const fecha = document.getElementById("fecha").value;
     const cat = document.getElementById("categoria").value;
-    const pasID = document.getElementById("selectDeudaVinculada").value;
-    if (!val || !tipoSeleccionado) return alert("Faltan datos");
+    const met = document.getElementById("metodoPago").value;
+    const pId = document.getElementById("selectDeudaVinculada").value;
+
+    if(!monto || !cat) return alert("Datos incompletos");
 
     await db.collection("movimientos").add({
-      uid: usuarioActual.uid, tipo: tipoSeleccionado, categoria: cat,
-      monto: val, fecha: fec, metodo: document.getElementById("metodoPago").value,
-      nota: document.getElementById("nota").value.trim(),
-      creado: firebase.firestore.FieldValue.serverTimestamp()
+      uid: usuarioActual.uid, tipo: tipoSeleccionado, monto, fecha, categoria: cat, metodo: met, nota: document.getElementById("nota").value
     });
 
-    if(pasID) await marcarPasivoPagado(pasID);
+    if(pId) await marcarPagado(pId);
+    
     document.getElementById("monto").value = "";
     document.getElementById("nota").value = "";
     cargarMovimientos();
   }
 
-  // --- FUNCIONES AUXILIARES ---
-  async function cargarCategoriasDB() {
-    const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
-    misCategorias = { ingreso: [], egreso: [] };
-    snap.forEach(doc => {
-        const d = doc.data();
-        misCategorias[d.tipo].push({ id: doc.id, ...d });
+  function cargarMovimientos() {
+    const m = document.getElementById("mesFiltro").value;
+    const a = document.getElementById("anioFiltro").value;
+    const pD = `${a}-${m.padStart(2,'0')}-01`;
+    const uD = `${a}-${m.padStart(2,'0')}-31`;
+
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid)
+      .where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+        const lista = document.getElementById("listaMovimientos");
+        lista.innerHTML = "";
+        let tI = 0, tE = 0, sC = 0, sB = 0;
+
+        snap.forEach(doc => {
+            const d = doc.data();
+            if(d.tipo === 'ingreso') { tI += d.monto; d.metodo==='CASH'?sC+=d.monto:sB+=d.monto; }
+            else { tE += d.monto; d.metodo==='CASH'?sC-=d.monto:sB-=d.monto; }
+
+            const div = document.createElement("div");
+            div.className = `movimiento-wrapper`;
+            div.innerHTML = `<div class="card ${d.tipo}-item">
+                <div class="card-top">
+                    <span><b>${d.categoria}</b> <small>${d.metodo}</small></span>
+                    <span class="text-${d.tipo}">$${new Intl.NumberFormat("es-CO").format(d.monto)}</span>
+                </div>
+                <small>${d.fecha} ${d.nota ? '- '+d.nota : ''}</small>
+            </div>`;
+            lista.appendChild(div);
+        });
+        document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(sC);
+        document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(sB);
     });
-    
-    const pCat = document.getElementById("pasivoCategoria");
-    pCat.innerHTML = "";
-    misCategorias.egreso.forEach(c => {
-        const o = document.createElement("option"); o.value = o.textContent = c.nombre; pCat.appendChild(o);
+  }
+
+  function cargarEstadisticas() {
+    const m = document.getElementById("mesFiltroStats").value;
+    const a = document.getElementById("anioFiltroStats").value;
+    const pD = `${a}-${m.padStart(2,'0')}-01`;
+    const uD = `${a}-${m.padStart(2,'0')}-31`;
+
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid)
+      .where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+        let catsI = {}, catsE = {}, totI = 0, totE = 0;
+        snap.forEach(doc => {
+            const d = doc.data();
+            if(d.tipo==='ingreso') { catsI[d.categoria] = (catsI[d.categoria]||0)+d.monto; totI += d.monto; }
+            else { catsE[d.categoria] = (catsE[d.categoria]||0)+d.monto; totE += d.monto; }
+        });
+
+        document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totI - totE);
+        
+        let h = "<h4>Ingresos</h4>";
+        for(let c in catsI) h += `<div class="row"><span>${c}</span><span class="text-ingreso">$${new Intl.NumberFormat("es-CO").format(catsI[c])}</span></div>`;
+        h += "<h4>Egresos</h4>";
+        for(let c in catsE) h += `<div class="row"><span>${c}</span><span class="text-egreso">$${new Intl.NumberFormat("es-CO").format(catsE[c])}</span></div>`;
+        document.getElementById("statsContent").innerHTML = h;
     });
   }
 
-  function setTipo(t) {
-    tipoSeleccionado = t;
-    document.getElementById("btnIngreso").style.opacity = t === 'ingreso' ? '1' : '0.4';
-    document.getElementById("btnEgreso").style.opacity = t === 'egreso' ? '1' : '0.4';
-    const catS = document.getElementById("categoria");
-    catS.innerHTML = "";
-    misCategorias[t].forEach(c => { 
-        const o = document.createElement("option"); o.value = o.textContent = c.nombre; catS.appendChild(o);
-    });
-    catS.classList.remove("hidden");
-    document.getElementById("metodoPagoContainer").classList.remove("hidden");
-    document.getElementById("nota").classList.remove("hidden");
-    document.getElementById("btnGuardar").classList.remove("hidden");
-    actualizarSelectorVinculo();
-  }
-
-  function actualizarResumenVisual(i, e) {
-    const f = new Intl.NumberFormat("es-CO");
-    document.getElementById("totalIngresos").textContent = "$ " + f.format(i);
-    document.getElementById("totalEgresos").textContent = "$ " + f.format(e);
-    document.getElementById("disponible").textContent = "$ " + f.format(i - e);
-  }
-
-  function cambiarVista(v) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`view-${v}`).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    let idx = 1; 
-    if(v==='stats') idx=0; if(v==='debts') idx=2; if(v==='settings') idx=3;
-    document.querySelectorAll('.nav-item')[idx].classList.add('active');
-    if(v==='stats') cargarEstadisticas();
-  }
-
+  // --- UI ---
   function formatearMonto(i) {
     let v = i.value.replace(/\D/g, "");
     i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
   }
 
-  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
-  function inicializarFiltros(idM, idA) {
+  function inicializarFiltros() {
     const hoy = new Date();
-    const sM = document.getElementById(idM);
-    const sA = document.getElementById(idA);
-    sM.innerHTML = ""; sA.innerHTML = "";
-    for (let m = 0; m < 12; m++) {
-      let o = document.createElement("option"); o.value = m + 1;
-      o.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" });
-      if (m === hoy.getMonth()) o.selected = true; sM.appendChild(o);
-    }
-    for (let a = hoy.getFullYear() - 1; a <= hoy.getFullYear() + 1; a++) {
-      let o = document.createElement("option"); o.value = a; o.textContent = a;
-      if (a === hoy.getFullYear()) o.selected = true; sA.appendChild(o);
-    }
-  }
-
-  function seleccionarMetodo(m) {
-    document.getElementById("metodoPago").value = m;
-    document.getElementById("optCash").classList.toggle("active", m === 'CASH');
-    document.getElementById("optBank").classList.toggle("active", m === 'BANK');
-  }
-  function toggleComent(id) { const c = document.getElementById(`c-${id}`); c.style.display = c.style.display === "block" ? "none" : "block"; }
-  function borrarMov(id) { if(confirm("¿Borrar movimiento?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
-
-  function cargarEstadisticas() {
-    const cont = document.getElementById("statsContent");
-    const m = parseInt(document.getElementById("mesFiltroStats").value);
-    const a = parseInt(document.getElementById("anioFiltroStats").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
-    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-      let sI = {}, sE = {}, tI = 0, tE = 0;
-      snap.forEach(doc => {
-        const d = doc.data();
-        if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
-        else if(d.tipo === 'egreso') { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
-      });
-      document.getElementById("totalIngresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
-      document.getElementById("totalEgresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
-      document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
-      
-      let h = `<div style="margin-top:20px;">`;
-      for(let [c,v] of Object.entries(sE)) h += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
-      cont.innerHTML = h + "</div>";
+    const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    [document.getElementById("mesFiltro"), document.getElementById("mesFiltroStats")].forEach(s => {
+        meses.forEach((m, i) => { const o = document.createElement("option"); o.value = i+1; o.textContent = m; if(i===hoy.getMonth()) o.selected=true; s.appendChild(o); });
     });
+    [document.getElementById("anioFiltro"), document.getElementById("anioFiltroStats")].forEach(s => {
+        for(let a=2024; a<=2026; a++) { const o = document.createElement("option"); o.value = a; o.textContent = a; if(a===hoy.getFullYear()) o.selected=true; s.appendChild(o); }
+    });
+    document.getElementById("fecha").value = hoy.toISOString().split('T')[0];
+    document.getElementById("pasivoFecha").value = hoy.toISOString().split('T')[0];
   }
+
+  function cambiarVista(v) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.add("hidden"));
+    document.getElementById(`view-${v}`).classList.remove("hidden");
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove("active"));
+    if(v === 'stats') cargarEstadisticas();
+  }
+
+  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 </script>
 </body>
 </html>
