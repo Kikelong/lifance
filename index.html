@@ -33,17 +33,13 @@
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
+    /* Buscador */
+    .search-box { margin-top: 15px; position: relative; }
+    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
+    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
+
     /* Balance Fijo */
-    .resumen-container {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin: 15px 0;
-        border: 1px solid #ddd;
-        position: sticky;
-        top: 10px;
-        z-index: 100;
-    }
+    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
     .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
     .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
@@ -56,54 +52,20 @@
     .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
     .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
 
-    /* --- SISTEMA DE SLIDE --- */
-    .movimiento-wrapper {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        margin-top: 10px;
-        border-radius: 8px;
-    }
-    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+    /* Modal Transferencia */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
 
-    .card {
-        min-width: 100%;
-        scroll-snap-align: start;
-        background: white;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        position: relative;
-        z-index: 2;
-        cursor: pointer;
-    }
+    /* Estilos de Lista */
+    .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
+    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
-    
-    .card-swipe-actions {
-        display: flex;
-        scroll-snap-align: end;
-    }
-    .btn-swipe {
-        border: none;
-        color: white;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        cursor: pointer;
-        margin-top: 0;
-        border-radius: 0;
-        width: 70px;
-    }
+    .card-swipe-actions { display: flex; scroll-snap-align: end; }
+    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
     .btn-edit { background: #3498db; }
     .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-
     .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
     .card-info { flex-grow: 1; }
     .card-cat { font-weight: bold; font-size: 0.95rem; }
@@ -112,7 +74,6 @@
     .text-ingreso { color: var(--ingreso); }
     .text-egreso { color: var(--egreso); }
     .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
-
     .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
 
     /* Nav Inferior */
@@ -177,8 +138,11 @@
     <button id="btnCancelarEdit" class="logout hidden" onclick="cancelarEdicion()">Cancelar Edición</button>
 
     <h3>Historial</h3>
-    <p style="font-size: 0.7rem; color: #999; margin-top: -10px;">(Desliza un movimiento a la izquierda para editar o borrar)</p>
-    <div class="row">
+    <div class="search-box">
+        <input type="text" id="buscador" placeholder="Buscar categoría o comentario..." oninput="filtrarMovimientos()">
+    </div>
+
+    <div class="row" style="margin-top:10px;">
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
@@ -212,20 +176,47 @@
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.0</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.2</p>
+  </div>
+
+  <div id="modalTransferencia" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">Transferencia Interna</h3>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Mueve dinero entre tus bolsillos sin afectar tu disponible total.</p>
+        
+        <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
+        <select id="transfOrigen" onchange="actualizarDestinoTransf()">
+            <option value="CASH">💵 CASH (Efectivo)</option>
+            <option value="BANK">💳 BANK (Banco/Tarjeta)</option>
+        </select>
+
+        <div style="text-align: center; margin: 5px 0; font-size: 1.2rem;">⬇️</div>
+
+        <label style="font-size: 0.8rem; font-weight: bold; color: #888;">DESTINO:</label>
+        <input type="text" id="transfDestino" value="BANK" disabled style="background: #f0f0f0; color: #555;">
+
+        <input type="text" id="montoTransf" inputmode="numeric" placeholder="Monto $ 0" oninput="formatearMonto(this)" style="margin-top: 15px; border: 2px solid var(--primary);">
+        
+        <div class="row">
+            <button class="btn-main" onclick="ejecutarTransferencia()">Confirmar</button>
+            <button class="logout" onclick="toggleModalTransf()" style="background: #95a5a6; margin-top: 15px;">Cerrar</button>
+        </div>
+    </div>
   </div>
 
   <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
-      <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 150px;">
-          <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Saldos Detallados</div>
+      <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 180px;">
+          <div style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Saldos Detallados</div>
           <div style="margin-bottom: 8px;">
               <small>💵 CASH</small>
               <div id="saldo-cash" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
           </div>
-          <div>
+          <div style="margin-bottom: 10px;">
               <small>💳 BANK</small>
               <div id="saldo-bank" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
           </div>
+          <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
+          <button onclick="toggleModalTransf()" style="background: #3498db; color: white; padding: 10px; font-size: 0.75rem; margin: 0; border-radius: 6px;">🔄 Transferir Dinero</button>
       </div>
       <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0;">
           💰
@@ -261,6 +252,7 @@
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
   let editandoID = null;
+  let movimientosCache = [];
 
   const catDefault = {
     ingreso: ["Salario", "Venta", "Préstamo", "Uti. Mes Ant."],
@@ -277,7 +269,6 @@
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      
       setTimeout(async () => {
           await cargarCategoriasDB();
           cargarMovimientos();
@@ -295,7 +286,6 @@
   async function cargarCategoriasDB() {
     if (!usuarioActual) return;
     const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
-    
     if (snap.empty) {
         const batch = db.batch();
         ['ingreso', 'egreso'].forEach(t => {
@@ -307,7 +297,6 @@
         await batch.commit();
         return cargarCategoriasDB();
     }
-
     misCategorias = { ingreso: [], egreso: [] };
     snap.forEach(doc => {
         const d = doc.data();
@@ -321,7 +310,6 @@
     const filtro = document.getElementById("tipoNuevaCat").value;
     cont.innerHTML = "";
     const lista = misCategorias[filtro].sort((a,b) => (a.orden||0) - (b.orden||0));
-    
     lista.forEach(c => {
         const div = document.createElement("div");
         div.className = "cat-tag";
@@ -346,7 +334,6 @@
     const idx = lista.findIndex(c => c.id === id);
     const nuevoIdx = idx + dir;
     if (nuevoIdx < 0 || nuevoIdx >= lista.length) return;
-
     const batch = db.batch();
     batch.update(db.collection("categorias").doc(lista[idx].id), { orden: nuevoIdx });
     batch.update(db.collection("categorias").doc(lista[nuevoIdx].id), { orden: idx });
@@ -358,9 +345,7 @@
     const tipo = document.getElementById("tipoNuevaCat").value;
     const nombre = document.getElementById("nombreNuevaCat").value.trim();
     if(!nombre) return;
-    await db.collection("categorias").add({
-        uid: usuarioActual.uid, tipo: tipo, nombre: nombre, orden: misCategorias[tipo].length
-    });
+    await db.collection("categorias").add({ uid: usuarioActual.uid, tipo: tipo, nombre: nombre, orden: misCategorias[tipo].length });
     document.getElementById("nombreNuevaCat").value = "";
     await cargarCategoriasDB();
   }
@@ -394,11 +379,13 @@
     const val = Number(mI.value.replace(/\D/g, ""));
     const fec = document.getElementById("fecha").value;
     if (!val || !tipoSeleccionado) return alert("Faltan datos");
-    
+    const ahora = new Date();
+    const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
     await db.collection("movimientos").add({
       uid: usuarioActual.uid, tipo: tipoSeleccionado,
       categoria: document.getElementById("categoria").value,
-      monto: val, fecha: fec, metodo: document.getElementById("metodoPago").value,
+      monto: val, fecha: fec, hora: horaString,
+      metodo: document.getElementById("metodoPago").value,
       nota: document.getElementById("nota").value.trim(),
       creado: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -407,81 +394,125 @@
   }
 
   function cargarMovimientos() {
-    const listaCont = document.getElementById("listaMovimientos");
-    listaCont.innerHTML = "";
     const m = parseInt(document.getElementById("mesFiltro").value);
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
     const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+        movimientosCache = [];
+        snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
+        movimientosCache.sort((a, b) => {
+            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
+            return (b.hora || "00:00").localeCompare(a.hora || "00:00");
+        });
+        renderizarLista(movimientosCache);
+    });
+  }
 
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid)
-      .where("fecha", ">=", pD).where("fecha", "<=", uD)
-      .orderBy("fecha", "desc").get().then(snap => {
-        let iT = 0, eT = 0;
-        let cashTotal = 0, bankTotal = 0;
-
-        snap.forEach(doc => {
-          const d = doc.data();
-          const monto = d.monto;
-          
-          if (d.tipo === "ingreso") {
-              iT += monto;
-              if (d.metodo === 'CASH') cashTotal += monto;
-              else bankTotal += monto;
-          } else {
-              eT += monto;
-              if (d.metodo === 'CASH') cashTotal -= monto;
-              else bankTotal -= monto;
-          }
-          
-          const wrapper = document.createElement("div");
-          wrapper.className = "movimiento-wrapper";
-          wrapper.innerHTML = `
-            <div class="card ${d.tipo}-item" onclick="toggleComent('${doc.id}')">
+  function renderizarLista(datos) {
+    const listaCont = document.getElementById("listaMovimientos");
+    listaCont.innerHTML = "";
+    let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
+    datos.forEach(d => {
+        if (d.tipo === "ingreso") {
+            iT += d.monto;
+            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
+        } else {
+            eT += d.monto;
+            if (d.metodo === 'CASH') cashTotal -= d.monto; else bankTotal -= d.monto;
+        }
+        const wrapper = document.createElement("div");
+        wrapper.className = "movimiento-wrapper";
+        wrapper.innerHTML = `
+            <div class="card ${d.tipo}-item" onclick="toggleComent('${d.id}')">
                 <div class="card-top">
                     <div class="card-info">
                         <div class="card-cat">${d.categoria} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
-                        <div class="card-date">${d.fecha}</div>
+                        <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                     </div>
-                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(monto)}</div>
+                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(d.monto)}</div>
                     <div style="color: #ccc; font-size: 0.8rem; margin-left: 10px;">❮</div>
                 </div>
-                <div id="c-${doc.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
+                <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
             <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${doc.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
-                <button class="btn-swipe btn-delete" onclick="borrarMov('${doc.id}')">✕</button>
+                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${d.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
+                <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
             </div>
-          `;
-          listaCont.appendChild(wrapper);
-        });
-
-        const formato = new Intl.NumberFormat("es-CO");
-        const balance = iT - eT;
-        
-        document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
-        document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
-        const disp = document.getElementById("disponible");
-        disp.textContent = "$ " + formato.format(balance);
-        disp.style.color = balance < 0 ? "#e74c3c" : "white";
-
-        if(document.getElementById("totalIngresos-stats")){
-            document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
-            document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
-            document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
-        }
-
-        // Actualizar Flotante
-        const cashEl = document.getElementById("saldo-cash");
-        const bankEl = document.getElementById("saldo-bank");
-        if(cashEl && bankEl) {
-            cashEl.textContent = "$ " + formato.format(cashTotal);
-            bankEl.textContent = "$ " + formato.format(bankTotal);
-            cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
-            bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
-        }
-      });
+        `;
+        listaCont.appendChild(wrapper);
+    });
+    actualizarResumenVisual(iT, eT, cashTotal, bankTotal);
   }
+
+  function filtrarMovimientos() {
+    const term = document.getElementById("buscador").value.toLowerCase();
+    const filtrados = movimientosCache.filter(m => m.categoria.toLowerCase().includes(term) || (m.nota && m.nota.toLowerCase().includes(term)));
+    renderizarLista(filtrados);
+  }
+
+  function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
+    const formato = new Intl.NumberFormat("es-CO");
+    const balance = iT - eT;
+    document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
+    document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
+    const disp = document.getElementById("disponible");
+    disp.textContent = "$ " + formato.format(balance);
+    disp.style.color = balance < 0 ? "#e74c3c" : "white";
+    if(document.getElementById("totalIngresos-stats")){
+        document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
+        document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
+        document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
+    }
+    const cashEl = document.getElementById("saldo-cash");
+    const bankEl = document.getElementById("saldo-bank");
+    if(cashEl && bankEl) {
+        cashEl.textContent = "$ " + formato.format(cashTotal);
+        bankEl.textContent = "$ " + formato.format(bankTotal);
+        cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
+        bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
+    }
+  }
+
+  // --- LÓGICA DE TRANSFERENCIAS ---
+  function toggleModalTransf() {
+    document.getElementById("modalTransferencia").classList.toggle("hidden");
+    document.getElementById("balance-popover").classList.add("hidden");
+    document.getElementById("montoTransf").value = "";
+  }
+
+  function actualizarDestinoTransf() {
+    const o = document.getElementById("transfOrigen").value;
+    document.getElementById("transfDestino").value = (o === 'CASH') ? '💳 BANK' : '💵 CASH';
+  }
+
+  async function ejecutarTransferencia() {
+    const mStr = document.getElementById("montoTransf").value;
+    const val = Number(mStr.replace(/\D/g, ""));
+    if (!val || val <= 0) return alert("Monto inválido");
+    
+    const origen = document.getElementById("transfOrigen").value;
+    const destino = (origen === 'CASH') ? 'BANK' : 'CASH';
+    const fecha = new Date().toLocaleDateString('en-CA');
+    const ahora = new Date();
+    const hora = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+
+    try {
+        const batch = db.batch();
+        // 1. Salida
+        const refE = db.collection("movimientos").doc();
+        batch.set(refE, { uid: usuarioActual.uid, tipo: "egreso", categoria: "Transferencia (Salida)", monto: val, fecha, hora, metodo: origen, nota: `Hacia ${destino}`, creado: firebase.firestore.FieldValue.serverTimestamp() });
+        // 2. Entrada
+        const refI = db.collection("movimientos").doc();
+        batch.set(refI, { uid: usuarioActual.uid, tipo: "ingreso", categoria: "Transferencia (Entrada)", monto: val, fecha, hora, metodo: destino, nota: `Desde ${origen}`, creado: firebase.firestore.FieldValue.serverTimestamp() });
+
+        await batch.commit();
+        toggleModalTransf();
+        cargarMovimientos();
+    } catch (e) { alert("Error al transferir"); }
+  }
+
+  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 
   function prepararEdicion(id, data) {
     editandoID = id;
@@ -493,7 +524,6 @@
     setTipo(data.tipo);
     document.getElementById("categoria").value = data.categoria;
     seleccionarMetodo(data.metodo);
-
     const btn = document.getElementById("btnGuardar");
     btn.textContent = "Guardar Cambios";
     btn.onclick = () => actualizarMovimiento(id);
@@ -503,13 +533,7 @@
 
   async function actualizarMovimiento(id) {
     const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
-    const data = {
-        monto: val,
-        fecha: document.getElementById("fecha").value,
-        categoria: document.getElementById("categoria").value,
-        metodo: document.getElementById("metodoPago").value,
-        nota: document.getElementById("nota").value.trim()
-    };
+    const data = { monto: val, fecha: document.getElementById("fecha").value, categoria: document.getElementById("categoria").value, metodo: document.getElementById("metodoPago").value, nota: document.getElementById("nota").value.trim() };
     await db.collection("movimientos").doc(id).update(data);
     cancelarEdicion();
     cargarMovimientos();
@@ -524,11 +548,6 @@
     const btn = document.getElementById("btnGuardar");
     btn.textContent = "Registrar Movimiento";
     btn.onclick = guardarMovimiento;
-  }
-
-  function toggleBalancePopover() {
-      const popover = document.getElementById("balance-popover");
-      popover.classList.toggle("hidden");
   }
 
   function cargarEstadisticas() {
@@ -589,7 +608,7 @@
     i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
   }
 
-  function toggleComent(id) { const c = document.getElementById(`c-${id}`); c.style.display = c.style.display === "block" ? "none" : "block"; }
+  function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
   function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
   function actualizarPerfil() {
       const n = document.getElementById("inputNombreUsuario").value;
