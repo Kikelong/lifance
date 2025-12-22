@@ -332,7 +332,6 @@
   let tipoSeleccionado = "";
   let misCategorias = { ingreso: [], egreso: [] };
   let misPendientes = [];
-  let editandoID = null;
   let movimientosCache = [];
   const catDefault = {
     ingreso: ["Salario", "Venta", "Préstamo", "Uti. Mes Ant."],
@@ -349,11 +348,11 @@
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
-      setTimeout(async () => {
-          await cargarCategoriasDB();
-          await cargarPendientesDB();
-          cargarMovimientos();
-      }, 600);
+      
+      // Cargar todo secuencialmente
+      await cargarCategoriasDB();
+      await cargarPendientesDB();
+      cargarMovimientos();
     } else {
       document.getElementById("loginBox").style.display = 'flex';
       document.getElementById("appContainer").classList.add("hidden");
@@ -391,6 +390,7 @@
   function actualizarListaCategoriasEdit() {
     const cont = document.getElementById("listaCategoriasEdit");
     const filtro = document.getElementById("tipoNuevaCat").value;
+    if(!cont) return;
     cont.innerHTML = "";
     const lista = misCategorias[filtro].sort((a,b) => (a.orden||0) - (b.orden||0));
     lista.forEach(c => {
@@ -440,6 +440,7 @@
   // --- Lógica Pendientes ---
   function actualizarSelectorCategoriasPendientes() {
     const sel = document.getElementById("catPendiente");
+    if(!sel) return;
     sel.innerHTML = "";
     misCategorias.egreso.forEach(c => {
         const o = document.createElement("option");
@@ -467,14 +468,20 @@
   }
 
   async function cargarPendientesDB() {
-    const snap = await db.collection("pendientes").where("uid", "==", usuarioActual.uid).orderBy("fecha", "asc").get();
+    // Consulta simple para evitar problemas de índices
+    const snap = await db.collection("pendientes").where("uid", "==", usuarioActual.uid).get();
     misPendientes = [];
     const cont = document.getElementById("listaPendientes");
+    if(!cont) return;
     cont.innerHTML = "";
     const formato = new Intl.NumberFormat("es-CO");
 
-    snap.forEach(doc => {
-        const d = doc.id ? { id: doc.id, ...doc.data() } : doc.data();
+    let docs = [];
+    snap.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+    // Ordenar localmente por fecha
+    docs.sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+    docs.forEach(d => {
         misPendientes.push(d);
         const item = document.createElement("div");
         item.className = `pago-item ${d.pagado ? 'pagado' : ''}`;
@@ -485,7 +492,7 @@
             </div>
             <div style="text-align:right;">
                 <div style="font-weight:bold; color:var(--egreso);">$ ${formato.format(d.monto)}</div>
-                ${!d.pagado ? `<button onclick="borrarPendiente('${d.id}')" style="background:none; color:red; padding:0; width:auto;">✕</button>` : ''}
+                ${!d.pagado ? `<button onclick="borrarPendiente('${d.id}')" style="background:none; color:red; padding:0; width:auto; margin:0;">✕</button>` : ''}
             </div>
         `;
         cont.appendChild(item);
@@ -599,21 +606,29 @@
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
     const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+    
+    // Consulta simple para evitar problemas de índices
     db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
         movimientosCache = [];
         snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
+        
+        // Ordenamiento local (más seguro)
         movimientosCache.sort((a, b) => {
             if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
             return (b.hora || "00:00").localeCompare(a.hora || "00:00");
         });
         renderizarLista(movimientosCache);
+    }).catch(err => {
+        console.error("Error cargando movimientos: ", err);
     });
   }
 
   function renderizarLista(datos) {
     const listaCont = document.getElementById("listaMovimientos");
+    if(!listaCont) return;
     listaCont.innerHTML = "";
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
+    
     datos.forEach(d => {
         if (d.tipo === "ingreso") {
             iT += d.monto;
@@ -663,6 +678,7 @@
     const disp = document.getElementById("disponible");
     disp.textContent = "$ " + formato.format(balance);
     disp.style.color = balance < 0 ? "#e74c3c" : "white";
+    
     if(document.getElementById("totalIngresos-stats")){
         document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
@@ -714,7 +730,6 @@
   function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 
   function prepararEdicion(id, data) {
-    editandoID = id;
     document.getElementById("formTitle").textContent = "Editando Movimiento";
     document.getElementById("monto").value = Math.abs(data.monto);
     formatearMonto(document.getElementById("monto"));
@@ -739,7 +754,6 @@
   }
 
   function cancelarEdicion() {
-    editandoID = null;
     document.getElementById("formTitle").textContent = "Nuevo Movimiento";
     document.getElementById("monto").value = "";
     document.getElementById("nota").value = "";
@@ -751,6 +765,7 @@
 
   function cargarEstadisticas() {
     const cont = document.getElementById("statsContent");
+    if(!cont) return;
     const m = parseInt(document.getElementById("mesFiltroStats").value);
     const a = parseInt(document.getElementById("anioFiltroStats").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
@@ -791,6 +806,7 @@
     const hoy = new Date();
     const sM = document.getElementById(idM);
     const sA = document.getElementById(idA);
+    if(!sM || !sA) return;
     sM.innerHTML = ""; sA.innerHTML = "";
     for (let m = 0; m < 12; m++) {
       let o = document.createElement("option");
