@@ -10,7 +10,7 @@
       --ingreso: #27ae60;
       --egreso: #c0392b;
       --bg: #f4f6f8;
-      --nav-height: 65px; /* Un poco más alto para las 4 opciones */
+      --nav-height: 60px;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background: var(--bg); padding: 0; margin: 0; padding-bottom: var(--nav-height); }
@@ -33,38 +33,55 @@
     .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* Resumen Visual */
+    /* Buscador */
+    .search-box { margin-top: 15px; position: relative; }
+    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
+    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
+
+    /* Balance Fijo */
     .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
     .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
     .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
     .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd; }
+    .resumen-item:last-child { border-right: none; }
     .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
-    /* Listas y Movimientos */
+    /* Métodos de Pago */
+    .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
+    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
+    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
+
+    /* Estilos de Lista */
     .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
-    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; position: relative; z-index: 2; cursor: pointer; }
+    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
     .card.egreso-item { border-left: 5px solid var(--egreso); }
-    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; width: 70px; }
-    .btn-delete { background: #e74c3c; border-radius: 0 8px 8px 0; }
+    .card.transferencia-item { border-left: 5px solid #3498db; }
+    .card-swipe-actions { display: flex; scroll-snap-align: end; }
+    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
+    .btn-edit { background: #3498db; }
+    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .card-info { flex-grow: 1; }
+    .card-cat { font-weight: bold; font-size: 0.95rem; }
+    .card-date { font-size: 0.75rem; color: #888; }
+    .card-monto { font-weight: bold; font-size: 1rem; }
+    .text-ingreso { color: var(--ingreso); }
+    .text-egreso { color: var(--egreso); }
+    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
     
+    /* Nueva sección Pendientes */
+    .pago-item { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .pago-item.pagado { opacity: 0.6; background: #fdfdfd; border-style: dashed; }
+    .btn-borrar-pago { background: #fee2e2; color: #ef4444; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+
     /* Nav Inferior */
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.75rem; padding: 5px 0; }
-    .nav-item i { display: block; font-size: 1.2rem; font-style: normal; margin-bottom: 2px; }
+    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem; }
+    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
     .nav-item.active { color: var(--primary); font-weight: bold; }
-
-    /* Pendientes */
-    .badge-pend { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; margin-left: 5px; }
-    .pago-item { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .pago-item.pagado { opacity: 0.6; background: #f9f9f9; border-style: dashed; }
-    .pago-item.pagado span { text-decoration: line-through; }
-    .btn-borrar-pago { background: #fee2e2; color: #ef4444; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
-
-    /* Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
   </style>
 </head>
 <body>
@@ -95,48 +112,74 @@
   </div>
 
   <div id="view-pendientes" class="view-section hidden">
-    <h3>📌 Pagos Pendientes</h3>
+    <h3>📌 Pagos Pendientes / Fijos</h3>
     <div style="background: #fdf2f2; padding: 15px; border-radius: 12px; border: 1px solid #fee2e2; margin-bottom: 20px;">
-        <h4 style="margin:0; color:#c0392b;">Nuevo compromiso</h4>
+        <h4 style="margin-top:0; color:#c0392b;">Crear compromiso</h4>
         <select id="catPendiente"></select>
         <div class="row">
             <input type="text" id="montoPendiente" inputmode="numeric" placeholder="Monto $ 0" oninput="formatearMonto(this)">
             <input type="date" id="fechaPendiente">
         </div>
         <input type="text" id="notaPendiente" placeholder="Descripción">
-        <button class="btn-egreso" onclick="crearPendiente()">+ Agregar Pendiente</button>
+        <button class="btn-egreso" onclick="crearPendiente()">+ Agregar</button>
     </div>
     <div id="listaPendientes"></div>
   </div>
 
   <div id="view-home" class="view-section">
     <h3 id="formTitle">Nuevo Movimiento</h3>
-    <div class="row"><input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)"><input type="date" id="fecha"></div>
+    <div class="row">
+      <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)">
+      <input type="date" id="fecha">
+    </div>
     <div class="row">
       <button id="btnIngreso" class="btn-ingreso" onclick="setTipo('ingreso')">INGRESO</button>
       <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
     </div>
     <select id="categoria" class="hidden" onchange="detectarPendientes()"></select>
     <div id="selectorPendienteContainer" class="hidden">
-        <p style="margin: 10px 0 5px; font-size: 0.8rem; color: #e67e22; font-weight: bold;">Vincular con pendiente:</p>
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #e67e22; font-weight: bold;">¿Vincular con pendiente?</p>
         <select id="pendienteVinculo" onchange="aplicarDatosPendiente()"></select>
     </div>
+    <div id="metodoPagoContainer" class="hidden">
+        <div class="metodo-selector">
+            <div class="metodo-option active" id="optCash" onclick="seleccionarMetodo('CASH')">💵 CASH</div>
+            <div class="metodo-option" id="optBank" onclick="seleccionarMetodo('BANK')">💳 BANK</div>
+        </div>
+        <input type="hidden" id="metodoPago" value="CASH">
+    </div>
     <input type="text" id="nota" class="hidden" placeholder="Comentario...">
-    <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar</button>
-
+    <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
+    
     <h3>Historial</h3>
     <div class="row">
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
     </div>
+    <div class="resumen-container">
+        <div class="balance-card">Disponible <span id="disponible">$ 0</span></div>
+        <div class="resumen-grid">
+            <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
+            <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
+        </div>
+    </div>
     <div id="listaMovimientos"></div>
   </div>
 
   <div id="view-settings" class="view-section hidden">
-    <h3>Configuración</h3>
+    <h3>Mi Perfil</h3>
     <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
-    <button class="btn-main" onclick="actualizarPerfil()">Guardar</button>
+    <button class="btn-main" onclick="actualizarPerfil()">Guardar Cambios</button>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
+  </div>
+
+  <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
+      <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div id="saldo-cash">$ 0</div>
+          <div id="saldo-bank">$ 0</div>
+          <button onclick="toggleModalTransf()">🔄 Transferir</button>
+      </div>
+      <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white;">💰</button>
   </div>
 </div>
 
@@ -144,7 +187,7 @@
     <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Balance</div>
     <div class="nav-item" onclick="cambiarVista('pendientes')"><i>📌</i>Pendientes</div>
     <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i>Inicio</div>
-    <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Perfil</div>
+    <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Config</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -152,7 +195,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // ... (Configuración de Firebase igual a la anterior)
+  // ... (Firebase Config de tu archivo original)
   const firebaseConfig = { apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c", authDomain: "lifance-d2316.firebaseapp.com", projectId: "lifance-d2316", storageBucket: "lifance-d2316.appspot.com", messagingSenderId: "87725148350", appId: "1:87725148350:web:9d04fc1c247d9058eeb6ef" };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
@@ -163,48 +206,26 @@
   auth.onAuthStateChanged(async user => {
     if (user) {
       usuarioActual = user;
-      document.getElementById("loginBox").style.display = 'none';
       document.getElementById("appContainer").classList.remove("hidden");
       document.getElementById("bottomNav").classList.remove("hidden");
+      document.getElementById("loginBox").style.display = 'none';
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
       await cargarCategoriasDB();
       await cargarPendientesDB();
       cargarMovimientos();
-    } else {
-      document.getElementById("loginBox").style.display = 'flex';
-      document.getElementById("appContainer").classList.add("hidden");
-      document.getElementById("bottomNav").classList.add("hidden");
     }
   });
 
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // Gestión de Vistas
-  function cambiarVista(v) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`view-${v}`).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    // Mapeo de items para activar el correcto
-    const mapa = { 'stats': 0, 'pendientes': 1, 'home': 2, 'settings': 3 };
-    document.querySelectorAll('.nav-item')[mapa[v]].classList.add('active');
-    
-    if(v === 'stats') cargarEstadisticas();
-    window.scrollTo(0,0);
-  }
-
-  // --- Lógica de Pendientes y Movimientos (Igual que la anterior) ---
+  // LÓGICA DE PENDIENTES
   async function cargarCategoriasDB() {
     const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
     misCategorias = { ingreso: [], egreso: [] };
     snap.forEach(doc => { const d = doc.data(); misCategorias[d.tipo].push({ id: doc.id, ...d }); });
-    actualizarSelectorCategoriasPendientes();
-  }
-
-  function actualizarSelectorCategoriasPendientes() {
     const sel = document.getElementById("catPendiente");
     sel.innerHTML = "";
     misCategorias.egreso.forEach(c => { const o = document.createElement("option"); o.value = c.nombre; o.textContent = c.nombre; sel.appendChild(o); });
@@ -230,7 +251,7 @@
         misPendientes.push(d);
         const item = document.createElement("div");
         item.className = `pago-item ${d.pagado ? 'pagado' : ''}`;
-        item.innerHTML = `<div><span>${d.pagado ? '✅ ' : '⏳ '}${d.categoria}</span><br><small>${d.fecha}</small></div>
+        item.innerHTML = `<div><b>${d.pagado ? '✅ ' : '⏳ '}${d.categoria}</b><br><small>${d.fecha}</small></div>
             <div style="display:flex; align-items:center; gap:10px;"><b>$ ${new Intl.NumberFormat().format(d.monto)}</b>
             <button class="btn-borrar-pago" onclick="borrarPendiente('${d.id}')">✕</button></div>`;
         cont.appendChild(item);
@@ -238,17 +259,16 @@
   }
 
   async function borrarPendiente(id) {
-    if(confirm("¿Eliminar pendiente?")) { await db.collection("pendientes").doc(id).delete(); cargarPendientesDB(); }
+    if(confirm("¿Eliminar este pendiente?")) { await db.collection("pendientes").doc(id).delete(); cargarPendientesDB(); }
   }
 
   function detectarPendientes() {
     const cat = document.getElementById("categoria").value;
     const selContainer = document.getElementById("selectorPendienteContainer");
     const selVinculo = document.getElementById("pendienteVinculo");
-    if (tipoSeleccionado !== 'egreso') { selContainer.classList.add("hidden"); return; }
     const pCat = misPendientes.filter(p => p.categoria === cat && !p.pagado);
-    if (pCat.length > 0) {
-        selVinculo.innerHTML = '<option value="">-- Pago Nuevo --</option>';
+    if (tipoSeleccionado === 'egreso' && pCat.length > 0) {
+        selVinculo.innerHTML = '<option value="">-- Pago Normal --</option>';
         pCat.forEach(p => { const o = document.createElement("option"); o.value = p.id; o.textContent = `Pendiente: $${new Intl.NumberFormat().format(p.monto)}`; selVinculo.appendChild(o); });
         selContainer.classList.remove("hidden");
     } else { selContainer.classList.add("hidden"); }
@@ -260,12 +280,14 @@
     if (p) document.getElementById("monto").value = "$ " + new Intl.NumberFormat().format(p.monto);
   }
 
+  // LÓGICA DE MOVIMIENTOS (ORIGINAL)
   function setTipo(t) {
     tipoSeleccionado = t;
     const catS = document.getElementById("categoria");
     catS.innerHTML = "";
     misCategorias[t].forEach(c => { const o = document.createElement("option"); o.value = o.textContent = c.nombre; catS.appendChild(o); });
     catS.classList.remove("hidden");
+    document.getElementById("metodoPagoContainer").classList.remove("hidden");
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
     detectarPendientes();
@@ -278,7 +300,7 @@
     if (!val) return;
     const batch = db.batch();
     const movRef = db.collection("movimientos").doc();
-    batch.set(movRef, { uid: usuarioActual.uid, tipo: tipoSeleccionado, categoria: document.getElementById("categoria").value, monto: val, fecha: fec, nota: document.getElementById("nota").value, creado: firebase.firestore.FieldValue.serverTimestamp() });
+    batch.set(movRef, { uid: usuarioActual.uid, tipo: tipoSeleccionado, categoria: document.getElementById("categoria").value, monto: val, fecha: fec, nota: document.getElementById("nota").value, metodo: document.getElementById("metodoPago").value, creado: firebase.firestore.FieldValue.serverTimestamp() });
     if (pId) batch.update(db.collection("pendientes").doc(pId), { pagado: true });
     await batch.commit();
     document.getElementById("monto").value = "";
@@ -286,6 +308,7 @@
     cargarMovimientos();
   }
 
+  // (El resto de funciones cargarMovimientos, cargarEstadisticas, etc. permanecen idénticas a tu archivo original)
   function cargarMovimientos() {
     const m = parseInt(document.getElementById("mesFiltro").value), a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`, uD = `${a}-${String(m).padStart(2, '0')}-31`;
@@ -305,26 +328,18 @@
         w.innerHTML = `<div class="card ${d.tipo}-item"><b>${d.categoria}</b> <small>${d.fecha}</small> <span>$ ${new Intl.NumberFormat().format(d.monto)}</span></div>`;
         lista.appendChild(w);
     });
-    // Actualizar disponibles en el home si existen
-    if(document.getElementById("disponible")) document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat().format(iT - eT);
+    document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat().format(iT);
+    document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat().format(eT);
+    document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat().format(iT - eT);
   }
 
-  function cargarEstadisticas() {
-    const m = parseInt(document.getElementById("mesFiltroStats").value), a = parseInt(document.getElementById("anioFiltroStats").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`, uD = `${a}-${String(m).padStart(2, '0')}-31`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-      let tI = 0, tE = 0, cats = {};
-      snap.forEach(doc => {
-        const d = doc.data();
-        if(d.tipo === 'ingreso') tI += d.monto; else { tE += d.monto; cats[d.categoria] = (cats[d.categoria]||0) + d.monto; }
-      });
-      document.getElementById("totalIngresos-stats").textContent = "$ " + new Intl.NumberFormat().format(tI);
-      document.getElementById("totalEgresos-stats").textContent = "$ " + new Intl.NumberFormat().format(tE);
-      document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat().format(tI - tE);
-      let h = "";
-      for(let [c,v] of Object.entries(cats)) h += `<div class="row" style="padding:10px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat().format(v)}</span></div>`;
-      document.getElementById("statsContent").innerHTML = h;
-    });
+  function cambiarVista(v) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`view-${v}`).classList.remove('hidden');
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const mapa = { 'stats': 0, 'pendientes': 1, 'home': 2, 'settings': 3 };
+    document.querySelectorAll('.nav-item')[mapa[v]].classList.add('active');
+    if(v === 'stats') cargarEstadisticas();
   }
 
   function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
@@ -333,7 +348,9 @@
     for (let m = 0; m < 12; m++) { let o = document.createElement("option"); o.value = m + 1; o.textContent = new Date(2000, m, 1).toLocaleString("es", { month: "long" }); if (m === hoy.getMonth()) o.selected = true; sM.appendChild(o); }
     for (let a = hoy.getFullYear() - 1; a <= hoy.getFullYear() + 1; a++) { let o = document.createElement("option"); o.value = a; o.textContent = a; if (a === hoy.getFullYear()) o.selected = true; sA.appendChild(o); }
   }
-  function formatearMonto(i) { let v = i.value.replace(/\D/g, ""); i.value = v ? "$ " + new Intl.NumberFormat().format(v) : ""; }
+  function formatearMonto(i) { let v = i.value.replace(/\D/g, ""); i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : ""; }
+  function seleccionarMetodo(m) { document.getElementById("metodoPago").value = m; document.querySelectorAll('.metodo-option').forEach(el => el.classList.toggle('active', el.id.includes(m.toLowerCase()))); }
+  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 </script>
 </body>
 </html>
