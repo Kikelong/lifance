@@ -12,138 +12,81 @@
       --bg: #f4f6f8;
       --nav-height: 60px;
     }
-    * { box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background: var(--bg); padding: 0;
-      margin: 0; padding-bottom: var(--nav-height); }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background: var(--bg); padding: 0; margin: 0; padding-bottom: var(--nav-height); }
     
-    .container { max-width: 480px; margin: auto; background: #fff;
-      min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative;
-    }
+    .container { max-width: 480px; margin: auto; background: #fff; min-height: 100vh; padding: 20px; padding-bottom: 80px; box-shadow: 0 0 15px rgba(0,0,0,0.05); position: relative; }
     
-    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px;
-    }
-    h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px;
-    }
+    h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
+    h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
     h4 { margin-bottom: 10px; color: var(--primary); }
-    p.subtitle { text-align: center; color: #888;
-      font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
+    p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
 
-    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px;
-      border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-    .row { display: flex; gap: 10px;
-    }
+    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
+    .row { display: flex; gap: 10px; }
     
-    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s;
-    }
+    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
     .btn-ingreso { background: var(--ingreso); color: white; }
-    .btn-egreso { background: var(--egreso); color: white;
-    }
+    .btn-egreso { background: var(--egreso); color: white; }
     .btn-google { background: #4285F4; color: white; }
-    .btn-main { background: var(--primary); color: white;
-      margin-top: 15px; }
-    .logout { background: #e74c3c; color: white; margin-top: 20px;
-    }
+    .btn-main { background: var(--primary); color: white; margin-top: 15px; }
+    .logout { background: #e74c3c; color: white; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* Buscador */
-    .search-box { margin-top: 15px;
-      position: relative; }
-    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee;
-    }
-    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem;
-    }
+    /* Buscador e Interfaz */
+    .search-box { margin-top: 15px; position: relative; }
+    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
+    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
 
-    /* Balance Fijo */
-    .resumen-container { border-radius: 8px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100;
-    }
-    .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center;
-    }
-    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px;
-    }
-    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05);
-    }
-    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd;
-    }
+    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
+    .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
+    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
+    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
+    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd; }
     .resumen-item:last-child { border-right: none; }
-    .resumen-item span { display: block; font-size: 1.1rem;
-      font-weight: 700; margin-top: 4px; }
+    .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
     /* Métodos de Pago */
-    .metodo-selector { display: flex;
-      gap: 10px; margin-top: 8px; }
-    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd;
-      border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
-    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary);
-    }
+    .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
+    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
+    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
 
     /* Modal Transferencia */
-    .modal-overlay { position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
 
     /* Estilos de Lista */
-    .movimiento-wrapper { display: flex; overflow-x: auto;
-      scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
-    .movimiento-wrapper::-webkit-scrollbar { display: none;
-    }
-    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee;
-      display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer;
-    }
+    .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
+    .movimiento-wrapper::-webkit-scrollbar { display: none; }
+    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
     .card.ingreso-item { border-left: 5px solid var(--ingreso); }
-    .card.egreso-item { border-left: 5px solid var(--egreso);
-    }
+    .card.egreso-item { border-left: 5px solid var(--egreso); }
     .card.transferencia-item { border-left: 5px solid #3498db; }
-    .card-swipe-actions { display: flex; scroll-snap-align: end;
-    }
-    .btn-swipe { border: none; color: white;
-    padding: 0 20px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px;
-    }
-    .btn-edit { background: #3498db;
-    }
-    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px;
-    }
-    .card-top { display: flex;
-      justify-content: space-between; align-items: center; width: 100%;
-    }
-    .card-info { flex-grow: 1;
-    }
-    .card-cat { font-weight: bold; font-size: 0.95rem;
-    }
-    .card-date { font-size: 0.75rem; color: #888;
-    }
-    .card-monto { font-weight: bold; font-size: 1rem;
-    }
-    .text-ingreso { color: var(--ingreso);
-    }
-    .text-egreso { color: var(--egreso);
-    }
-    .text-transferencia { color: #3498db;
-    }
-    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic;
-    }
-    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee;
-      margin-bottom: 5px; border-radius: 6px; }
+    .card-swipe-actions { display: flex; scroll-snap-align: end; }
+    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
+    .btn-edit { background: #3498db; }
+    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .card-info { flex-grow: 1; }
+    .card-cat { font-weight: bold; font-size: 0.95rem; }
+    .card-date { font-size: 0.75rem; color: #888; }
+    .card-monto { font-weight: bold; font-size: 1rem; }
+    .text-ingreso { color: var(--ingreso); }
+    .text-egreso { color: var(--egreso); }
+    .text-transferencia { color: #3498db; }
+    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
+    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
 
     /* Nav Inferior */
-    .bottom-nav { position: fixed;
-      bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around;
-      align-items: center; z-index: 1000; }
-    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem;
-    }
-    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px;
-    }
-    .nav-item.active { color: var(--primary); font-weight: bold;
-    }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height); background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem; }
+    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
 
     /* Estilos Deudas/Pendientes */
     .badge-pend { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; margin-left: 5px; vertical-align: middle; }
-    .pago-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .pago-item.pagado { opacity: 0.5; background: #f9f9f9; }
+    .pago-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff;}
+    .pago-item.pagado { opacity: 0.6; background: #f9f9f9; border-left: 4px solid #27ae60; }
     .pago-item.pagado span { text-decoration: line-through; }
   </style>
 </head>
@@ -229,14 +172,10 @@
     <div id="listaMovimientos"></div>
   </div>
 
-  <div id="view-settings" class="view-section hidden">
-    <h3>Mi Perfil</h3>
-    <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
-    <button class="btn-main" onclick="actualizarPerfil()">Guardar Cambios</button>
-
-    <div style="background: #fff; padding: 15px; border-radius: 8px; margin-top: 25px; border: 1px solid #e74c3c;">
-        <h4 style="color:#e74c3c;">📌 Pagos Pendientes / Fijos</h4>
-        <p style="font-size: 0.75rem; color: #666;">Registra tus compromisos del mes.</p>
+  <div id="view-pendientes" class="view-section hidden">
+    <h3>Pagos Pendientes / Fijos</h3>
+    <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e67e22;">
+        <h4 style="color:#e67e22; margin-top:0;">📌 Agregar Compromiso</h4>
         <div class="row">
             <select id="catPendiente"></select>
         </div>
@@ -245,10 +184,17 @@
             <input type="date" id="fechaPendiente">
         </div>
         <input type="text" id="notaPendiente" placeholder="Descripción (Ej: Internet Claro)">
-        <button class="btn-egreso" onclick="crearPendiente()" style="margin-top:10px;">+ Agregar Pendiente</button>
-        
-        <div id="listaPendientes" style="margin-top:15px; max-height: 250px; overflow-y: auto;"></div>
+        <button class="btn-egreso" onclick="crearPendiente()" style="margin-top:10px;">+ Guardar en Pendientes</button>
     </div>
+
+    <h4 style="margin-top: 25px;">Lista de Pendientes</h4>
+    <div id="listaPendientes" style="margin-top:10px;"></div>
+  </div>
+
+  <div id="view-settings" class="view-section hidden">
+    <h3>Mi Perfil</h3>
+    <input type="text" id="inputNombreUsuario" placeholder="Tu nombre">
+    <button class="btn-main" onclick="actualizarPerfil()">Guardar Cambios</button>
 
     <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 25px; border: 1px solid #eee;">
         <h4>Gestionar Categorías</h4>
@@ -263,13 +209,13 @@
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.3</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.3.1</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
     <div class="modal-content">
         <h3 style="margin-top: 0;">Transferencia Interna</h3>
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Mueve dinero entre tus bolsillos sin afectar tu disponible total.</p>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Mueve dinero entre tus bolsillos.</p>
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
         <select id="transfOrigen" onchange="actualizarDestinoTransf()">
             <option value="CASH">💵 CASH (Efectivo)</option>
@@ -307,6 +253,7 @@
 <div id="bottomNav" class="bottom-nav hidden">
     <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i>Balance</div>
     <div class="nav-item active" onclick="cambiarVista('home')"><i>🏠</i>Inicio</div>
+    <div class="nav-item" onclick="cambiarVista('pendientes')"><i>⏳</i>Pendientes</div>
     <div class="nav-item" onclick="cambiarVista('settings')"><i>⚙️</i>Config</div>
 </div>
 
@@ -315,6 +262,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
+  // Tu Configuración Original 
   const firebaseConfig = {
     apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
     authDomain: "lifance-d2316.firebaseapp.com",
@@ -349,7 +297,6 @@
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
       
-      // Cargar todo secuencialmente
       await cargarCategoriasDB();
       await cargarPendientesDB();
       cargarMovimientos();
@@ -434,10 +381,10 @@
   }
 
   async function borrarCategoria(id) {
-    if(confirm("¿Borrar?")) { await db.collection("categorias").doc(id).delete(); cargarCategoriasDB(); }
+    if(confirm("¿Borrar categoría?")) { await db.collection("categorias").doc(id).delete(); cargarCategoriasDB(); }
   }
 
-  // --- Lógica Pendientes ---
+  // --- Lógica Pendientes (Modificada) ---
   function actualizarSelectorCategoriasPendientes() {
     const sel = document.getElementById("catPendiente");
     if(!sel) return;
@@ -455,7 +402,6 @@
     const fecha = document.getElementById("fechaPendiente").value;
     const nota = document.getElementById("notaPendiente").value.trim();
     if(!monto || !fecha) return alert("Completa monto y fecha");
-    
     await db.collection("pendientes").add({
         uid: usuarioActual.uid,
         monto, categoria: cat, fecha, nota,
@@ -464,21 +410,19 @@
     });
     document.getElementById("montoPendiente").value = "";
     document.getElementById("notaPendiente").value = "";
+    alert("Pendiente guardado correctamente.");
     cargarPendientesDB();
   }
 
   async function cargarPendientesDB() {
-    // Consulta simple para evitar problemas de índices
     const snap = await db.collection("pendientes").where("uid", "==", usuarioActual.uid).get();
     misPendientes = [];
     const cont = document.getElementById("listaPendientes");
     if(!cont) return;
     cont.innerHTML = "";
     const formato = new Intl.NumberFormat("es-CO");
-
     let docs = [];
     snap.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
-    // Ordenar localmente por fecha
     docs.sort((a,b) => a.fecha.localeCompare(b.fecha));
 
     docs.forEach(d => {
@@ -492,7 +436,7 @@
             </div>
             <div style="text-align:right;">
                 <div style="font-weight:bold; color:var(--egreso);">$ ${formato.format(d.monto)}</div>
-                ${!d.pagado ? `<button onclick="borrarPendiente('${d.id}')" style="background:none; color:red; padding:0; width:auto; margin:0;">✕</button>` : ''}
+                <button onclick="borrarPendiente('${d.id}')" style="background:none; color:red; padding:0; width:auto; margin:0; font-size:11px;">Eliminar ✕</button>
             </div>
         `;
         cont.appendChild(item);
@@ -517,7 +461,6 @@
       }
 
       const pendientesCat = misPendientes.filter(p => p.categoria === cat && !p.pagado);
-      
       if (pendientesCat.length > 0) {
           selVinculo.innerHTML = '<option value="">-- OTRO (Gasto normal) --</option>';
           pendientesCat.forEach(p => {
@@ -577,7 +520,6 @@
     
     const batch = db.batch();
     const movRef = db.collection("movimientos").doc();
-    
     batch.set(movRef, {
       uid: usuarioActual.uid, tipo: tipoSeleccionado,
       categoria: document.getElementById("categoria").value,
@@ -587,7 +529,6 @@
       pendienteVinculado: pendienteId || null,
       creado: firebase.firestore.FieldValue.serverTimestamp()
     });
-
     if (pendienteId) {
         batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
     }
@@ -606,21 +547,15 @@
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
     const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    
-    // Consulta simple para evitar problemas de índices
     db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
         movimientosCache = [];
         snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
-        
-        // Ordenamiento local (más seguro)
         movimientosCache.sort((a, b) => {
             if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
             return (b.hora || "00:00").localeCompare(a.hora || "00:00");
         });
         renderizarLista(movimientosCache);
-    }).catch(err => {
-        console.error("Error cargando movimientos: ", err);
-    });
+    }).catch(err => { console.error(err); });
   }
 
   function renderizarLista(datos) {
@@ -628,7 +563,6 @@
     if(!listaCont) return;
     listaCont.innerHTML = "";
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
-    
     datos.forEach(d => {
         if (d.tipo === "ingreso") {
             iT += d.monto;
@@ -678,7 +612,6 @@
     const disp = document.getElementById("disponible");
     disp.textContent = "$ " + formato.format(balance);
     disp.style.color = balance < 0 ? "#e74c3c" : "white";
-    
     if(document.getElementById("totalIngresos-stats")){
         document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
@@ -694,7 +627,22 @@
     }
   }
 
-  // --- Funciones de Utilidad y UI ---
+  // --- UI y Navegación ---
+  function cambiarVista(v) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`view-${v}`).classList.remove('hidden');
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    
+    // Mapeo de índices para el menú de 4 opciones
+    const vistas = ['stats', 'home', 'pendientes', 'settings'];
+    const idx = vistas.indexOf(v);
+    document.querySelectorAll('.nav-item')[idx].classList.add('active');
+    
+    if(v === 'stats') cargarEstadisticas();
+    if(v === 'pendientes') cargarPendientesDB();
+    window.scrollTo(0,0);
+  }
+
   function toggleModalTransf() {
     document.getElementById("modalTransferencia").classList.toggle("hidden");
     document.getElementById("balance-popover").classList.add("hidden");
@@ -785,16 +733,6 @@
     });
   }
 
-  function cambiarVista(v) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`view-${v}`).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    const idx = v === 'stats' ? 0 : (v === 'home' ? 1 : 2);
-    document.querySelectorAll('.nav-item')[idx].classList.add('active');
-    if(v === 'stats') cargarEstadisticas();
-    window.scrollTo(0,0);
-  }
-
   function actualizarHeaderNombre() {
     const n = usuarioActual.displayName || usuarioActual.email;
     document.getElementById("headerTitle").textContent = `Lifance de ${n.split(' ')[0]}`;
@@ -827,7 +765,7 @@
   }
 
   function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
-  function borrarMov(id) { if(confirm("¿Borrar?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
+  function borrarMov(id) { if(confirm("¿Borrar movimiento?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
   function actualizarPerfil() {
       const n = document.getElementById("inputNombreUsuario").value;
       if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
