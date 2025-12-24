@@ -213,6 +213,16 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     pointer-events: auto; 
 }
 
+
+@media (hover: hover) {
+    .card:hover {
+        background-color: #f9f9f9;
+    }
+    .btn-swipe:hover {
+        filter: brightness(1.1);
+    }
+}
+    
     
   </style>
 </head>
@@ -712,7 +722,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
                         <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                     </div>
                     <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
-                    <div style="color: #ccc; font-size: 0.8rem; margin-left: 10px;">❮</div>
+                    <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
                 </div>
                 <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
@@ -898,6 +908,31 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
       const n = document.getElementById("inputNombreUsuario").value;
       if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
   }
+
+
+function toggleSwipe(el, event) {
+    // Evitamos que el clic abra también el comentario de la tarjeta
+    event.stopPropagation();
+    
+    // Buscamos el contenedor que tiene el scroll (movimiento-wrapper)
+    const wrapper = el.closest('.movimiento-wrapper');
+    
+    // Si el scroll está al inicio, lo movemos al final (donde están los botones)
+    if (wrapper.scrollLeft < 50) {
+        wrapper.scrollTo({
+            left: wrapper.scrollWidth,
+            behavior: 'smooth'
+        });
+        el.textContent = '❯'; // Cambia la flecha para indicar cierre
+    } else {
+        wrapper.scrollTo({
+            left: 0,
+            behavior: 'smooth'
+        });
+        el.textContent = '❮'; // Cambia la flecha para indicar apertura
+    }
+}
+  
 </script>
 </body>
 </html>
