@@ -9,17 +9,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lifance">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#2c3e50">
+  
   
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5501/5501375.png">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5501/5501375.png">
 
 
-  
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+ 
   <style>
     :root {
   --primary: #2c3e50;
@@ -36,7 +36,14 @@
     margin: 0;
     /* El body debe permitir que el color de fondo suba hasta la batería */
     min-height: 100vh;
+      background-color: white; /* Esto elimina el espacio vacío de arriba */
     }
+
+
+    #appContainer {
+  background-color: #f4f6f8; /* El color gris de fondo solo para el contenido */
+  min-height: 100vh;
+}
     
     .container { 
       max-width: 480px; 
@@ -170,17 +177,18 @@
     .pago-item.pagado span { text-decoration: line-through; }
 
     .sticky-header {
-      position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
-      backdrop-filter: blur(10px); /* Efecto de desenfoque moderno */
-      padding: calc(env(safe-area-inset-top) + 10px) 20px 15px 20px;
-      z-index: 1000;
-      border-bottom: 1px solid #eee;
-      text-align: center;
-    }
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white; /* Color sólido para que tape lo de abajo */
+  /* El padding-top usa la zona segura del iPhone + un extra */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 10px); 
+  padding-bottom: 15px;
+  z-index: 1000;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
     
     
 
