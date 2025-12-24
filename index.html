@@ -29,7 +29,7 @@
   /* Altura dinámica para evitar que se tape con la barra de gestos */
   --nav-height: calc(65px + env(safe-area-inset-bottom));
     }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; /* Elimina el recuadro azul en móviles */}
     body { 
     background: var(--bg); 
     padding: 0; 
@@ -37,7 +37,21 @@
     /* El body debe permitir que el color de fondo suba hasta la batería */
     min-height: 100vh;
     }
-    
+
+button, .nav-item, .metodo-option, .card, #fab-container button {
+  outline: none; /* Elimina el borde de selección en navegadores de escritorio */
+}
+
+    #fab-container button:active {
+  transform: scale(0.9); /* Se encoge un poquito al tocarlo */
+  transition: transform 0.1s ease;
+}
+
+
+    #fab-container button {
+  user-select: none;
+  -webkit-user-select: none;
+}
     .container { 
       max-width: 480px; 
       margin: auto;
