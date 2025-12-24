@@ -44,7 +44,7 @@
       background: #fff; 
       min-height: 100vh; 
       /* FORZAMOS el espacio para la hora y batería con un padding extra */
-      padding-top: calc(env(safe-area-inset-top) + 20px) !important;
+      padding-top: 0 !important;
       padding-left: 20px;
       padding-right: 20px;
       /* Espacio para la barra inferior */
@@ -143,15 +143,49 @@
         z-index: 1001;
     }
     
-    .nav-item { flex: 1; text-align: center; color: #95a5a6; cursor: pointer; font-size: 0.8rem; }
-    .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
-    .nav-item.active { color: var(--primary); font-weight: bold; }
+    .nav-item i { 
+      display: block; 
+      font-size: 1.8rem; /* Aumentado de 1.4rem a 1.8rem */
+      font-style: normal; 
+      margin-bottom: 4px; 
+    }
+    
+    .nav-item { 
+      flex: 1;
+      text-align: center; 
+      color: #95a5a6; 
+      cursor: pointer; 
+      font-size: 0.7rem; /* Texto un poco más pequeño para dar aire al icono */
+      transition: transform 0.1s ease;
+    }
+    
+    .nav-item:active {
+      transform: scale(0.9); /* Efecto de pulsación al tocar */
+    }
 
     /* Estilos Deudas/Pendientes */
     .badge-pend { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; margin-left: 5px; vertical-align: middle; }
     .pago-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff;}
     .pago-item.pagado { opacity: 0.6; background: #f9f9f9; border-left: 4px solid #27ae60; }
     .pago-item.pagado span { text-decoration: line-through; }
+
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
+      backdrop-filter: blur(10px); /* Efecto de desenfoque moderno */
+      padding: calc(env(safe-area-inset-top) + 10px) 20px 15px 20px;
+      z-index: 1000;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+    
+    
+
+
+    
   </style>
 </head>
 <body>
@@ -163,8 +197,10 @@
 </div>
 
 <div id="appContainer" class="container hidden">
-  <h2 id="headerTitle">Lifance</h2>
-  <p class="subtitle" id="userSubtitle">Cargando...</p>
+  <div class="sticky-header">
+    <h2 id="headerTitle" style="margin:0; font-size: 1.2rem;">Lifance</h2>
+    <p id="userSubtitle" style="margin:0; font-size: 0.8rem; color: #888;">Cargando...</p>
+  </div>
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
