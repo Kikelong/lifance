@@ -138,9 +138,13 @@
     /* El botón flotante (💰) también debe subir para no estorbar */
     #fab-container {
         position: fixed; 
-        bottom: calc(var(--nav-height) + 15px); 
+        bottom: calc(var(--nav-height) + 20px); 
         right: 20px; 
         z-index: 1001;
+      display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alinea el popover y el botón siempre a la derecha */
+    width: auto;
     }
     
     .nav-item i { 
@@ -183,7 +187,17 @@
     }
     
     
-
+#balance-popover {
+    background: white; 
+    border: 1px solid #ddd;
+    border-radius: 12px; 
+    padding: 15px; 
+    margin-bottom: 15px; /* Separación entre el cuadro y el botón 💰 */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    min-width: 200px;
+    /* Evita que el texto se mueva */
+    pointer-events: auto; 
+}
 
     
   </style>
