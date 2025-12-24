@@ -9,17 +9,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lifance">
   <meta name="mobile-web-app-capable" content="yes">
-  
+  <meta name="theme-color" content="#2c3e50">
   
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5501/5501375.png">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5501/5501375.png">
 
 
-  <meta name="theme-color" content="#ffffff">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
 
 
- 
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <style>
     :root {
   --primary: #2c3e50;
@@ -36,14 +36,7 @@
     margin: 0;
     /* El body debe permitir que el color de fondo suba hasta la batería */
     min-height: 100vh;
-      background-color: white; /* Esto elimina el espacio vacío de arriba */
     }
-
-
-    #appContainer {
-  background-color: #f4f6f8; /* El color gris de fondo solo para el contenido */
-  min-height: 100vh;
-}
     
     .container { 
       max-width: 480px; 
@@ -82,7 +75,7 @@
     .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
     .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
 
-    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 85px; z-index: 99; }
+    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 10px; z-index: 100; }
     .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
     .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
     .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
@@ -177,18 +170,17 @@
     .pago-item.pagado span { text-decoration: line-through; }
 
     .sticky-header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: white; /* Color sólido para que tape lo de abajo */
-  /* El padding-top usa la zona segura del iPhone + un extra */
-  padding-top: calc(env(safe-area-inset-top, 0px) + 10px); 
-  padding-bottom: 15px;
-  z-index: 1000;
-  border-bottom: 1px solid #eee;
-  text-align: center;
-}
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
+      backdrop-filter: blur(10px); /* Efecto de desenfoque moderno */
+      padding: calc(env(safe-area-inset-top) + 10px) 20px 15px 20px;
+      z-index: 1000;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
     
     
 
