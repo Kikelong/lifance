@@ -700,39 +700,70 @@ async function obtenerTodosLosPendientesPorPagar() {
   }
 
   async function guardarMovimiento() {
+    const btnGuardar = document.getElementById("btnGuardar");
     const mI = document.getElementById("monto");
     const val = Number(mI.value.replace(/\D/g, ""));
     const fec = document.getElementById("fecha").value;
     const pendienteId = document.getElementById("pendienteVinculo").value;
 
     if (!val || !tipoSeleccionado) return alert("Faltan datos");
-    
-    const ahora = new Date();
-    const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-    
-    const batch = db.batch();
-    const movRef = db.collection("movimientos").doc();
-    batch.set(movRef, {
-      uid: usuarioActual.uid, tipo: tipoSeleccionado,
-      categoria: document.getElementById("categoria").value,
-      monto: val, fecha: fec, hora: horaString,
-      metodo: document.getElementById("metodoPago").value,
-      nota: document.getElementById("nota").value.trim(),
-      pendienteVinculado: pendienteId || null,
-      creado: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    if (pendienteId) {
-        batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
-    }
 
-    await batch.commit();
-    
-    mI.value = ""; 
-    document.getElementById("nota").value = "";
-    document.getElementById("selectorPendienteContainer").classList.add("hidden");
-    await cargarPendientesDB();
-    cargarMovimientos();
-  }
+    // --- EFECTO DE CARGA ---
+    // Deshabilitamos el botón y cambiamos el texto
+    btnGuardar.disabled = true;
+    btnGuardar.innerHTML = "⌛ Registrando...";
+    btnGuardar.style.opacity = "0.7";
+    btnGuardar.style.cursor = "not-allowed";
+
+    try {
+        const ahora = new Date();
+        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+        
+        const batch = db.batch();
+        const movRef = db.collection("movimientos").doc();
+        
+        batch.set(movRef, {
+            uid: usuarioActual.uid, 
+            tipo: tipoSeleccionado,
+            categoria: document.getElementById("categoria").value,
+            monto: val, 
+            fecha: fec, 
+            hora: horaString,
+            metodo: document.getElementById("metodoPago").value,
+            nota: document.getElementById("nota").value.trim(),
+            pendienteVinculado: pendienteId || null,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        if (pendienteId) {
+            batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
+        }
+
+        await batch.commit();
+        
+        // Limpieza de campos tras éxito
+        mI.value = ""; 
+        document.getElementById("nota").value = "";
+        document.getElementById("selectorPendienteContainer").classList.add("hidden");
+        
+        await cargarPendientesDB();
+        cargarMovimientos();
+        
+        // Opcional: Pequeña alerta visual de éxito
+        console.log("Movimiento registrado con éxito");
+
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("Hubo un error al registrar. Inténtalo de nuevo.");
+    } finally {
+        // --- RESTAURAR BOTÓN ---
+        // Volvemos el botón a su estado original pase lo que pase
+        btnGuardar.disabled = false;
+        btnGuardar.innerHTML = "Registrar Movimiento";
+        btnGuardar.style.opacity = "1";
+        btnGuardar.style.cursor = "pointer";
+    }
+}
 
   function cargarMovimientos() {
     const m = parseInt(document.getElementById("mesFiltro").value);
