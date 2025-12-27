@@ -615,30 +615,57 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
       }
   }
 
-  function detectarPendientes() {
-      const cat = document.getElementById("categoria").value;
-      const selContainer = document.getElementById("selectorPendienteContainer");
-      const selVinculo = document.getElementById("pendienteVinculo");
-      
-      if (tipoSeleccionado !== 'egreso') {
-          selContainer.classList.add("hidden");
-          return;
-      }
 
-      const pendientesCat = misPendientes.filter(p => p.categoria === cat && !p.pagado);
-      if (pendientesCat.length > 0) {
-          selVinculo.innerHTML = '<option value="">-- OTRO (Gasto normal) --</option>';
-          pendientesCat.forEach(p => {
-              const o = document.createElement("option");
-              o.value = p.id;
-              o.textContent = `PAGAR: $${new Intl.NumberFormat("es-CO").format(p.monto)} (${p.nota || 'Sin nota'})`;
-              selVinculo.appendChild(o);
-          });
-          selContainer.classList.remove("hidden");
-      } else {
-          selContainer.classList.add("hidden");
-      }
-  }
+async function obtenerTodosLosPendientesPorPagar() {
+    if (!usuarioActual) return [];
+    const snap = await db.collection("pendientes")
+        .where("uid", "==", usuarioActual.uid)
+        .where("pagado", "==", false)
+        .get();
+    
+    let todos = [];
+    snap.forEach(doc => {
+        const data = doc.data();
+        // Extraemos mes y año de la fecha "YYYY-MM-DD"
+        const partes = data.fecha.split("-");
+        const fechaLegible = `${partes[1]}/${partes[0]}`; // Formato MM/YYYY
+        todos.push({ id: doc.id, ...data, fechaLegible });
+    });
+    return todos;
+}
+  
+
+  
+ async function detectarPendientes() {
+    const cat = document.getElementById("categoria").value;
+    const selContainer = document.getElementById("selectorPendienteContainer");
+    const selVinculo = document.getElementById("pendienteVinculo");
+
+    if (tipoSeleccionado !== 'egreso') {
+        selContainer.classList.add("hidden");
+        return;
+    }
+
+    // Buscamos en TODOS los pendientes por pagar de la DB, no solo los del cache local
+    const todosPendientes = await obtenerTodosLosPendientesPorPagar();
+    const pendientesCat = todosPendientes.filter(p => p.categoria === cat);
+
+    if (pendientesCat.length > 0) {
+        selVinculo.innerHTML = '<option value="">-- OTRO (Gasto normal) --</option>';
+        
+        pendientesCat.forEach(p => {
+            const o = document.createElement("option");
+            o.value = p.id;
+            // Aquí incluimos el Mes/Año al lado del texto
+            const montoFormateado = new Intl.NumberFormat("es-CO").format(p.monto);
+            o.textContent = `[${p.fechaLegible}] PAGAR: $${montoFormateado} (${p.nota || 'Sin nota'})`;
+            selVinculo.appendChild(o);
+        });
+        selContainer.classList.remove("hidden");
+    } else {
+        selContainer.classList.add("hidden");
+    }
+}
 
   function aplicarDatosPendiente() {
       const id = document.getElementById("pendienteVinculo").value;
