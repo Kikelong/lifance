@@ -324,7 +324,10 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
         <input type="text" id="notaPendiente" placeholder="Descripción (Ej: Internet Claro)">
         <button class="btn-egreso" onclick="crearPendiente()" style="margin-top:10px;">+ Guardar en Pendientes</button>
     </div>
-
+    <div class="row" style="margin-top:20px;">
+      <select id="mesFiltroPend" onchange="cargarPendientesDB()"></select>
+      <select id="anioFiltroPend" onchange="cargarPendientesDB()"></select>
+    </div>
     <h4 style="margin-top: 25px;">Lista de Pendientes</h4>
     <div id="listaPendientes" style="margin-top:10px;"></div>
   </div>
@@ -434,6 +437,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
       inicializarFechas();
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
+      inicializarFiltros("mesFiltroPend", "anioFiltroPend");
       
       await cargarCategoriasDB();
       await cargarPendientesDB();
@@ -553,15 +557,37 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
   }
 
   async function cargarPendientesDB() {
-    const snap = await db.collection("pendientes").where("uid", "==", usuarioActual.uid).get();
+    if (!usuarioActual) return;
+
+    // Obtenemos mes y año de los nuevos filtros
+    const m = parseInt(document.getElementById("mesFiltroPend").value);
+    const a = parseInt(document.getElementById("anioFiltroPend").value);
+    
+    // Calculamos el rango del mes (ej: 2023-10-01 al 2023-10-31)
+    const primerDia = `${a}-${String(m).padStart(2, '0')}-01`;
+    const ultimoDia = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+
+    // Consultamos solo los del mes seleccionado
+    const snap = await db.collection("pendientes")
+        .where("uid", "==", usuarioActual.uid)
+        .where("fecha", ">=", primerDia)
+        .where("fecha", "<=", ultimoDia)
+        .get();
+
     misPendientes = [];
     const cont = document.getElementById("listaPendientes");
     if(!cont) return;
     cont.innerHTML = "";
     const formato = new Intl.NumberFormat("es-CO");
     let docs = [];
+
     snap.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
     docs.sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+    if (docs.length === 0) {
+        cont.innerHTML = "<p style='text-align:center; color:#888;'>No hay pendientes para este mes.</p>";
+        return;
+    }
 
     docs.forEach(d => {
         misPendientes.push(d);
@@ -579,6 +605,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
         `;
         cont.appendChild(item);
     });
+
   }
 
   async function borrarPendiente(id) {
