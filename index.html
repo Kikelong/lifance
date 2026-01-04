@@ -29,89 +29,6 @@
   /* Altura dinámica para evitar que se tape con la barra de gestos */
   --nav-height: calc(65px + env(safe-area-inset-bottom));
     }
-
-:root {
-    --tab-bg: #ffffff;
-    --active-color: #ff5e7d; /* Color rosa de tu imagen */
-    --inactive-color: #94a3b8;
-}
-
-.new-tab-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    background: var(--tab-bg);
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    align-items: center;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-    border-radius: 25px 25px 0 0;
-    z-index: 1000;
-    /* Este clip-path crea el hueco curvo en el centro */
-    clip-path: polygon(0 0, 38% 0, 42% 15%, 50% 25%, 58% 15%, 62% 0, 100% 0, 100% 100%, 0 100%);
-}
-
-.tab-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.tab-icon {
-    color: var(--inactive-color);
-    width: 24px;
-    height: 24px;
-    stroke-width: 1.5px; /* Líneas finas tipo Instagram */
-}
-
-/* Estado activo: Línea más gruesa y color */
-.tab-item.active .tab-icon {
-    color: var(--active-color);
-    stroke-width: 2.5px;
-}
-
-/* Estilo del Botón Central Floating */
-.tab-item.central {
-    position: relative;
-    overflow: visible;
-}
-
-.fab-button {
-    position: absolute;
-    top: -35px; /* Lo sube para que flote */
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #ff8a9b, #ff5e7d);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    box-shadow: 0 8px 15px rgba(255, 94, 125, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.fab-button:active {
-    transform: scale(0.9);
-}
-
-.fab-icon {
-    width: 30px;
-    height: 30px;
-    stroke-width: 3px;
-}
-
-    
-
-    
-
-    
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; /* Elimina el recuadro azul en móviles */}
     body { 
     background: var(--bg); 
@@ -474,37 +391,12 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
   </div>
 </div>
 
-  
-
-  
-<footer class="new-tab-bar">
-    <div class="tab-item" onclick="mostrarSeccion('checklist')">
-        <i data-lucide="check-square" class="tab-icon"></i>
-    </div>
-
-    <div class="tab-item" onclick="mostrarSeccion('resumen')">
-        <i data-lucide="layout-dashboard" class="tab-icon"></i>
-    </div>
-
-    <div class="tab-item central">
-        <button class="fab-button" onclick="abrirModalMovimiento()">
-            <i data-lucide="plus" class="fab-icon"></i>
-        </button>
-    </div>
-
-    <div class="tab-item" onclick="mostrarSeccion('pendientes')">
-        <i data-lucide="clock" class="tab-icon"></i>
-    </div>
-
-    <div class="tab-item" onclick="mostrarSeccion('perfil')">
-        <i data-lucide="user" class="tab-icon"></i>
-    </div>
-</footer>
-
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-  lucide.createIcons();
-</script>
+<div id="bottomNav" class="bottom-nav hidden">
+    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i></div>
+    <div class="nav-item active" onclick="cambiarVista('home')"><i>📥</i></div>
+    <div class="nav-item" onclick="cambiarVista('pendientes')"><i>⏳</i></div>
+    <div class="nav-item" onclick="cambiarVista('settings')"><i>👤</i></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
