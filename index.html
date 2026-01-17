@@ -1007,6 +1007,13 @@ function cargarMovimientos() {
         movimientosCache = [];
         snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
         movimientosCache.sort((a, b) => {
+            // Ordenar por timestamp de creación descendente (más reciente primero)
+            if (b.creado && a.creado) {
+                const diff = b.creado.seconds - a.creado.seconds;
+                if (diff !== 0) return diff;
+                return b.creado.nanoseconds - a.creado.nanoseconds;
+            }
+            // Fallback por fecha y hora si no hay timestamp
             if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
             return (b.hora || "00:00").localeCompare(a.hora || "00:00");
         });
