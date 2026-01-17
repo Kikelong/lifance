@@ -585,11 +585,11 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
 
     
     docs.sort((a, b) => {
-  // 1. Primero comparamos por fecha (día)
     if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
-  // 2. Si es el mismo día, comparamos por hora
-    if (a.hora !== b.hora) return b.hora.localeCompare(a.hora);
-  // 3. Si es el mismo minuto, desempatamos con el timestamp 'creado'
+    if ((a.hora || "") !== (b.hora || "")) return (b.hora || "").localeCompare(a.hora || "");
+    return 0;
+});
+
 
       
 
