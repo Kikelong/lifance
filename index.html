@@ -449,7 +449,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     }
   });
 
-  function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  window.login = function () { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
   // --- Lógica Categorías ---
