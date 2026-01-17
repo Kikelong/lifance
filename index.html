@@ -582,7 +582,16 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     let docs = [];
 
     snap.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
-    docs.sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+    
+    docs.sort((a, b) => {
+  // 1. Primero comparamos por fecha (día)
+    if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
+  // 2. Si es el mismo día, comparamos por hora
+    if (a.hora !== b.hora) return b.hora.localeCompare(a.hora);
+  // 3. Si es el mismo minuto, desempatamos con el timestamp 'creado'
+
+      
 
     if (docs.length === 0) {
         cont.innerHTML = "<p style='text-align:center; color:#888;'>No hay pendientes para este mes.</p>";
@@ -765,21 +774,51 @@ async function obtenerTodosLosPendientesPorPagar() {
     }
 }
 
-  function cargarMovimientos() {
-    const m = parseInt(document.getElementById("mesFiltro").value);
-    const a = parseInt(document.getElementById("anioFiltro").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
-    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-        movimientosCache = [];
-        snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
-        movimientosCache.sort((a, b) => {
-            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
-            return (b.hora || "00:00").localeCompare(a.hora || "00:00");
-        });
-        renderizarLista(movimientosCache);
-    }).catch(err => { console.error(err); });
-  }
+
+  
+
+  
+      function cargarMovimientos() {
+          const m = parseInt(document.getElementById("mesFiltro").value);
+          const a = parseInt(document.getElementById("anioFiltro").value);
+          const pD = `${a}-${String(m).padStart(2, '0')}-01`;
+          const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+      
+          db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+              movimientosCache = [];
+              snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
+      
+              // EL CAMBIO ESTÁ AQUÍ:
+              movimientosCache.sort((a, b) => {
+                  // 1. Primero por fecha (Día)
+                  if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
+                  
+                  // 2. Si es el mismo día, desempatamos por hora (HH:mm)
+                  if ((a.hora || "00:00") !== (b.hora || "00:00")) {
+                      return (b.hora || "00:00").localeCompare(a.hora || "00:00");
+                  }
+                  
+                  // 3. Si es el mismo minuto, desempatamos por el timestamp exacto
+                  const timeA = a.creado?.seconds || 0;
+                  const timeB = b.creado?.seconds || 0;
+                  return timeB - timeA; 
+              });
+      
+              renderizarLista(movimientosCache);
+          }).catch(err => { console.error(err); });
+        }
+
+
+
+
+
+
+
+
+
+
+
+  
 
   function renderizarLista(datos) {
     const listaCont = document.getElementById("listaMovimientos");
