@@ -717,7 +717,8 @@ async function obtenerTodosLosPendientesPorPagar() {
 
     try {
         const ahora = new Date();
-        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0') + ":" + ahora.getSeconds().toString().padStart(2, '0');
+
         
         const batch = db.batch();
         const movRef = db.collection("movimientos").doc();
