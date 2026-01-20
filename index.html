@@ -65,9 +65,14 @@
         --text-secondary: #bdc3c7;
         --border-color: #444;
         --nav-bg: #2c2c2c;
+        --ingreso: #2ecc71; /* Un verde un poco más brillante */
+        --egreso: #e74c3c;  /* Un rojo un poco más brillante */
       }
 
-
+body.dark-mode .card {
+  background-color: var(--card-bg);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+}
 
     
     #fab-container button:active {
@@ -281,13 +286,13 @@
       cursor: pointer;
     }
     .card.ingreso-item {
-      border-left: 5px solid var(--ingreso);
+      border-left: 6px solid var(--ingreso) !important;
     }
     .card.egreso-item {
-      border-left: 5px solid var(--egreso);
+      border-left: 6px solid var(--egreso) !important;
     }
     .card.transferencia-item {
-      border-left: 5px solid #3498db;
+      border-left: 6px solid #3498db !important;
     }
     .card-swipe-actions {
       display: flex;
@@ -666,7 +671,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.7.1</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.7.2</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
