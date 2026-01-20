@@ -3,234 +3,499 @@
 <head>
   <meta charset="UTF-8">
   <title>Lifance - Control de Gastos</title>
-
-
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lifance">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#2c3e50">
-  
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Kikelong/lifance/refs/heads/main/342564211_194352320080466_4200138353293303184_n.png">
   <link rel="icon" href="https://raw.githubusercontent.com/Kikelong/lifance/refs/heads/main/342564211_194352320080466_4200138353293303184_n.png">
-
-
-  
-
-
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <style>
     :root {
-  --primary: #2c3e50;
-  --ingreso: #27ae60;
-  --egreso: #c0392b;
-  --bg: #f4f6f8;
-  /* Altura dinámica para evitar que se tape con la barra de gestos */
-  --nav-height: calc(65px + env(safe-area-inset-bottom));
+      --primary: #2c3e50;
+      --ingreso: #27ae60;
+      --egreso: #c0392b;
+      --bg: #f4f6f8;
+      --nav-height: calc(65px + env(safe-area-inset-bottom));
     }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; /* Elimina el recuadro azul en móviles */}
-    body { 
-    background: var(--bg); 
-    padding: 0; 
-    margin: 0;
-    /* El body debe permitir que el color de fondo suba hasta la batería */
-    min-height: 100vh;
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-
-button, .nav-item, .metodo-option, .card, #fab-container button {
-  outline: none; /* Elimina el borde de selección en navegadores de escritorio */
-}
-
+    body {
+      background: var(--bg);
+      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: calc(var(--nav-height) + 20px);
+    }
+    button, .nav-item, .metodo-option, .card, #fab-container button {
+      outline: none;
+    }
     #fab-container button:active {
-  transform: scale(0.9); /* Se encoge un poquito al tocarlo */
-  transition: transform 0.1s ease;
-}
-
-
+      transform: scale(0.9);
+      transition: transform 0.1s ease;
+    }
     #fab-container button {
-  user-select: none;
-  -webkit-user-select: none;
-}
-    .container { 
-      max-width: 480px; 
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .container {
+      max-width: 480px;
       margin: auto;
-      background: #fff; 
-      min-height: 100vh; 
-      /* FORZAMOS el espacio para la hora y batería con un padding extra */
+      background: #fff;
+      min-height: 100vh;
       padding-top: 0 !important;
       padding-left: 20px;
       padding-right: 20px;
-      /* Espacio para la barra inferior */
-      padding-bottom: calc(var(--nav-height) + 20px); 
-      box-shadow: 0 0 15px rgba(0,0,0,0.05); 
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
       position: relative;
-      box-sizing: border-box;
     }
-    
-    h2 { text-align: center; color: var(--primary); margin-top: 10px; margin-bottom: 5px; }
-    h3 { font-size: 1.1rem; color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; }
-    h4 { margin-bottom: 10px; color: var(--primary); }
-    p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;}
-
-    input, select, button, textarea { width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-    .row { display: flex; gap: 10px; }
-    
-    button { cursor: pointer; font-weight: 600; border: none; transition: opacity 0.2s; }
-    .btn-ingreso { background: var(--ingreso); color: white; }
-    .btn-egreso { background: var(--egreso); color: white; }
-    .btn-google { background: #4285F4; color: white; }
-    .btn-main { background: var(--primary); color: white; margin-top: 15px; }
-    .logout { background: #e74c3c; color: white; margin-top: 20px; }
-    .hidden { display: none !important; }
-
-    /* Buscador e Interfaz */
-    .search-box { margin-top: 15px; position: relative; }
-    .search-box input { padding-left: 40px; background: #f9f9f9; border: 1px solid #eee; }
-    .search-box::before { content: "🔍"; position: absolute; left: 12px; top: 24px; font-size: 1.1rem; }
-
-    .resumen-container { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #ddd; position: sticky; top: 85px; z-index: 99; }
-    .balance-card { background: var(--primary); color: white; padding: 15px; text-align: center; }
-    .balance-card span { display: block; font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
-    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; background: #ecf0f1; border-top: 1px solid rgba(0,0,0,0.05); }
-    .resumen-item { padding: 12px; text-align: center; font-size: 0.85rem; color: #555; border-right: 1px solid #ddd; }
-    .resumen-item:last-child { border-right: none; }
-    .resumen-item span { display: block; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
-
-    /* Métodos de Pago */
-    .metodo-selector { display: flex; gap: 10px; margin-top: 8px; }
-    .metodo-option { flex: 1; padding: 12px; text-align: center; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; background: #fff; }
-    .metodo-option.active { border-color: var(--primary); background: #ebf2f7; color: var(--primary); }
-
-    /* Modal Transferencia */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; }
-
-    /* Estilos de Lista */
-    .movimiento-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 10px; border-radius: 8px; }
-    .movimiento-wrapper::-webkit-scrollbar { display: none; }
-    .card { min-width: 100%; scroll-snap-align: start; background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 2; cursor: pointer; }
-    .card.ingreso-item { border-left: 5px solid var(--ingreso); }
-    .card.egreso-item { border-left: 5px solid var(--egreso); }
-    .card.transferencia-item { border-left: 5px solid #3498db; }
-    .card-swipe-actions { display: flex; scroll-snap-align: end; }
-    .btn-swipe { border: none; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; margin-top: 0; border-radius: 0; width: 70px; }
-    .btn-edit { background: #3498db; }
-    .btn-delete { background: #e74c3c; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-    .card-info { flex-grow: 1; }
-    .card-cat { font-weight: bold; font-size: 0.95rem; }
-    .card-date { font-size: 0.75rem; color: #888; }
-    .card-monto { font-weight: bold; font-size: 1rem; }
-    .text-ingreso { color: var(--ingreso); }
-    .text-egreso { color: var(--egreso); }
-    .text-transferencia { color: #3498db; }
-    .comentario-box { display: none; background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 6px; font-size: 0.9rem; font-style: italic; }
-    .cat-tag { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
-
-    /* Nav Inferior */
-
-    
-    .bottom-nav { 
+    h2 {
+      text-align: center;
+      color: var(--primary);
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: #555;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+      margin-top: 25px;
+    }
+    h4 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    p.subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    input, select, button, textarea {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn-ingreso {
+      background: var(--ingreso);
+      color: white;
+    }
+    .btn-egreso {
+      background: var(--egreso);
+      color: white;
+    }
+    .btn-google {
+      background: #4285F4;
+      color: white;
+    }
+    .btn-main {
+      background: var(--primary);
+      color: white;
+      margin-top: 15px;
+    }
+    .logout {
+      background: #e74c3c;
+      color: white;
+      margin-top: 20px;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .search-box {
+      margin-top: 15px;
+      position: relative;
+    }
+    .search-box input {
+      padding-left: 40px;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+    }
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 12px;
+      top: 24px;
+      font-size: 1.1rem;
+    }
+    .resumen-container {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      position: sticky;
+      top: 85px;
+      z-index: 99;
+    }
+    .balance-card {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .balance-card span {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 5px;
+    }
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #ecf0f1;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    .resumen-item {
+      padding: 12px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #555;
+      border-right: 1px solid #ddd;
+    }
+    .resumen-item:last-child {
+      border-right: none;
+    }
+    .resumen-item span {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .metodo-selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .metodo-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #fff;
+    }
+    .metodo-option.active {
+      border-color: var(--primary);
+      background: #ebf2f7;
+      color: var(--primary);
+    }
+    .modal-overlay {
       position: fixed;
-      bottom: 0; 
-      left: 0; 
-      width: 100%; 
-      height: var(--nav-height); 
-      background: white; 
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
-      display: flex; 
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      padding: 25px;
+      border-radius: 15px;
+    }
+    .movimiento-wrapper {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    .movimiento-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+    .card {
+      min-width: 100%;
+      scroll-snap-align: start;
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 2;
+      cursor: pointer;
+    }
+    .card.ingreso-item {
+      border-left: 5px solid var(--ingreso);
+    }
+    .card.egreso-item {
+      border-left: 5px solid var(--egreso);
+    }
+    .card.transferencia-item {
+      border-left: 5px solid #3498db;
+    }
+    .card-swipe-actions {
+      display: flex;
+      scroll-snap-align: end;
+    }
+    .btn-swipe {
+      border: none;
+      color: white;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-top: 0;
+      border-radius: 0;
+      width: 70px;
+    }
+    .btn-edit {
+      background: #3498db;
+    }
+    .btn-delete {
+      background: #e74c3c;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .card-info {
+      flex-grow: 1;
+    }
+    .card-cat {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .card-date {
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .card-monto {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .text-ingreso {
+      color: var(--ingreso);
+    }
+    .text-egreso {
+      color: var(--egreso);
+    }
+    .text-transferencia {
+      color: #3498db;
+    }
+    .comentario-box {
+      display: none;
+      background: #fff3cd;
+      padding: 8px;
+      margin-top: 8px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+    .cat-tag {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #eee;
+      margin-bottom: 5px;
+      border-radius: 6px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: var(--nav-height);
+      background: white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      display: flex;
       justify-content: space-around;
-      align-items: flex-start; 
-      /* Empujamos los iconos un poco hacia arriba */
+      align-items: flex-start;
       padding-top: 10px;
-      /* Evitamos que los iconos toquen la línea de abajo en iPhone */
       padding-bottom: env(safe-area-inset-bottom);
       z-index: 1000;
       box-sizing: border-box;
     }
-    /* El botón flotante (💰) también debe subir para no estorbar */
-    #fab-container {
-        position: fixed; 
-        bottom: calc(var(--nav-height) + 20px); 
-        right: 20px; 
-        z-index: 1001;
+    .nav-item.floating {
+      position: fixed;
+      bottom: calc(var(--nav-height) + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 1001;
       display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Alinea el popover y el botón siempre a la derecha */
-    width: auto;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
-    
-    .nav-item i { 
-      display: block; 
-      font-size: 1.8rem; /* Aumentado de 1.4rem a 1.8rem */
-      font-style: normal; 
-      margin-bottom: 4px; 
-    }
-    
-    .nav-item { 
-      flex: 1;
-      text-align: center; 
-      color: #95a5a6; 
-      cursor: pointer; 
-      font-size: 0.7rem; /* Texto un poco más pequeño para dar aire al icono */
+    .nav-item.floating:active {
+      transform: translateX(-50%) scale(0.9);
       transition: transform 0.1s ease;
     }
-    
-    .nav-item:active {
-      transform: scale(0.9); /* Efecto de pulsación al tocar */
+    #fab-container {
+      position: fixed;
+      bottom: calc(var(--nav-height) + 20px);
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
     }
-
-    /* Estilos Deudas/Pendientes */
-    .badge-pend { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; margin-left: 5px; vertical-align: middle; }
-    .pago-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; background: #fff;}
-    .pago-item.pagado { opacity: 0.6; background: #f9f9f9; border-left: 4px solid #27ae60; }
-    .pago-item.pagado span { text-decoration: line-through; }
-
+    .nav-item i {
+      display: block;
+      font-size: 1.8rem;
+      font-style: normal;
+      margin-bottom: 4px;
+    }
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      color: #95a5a6;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: transform 0.1s ease;
+    }
+    .nav-item:active {
+      transform: scale(0.9);
+    }
+    .badge-pend {
+      background: #f39c12;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .pago-item {
+      border: 1px solid #eee;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+    .pago-item.pagado {
+      opacity: 0.6;
+      background: #f9f9f9;
+      border-left: 4px solid #27ae60;
+    }
+    .pago-item.pagado span {
+      text-decoration: line-through;
+    }
     .sticky-header {
       position: sticky;
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
-      backdrop-filter: blur(10px); /* Efecto de desenfoque moderno */
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       padding: calc(env(safe-area-inset-top) + 10px) 20px 15px 20px;
       z-index: 1000;
       border-bottom: 1px solid #eee;
       text-align: center;
     }
-    
-    
-#balance-popover {
-    background: white; 
-    border: 1px solid #ddd;
-    border-radius: 12px; 
-    padding: 15px; 
-    margin-bottom: 15px; /* Separación entre el cuadro y el botón 💰 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    min-width: 200px;
-    /* Evita que el texto se mueva */
-    pointer-events: auto; 
-}
-
-
-@media (hover: hover) {
-    .card:hover {
+    #balance-popover {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      min-width: 200px;
+      pointer-events: auto;
+    }
+    @media (hover: hover) {
+      .card:hover {
         background-color: #f9f9f9;
-    }
-    .btn-swipe:hover {
+      }
+      .btn-swipe:hover {
         filter: brightness(1.1);
+      }
     }
-}
-    
-    
+    /* Mejoras básicas de CSS */
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: 1px solid #bdc3c7;
+      cursor: pointer;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
-
 <div id="loginBox" class="container" style="display:flex; flex-direction:column; justify-content:center;">
   <h2>Bienvenido a Lifance</h2>
-  <p style="text-align:center; color:#666;">Tu control financiero personal</p>
+  <p class="subtitle">Tu control financiero personal</p>
   <button class="btn-google" onclick="login()">🔵 Ingresar con Google</button>
 </div>
 
@@ -268,7 +533,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     </div>
 
     <select id="categoria" class="hidden" onchange="detectarPendientes()"></select>
-    
+
     <div id="selectorPendienteContainer" class="hidden">
         <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #e67e22; font-weight: bold;">Vincular con pendiente:</p>
         <select id="pendienteVinculo" onchange="aplicarDatosPendiente()">
@@ -321,7 +586,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
             <input type="text" id="montoPendiente" inputmode="numeric" placeholder="Monto $ 0" oninput="formatearMonto(this)">
             <input type="date" id="fechaPendiente">
         </div>
-        <input type="text" id="notaPendiente" placeholder="Descripción (Ej: Internet Claro)">
+        <input type="text" id="notaPendiente" placeholder="Descripción (Ej: Internet)">
         <button class="btn-egreso" onclick="crearPendiente()" style="margin-top:10px;">+ Guardar en Pendientes</button>
     </div>
     <div class="row" style="margin-top:20px;">
@@ -350,7 +615,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
         <div id="listaCategoriasEdit" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
     </div>
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.4</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.6</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -373,8 +638,46 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     </div>
   </div>
 
-  <div id="fab-container" style="position: fixed; bottom: 80px; right: 20px; z-index: 1001;">
-      <div id="balance-popover" class="hidden" style="background: white; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 180px;">
+  <div id="modalAddMovimiento" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">Nuevo Movimiento</h3>
+        <div class="row">
+          <input type="text" id="montoModal" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)" autocomplete="off">
+          <input type="date" id="fechaModal">
+        </div>
+        <div class="row">
+          <button id="btnIngresoModal" class="btn-ingreso" onclick="setTipoModal('ingreso')">INGRESO</button>
+          <button id="btnEgresoModal" class="btn-egreso" onclick="setTipoModal('egreso')">EGRESO</button>
+        </div>
+
+        <select id="categoriaModal" class="hidden" onchange="detectarPendientesModal()"></select>
+
+        <div id="selectorPendienteContainerModal" class="hidden">
+            <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #e67e22; font-weight: bold;">Vincular con pendiente:</p>
+            <select id="pendienteVinculoModal" onchange="aplicarDatosPendienteModal()">
+                <option value="">-- Escoger pendiente o "Otro" --</option>
+            </select>
+        </div>
+
+        <div id="metodoPagoContainerModal" class="hidden">
+            <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #666;">Método:</p>
+            <div class="metodo-selector">
+                <div class="metodo-option active" id="optCashModal" onclick="seleccionarMetodoModal('CASH')">💵 CASH</div>
+                <div class="metodo-option" id="optBankModal" onclick="seleccionarMetodoModal('BANK')">💳 BANK</div>
+            </div>
+            <input type="hidden" id="metodoPagoModal" value="CASH">
+        </div>
+
+        <input type="text" id="notaModal" class="hidden" placeholder="Escribe un comentario (opcional)...">
+        <button id="btnGuardarModal" class="btn-main hidden" onclick="guardarMovimientoModal()">Registrar Movimiento</button>
+        <div class="row" style="margin-top: 15px;">
+            <button class="logout" onclick="closeAddModal()" style="background: #95a5a6;">Cerrar</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="fab-container">
+      <div id="balance-popover" class="hidden">
           <div style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Saldos Detallados</div>
           <div style="margin-bottom: 8px;">
               <small>💵 CASH</small>
@@ -392,10 +695,11 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
 </div>
 
 <div id="bottomNav" class="bottom-nav hidden">
-    <div class="nav-item" onclick="cambiarVista('stats')"><i>📊</i></div>
-    <div class="nav-item active" onclick="cambiarVista('home')"><i>📥</i></div>
-    <div class="nav-item" onclick="cambiarVista('pendientes')"><i>⏳</i></div>
-    <div class="nav-item" onclick="cambiarVista('settings')"><i>👤</i></div>
+    <div class="nav-item" onclick="cambiarVista('stats')" id="nav-stats"><i class="far fa-chart-bar"></i></div>
+    <div class="nav-item active" onclick="cambiarVista('home')" id="nav-home"><i class="far fa-list"></i></div>
+    <div class="nav-item floating" onclick="openAddModal()" id="nav-add"><i class="fas fa-plus"></i></div>
+    <div class="nav-item" onclick="cambiarVista('pendientes')" id="nav-pendientes"><i class="far fa-clock"></i></div>
+    <div class="nav-item" onclick="cambiarVista('settings')" id="nav-settings"><i class="far fa-user"></i></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -403,7 +707,6 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // Tu Configuración Original 
   const firebaseConfig = {
     apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
     authDomain: "lifance-d2316.firebaseapp.com",
@@ -438,7 +741,7 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
       inicializarFiltros("mesFiltro", "anioFiltro");
       inicializarFiltros("mesFiltroStats", "anioFiltroStats");
       inicializarFiltros("mesFiltroPend", "anioFiltroPend");
-      
+
       await cargarCategoriasDB();
       await cargarPendientesDB();
       cargarMovimientos();
@@ -452,7 +755,6 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
   function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut(); }
 
-  // --- Lógica Categorías ---
   async function cargarCategoriasDB() {
     if (!usuarioActual) return;
     const snap = await db.collection("categorias").where("uid", "==", usuarioActual.uid).get();
@@ -526,7 +828,6 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
     if(confirm("¿Borrar categoría?")) { await db.collection("categorias").doc(id).delete(); cargarCategoriasDB(); }
   }
 
-  // --- Lógica Pendientes (Modificada) ---
   function actualizarSelectorCategoriasPendientes() {
     const sel = document.getElementById("catPendiente");
     if(!sel) return;
@@ -559,15 +860,12 @@ button, .nav-item, .metodo-option, .card, #fab-container button {
   async function cargarPendientesDB() {
     if (!usuarioActual) return;
 
-    // Obtenemos mes y año de los nuevos filtros
     const m = parseInt(document.getElementById("mesFiltroPend").value);
     const a = parseInt(document.getElementById("anioFiltroPend").value);
-    
-    // Calculamos el rango del mes (ej: 2023-10-01 al 2023-10-31)
+
     const primerDia = `${a}-${String(m).padStart(2, '0')}-01`;
     const ultimoDia = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
 
-    // Consultamos solo los del mes seleccionado
     const snap = await db.collection("pendientes")
         .where("uid", "==", usuarioActual.uid)
         .where("fecha", ">=", primerDia)
@@ -622,7 +920,7 @@ async function obtenerTodosLosPendientesPorPagar() {
         .where("uid", "==", usuarioActual.uid)
         .where("pagado", "==", false)
         .get();
-    
+
     let todos = [];
     snap.forEach(doc => {
         const data = doc.data();
@@ -633,10 +931,8 @@ async function obtenerTodosLosPendientesPorPagar() {
     });
     return todos;
 }
-  
 
-  
- async function detectarPendientes() {
+async function detectarPendientes() {
     const cat = document.getElementById("categoria").value;
     const selContainer = document.getElementById("selectorPendienteContainer");
     const selVinculo = document.getElementById("pendienteVinculo");
@@ -652,7 +948,7 @@ async function obtenerTodosLosPendientesPorPagar() {
 
     if (pendientesCat.length > 0) {
         selVinculo.innerHTML = '<option value="">-- OTRO (Gasto normal) --</option>';
-        
+
         pendientesCat.forEach(p => {
             const o = document.createElement("option");
             o.value = p.id;
@@ -667,24 +963,24 @@ async function obtenerTodosLosPendientesPorPagar() {
     }
 }
 
-  function aplicarDatosPendiente() {
-      const id = document.getElementById("pendienteVinculo").value;
-      if (!id) return;
-      const p = misPendientes.find(x => x.id === id);
-      if (p) {
-          document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(p.monto);
-          document.getElementById("nota").value = p.nota;
-      }
-  }
+function aplicarDatosPendiente() {
+    const id = document.getElementById("pendienteVinculo").value;
+    if (!id) return;
+    const p = misPendientes.find(x => x.id === id);
+    if (p) {
+        document.getElementById("monto").value = "$ " + new Intl.NumberFormat("es-CO").format(p.monto);
+        document.getElementById("nota").value = p.nota;
+    }
+}
 
-  // --- Lógica Movimientos ---
-  function seleccionarMetodo(m) {
+// --- Lógica Movimientos ---
+function seleccionarMetodo(m) {
     document.getElementById("metodoPago").value = m;
     document.getElementById("optCash").classList.toggle("active", m === 'CASH');
     document.getElementById("optBank").classList.toggle("active", m === 'BANK');
-  }
+}
 
-  function setTipo(t) {
+function setTipo(t) {
     tipoSeleccionado = t;
     document.getElementById("btnIngreso").style.opacity = t === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgreso").style.opacity = t === 'egreso' ? '1' : '0.4';
@@ -697,9 +993,9 @@ async function obtenerTodosLosPendientesPorPagar() {
     document.getElementById("nota").classList.remove("hidden");
     document.getElementById("btnGuardar").classList.remove("hidden");
     detectarPendientes();
-  }
+}
 
-  async function guardarMovimiento() {
+async function guardarMovimiento() {
     const btnGuardar = document.getElementById("btnGuardar");
     const mI = document.getElementById("monto");
     const val = Number(mI.value.replace(/\D/g, ""));
@@ -717,18 +1013,17 @@ async function obtenerTodosLosPendientesPorPagar() {
 
     try {
         const ahora = new Date();
-        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0') + ":" + ahora.getSeconds().toString().padStart(2, '0');
+        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
 
-        
         const batch = db.batch();
         const movRef = db.collection("movimientos").doc();
-        
+
         batch.set(movRef, {
-            uid: usuarioActual.uid, 
+            uid: usuarioActual.uid,
             tipo: tipoSeleccionado,
             categoria: document.getElementById("categoria").value,
-            monto: val, 
-            fecha: fec, 
+            monto: val,
+            fecha: fec,
             hora: horaString,
             metodo: document.getElementById("metodoPago").value,
             nota: document.getElementById("nota").value.trim(),
@@ -741,15 +1036,15 @@ async function obtenerTodosLosPendientesPorPagar() {
         }
 
         await batch.commit();
-        
+
         // Limpieza de campos tras éxito
-        mI.value = ""; 
+        mI.value = "";
         document.getElementById("nota").value = "";
         document.getElementById("selectorPendienteContainer").classList.add("hidden");
-        
+
         await cargarPendientesDB();
         cargarMovimientos();
-        
+
         // Opcional: Pequeña alerta visual de éxito
         console.log("Movimiento registrado con éxito");
 
@@ -766,7 +1061,7 @@ async function obtenerTodosLosPendientesPorPagar() {
     }
 }
 
-  function cargarMovimientos() {
+function cargarMovimientos() {
     const m = parseInt(document.getElementById("mesFiltro").value);
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
@@ -775,14 +1070,21 @@ async function obtenerTodosLosPendientesPorPagar() {
         movimientosCache = [];
         snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
         movimientosCache.sort((a, b) => {
+            // Ordenar por timestamp de creación descendente (más reciente primero)
+            if (b.creado && a.creado) {
+                const diff = b.creado.seconds - a.creado.seconds;
+                if (diff !== 0) return diff;
+                return b.creado.nanoseconds - a.creado.nanoseconds;
+            }
+            // Fallback por fecha y hora si no hay timestamp
             if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
             return (b.hora || "00:00").localeCompare(a.hora || "00:00");
         });
         renderizarLista(movimientosCache);
     }).catch(err => { console.error(err); });
-  }
+}
 
-  function renderizarLista(datos) {
+function renderizarLista(datos) {
     const listaCont = document.getElementById("listaMovimientos");
     if(!listaCont) return;
     listaCont.innerHTML = "";
@@ -813,22 +1115,22 @@ async function obtenerTodosLosPendientesPorPagar() {
                 <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
             <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${d.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️</button>
+                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${d.id}', ${JSON.stringify(d).replace(/"/g, '"')})">✏️</button>
                 <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
             </div>
         `;
         listaCont.appendChild(wrapper);
     });
     actualizarResumenVisual(iT, eT, cashTotal, bankTotal);
-  }
+}
 
-  function filtrarMovimientos() {
+function filtrarMovimientos() {
     const term = document.getElementById("buscador").value.toLowerCase();
     const filtrados = movimientosCache.filter(m => m.categoria.toLowerCase().includes(term) || (m.nota && m.nota.toLowerCase().includes(term)));
     renderizarLista(filtrados);
-  }
+}
 
-  function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
+function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
     const formato = new Intl.NumberFormat("es-CO");
     const balance = iT - eT;
     document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
@@ -849,36 +1151,65 @@ async function obtenerTodosLosPendientesPorPagar() {
         cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
         bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
     }
-  }
+}
 
-  // --- UI y Navegación ---
-  function cambiarVista(v) {
+// --- UI y Navegación ---
+function cambiarVista(v) {
+    if (v === 'add') {
+        openAddModal();
+        return;
+    }
     document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(`view-${v}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    // Mapeo de índices para el menú de 4 opciones
-    const vistas = ['stats', 'home', 'pendientes', 'settings'];
+
+    // Mapeo de índices para el menú de 5 opciones
+    const vistas = ['stats', 'home', 'add', 'pendientes', 'settings'];
     const idx = vistas.indexOf(v);
-    document.querySelectorAll('.nav-item')[idx].classList.add('active');
-    
+    if (idx >= 0 && idx < 5) {
+        document.querySelectorAll('.nav-item')[idx].classList.add('active');
+    }
+
+    // Actualizar iconos: solid para activo, outline para inactivos
+    document.querySelectorAll('.nav-item i').forEach((icon, i) => {
+        const isActive = i === idx;
+        if (i === 0) { // Resumen
+            icon.className = isActive ? 'fas fa-chart-bar' : 'far fa-chart-bar';
+        } else if (i === 1) { // Movimientos
+            icon.className = isActive ? 'fas fa-list' : 'far fa-list';
+        } else if (i === 2) { // + (floating, always solid)
+            icon.className = 'fas fa-plus';
+        } else if (i === 3) { // Pendientes
+            icon.className = isActive ? 'fas fa-clock' : 'far fa-clock';
+        } else if (i === 4) { // Perfil
+            icon.className = isActive ? 'fas fa-user' : 'far fa-user';
+        }
+    });
+
     if(v === 'stats') cargarEstadisticas();
     if(v === 'pendientes') cargarPendientesDB();
     window.scrollTo(0,0);
-  }
+}
 
-  function toggleModalTransf() {
+function abrirModalMovimiento() {
+    // Mostrar el formulario de nuevo movimiento y cambiar a la vista home
+    cambiarVista('home');
+    // Scroll to top to show the form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleModalTransf() {
     document.getElementById("modalTransferencia").classList.toggle("hidden");
     document.getElementById("balance-popover").classList.add("hidden");
     document.getElementById("montoTransf").value = "";
-  }
+}
 
-  function actualizarDestinoTransf() {
+function actualizarDestinoTransf() {
     const o = document.getElementById("transfOrigen").value;
     document.getElementById("transfDestino").value = (o === 'CASH') ? '💳 BANK' : '💵 CASH';
-  }
+}
 
-  async function ejecutarTransferencia() {
+async function ejecutarTransferencia() {
     const mStr = document.getElementById("montoTransf").value;
     const val = Number(mStr.replace(/\D/g, ""));
     if (!val || val <= 0) return alert("Monto inválido");
@@ -897,11 +1228,11 @@ async function obtenerTodosLosPendientesPorPagar() {
         toggleModalTransf();
         cargarMovimientos();
     } catch (e) { alert("Error al transferir"); }
-  }
+}
 
-  function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
+function toggleBalancePopover() { document.getElementById("balance-popover").classList.toggle("hidden"); }
 
-  function prepararEdicion(id, data) {
+function prepararEdicion(id, data) {
     document.getElementById("formTitle").textContent = "Editando Movimiento";
     document.getElementById("monto").value = Math.abs(data.monto);
     formatearMonto(document.getElementById("monto"));
@@ -915,17 +1246,17 @@ async function obtenerTodosLosPendientesPorPagar() {
     btn.onclick = () => actualizarMovimiento(id);
     document.getElementById("btnCancelarEdit").classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+}
 
-  async function actualizarMovimiento(id) {
+async function actualizarMovimiento(id) {
     const val = Number(document.getElementById("monto").value.replace(/\D/g, ""));
     const data = { monto: val, fecha: document.getElementById("fecha").value, categoria: document.getElementById("categoria").value, metodo: document.getElementById("metodoPago").value, nota: document.getElementById("nota").value.trim() };
     await db.collection("movimientos").doc(id).update(data);
     cancelarEdicion();
     cargarMovimientos();
-  }
+}
 
-  function cancelarEdicion() {
+function cancelarEdicion() {
     document.getElementById("formTitle").textContent = "Nuevo Movimiento";
     document.getElementById("monto").value = "";
     document.getElementById("nota").value = "";
@@ -933,9 +1264,9 @@ async function obtenerTodosLosPendientesPorPagar() {
     const btn = document.getElementById("btnGuardar");
     btn.textContent = "Registrar Movimiento";
     btn.onclick = guardarMovimiento;
-  }
+}
 
-  function cargarEstadisticas() {
+function cargarEstadisticas() {
     const cont = document.getElementById("statsContent");
     if(!cont) return;
     const m = parseInt(document.getElementById("mesFiltroStats").value);
@@ -955,16 +1286,16 @@ async function obtenerTodosLosPendientesPorPagar() {
       for(let [c,v] of Object.entries(sE)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
       cont.innerHTML = h;
     });
-  }
+}
 
-  function actualizarHeaderNombre() {
+function actualizarHeaderNombre() {
     const n = usuarioActual.displayName || usuarioActual.email;
     document.getElementById("headerTitle").textContent = `Lifance de ${n.split(' ')[0]}`;
     document.getElementById("userSubtitle").textContent = usuarioActual.email;
-  }
+}
 
-  function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
-  function inicializarFiltros(idM, idA) {
+function inicializarFechas() { document.getElementById("fecha").value = new Date().toLocaleDateString('en-CA'); }
+function inicializarFiltros(idM, idA) {
     const hoy = new Date();
     const sM = document.getElementById(idM);
     const sA = document.getElementById(idA);
@@ -981,28 +1312,27 @@ async function obtenerTodosLosPendientesPorPagar() {
       o.value = a; o.textContent = a;
       if (a === hoy.getFullYear()) o.selected = true; sA.appendChild(o);
     }
-  }
+}
 
-  function formatearMonto(i) {
+function formatearMonto(i) {
     let v = i.value.replace(/\D/g, "");
     i.value = v ? "$ " + new Intl.NumberFormat("es-CO").format(v) : "";
-  }
+}
 
-  function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
-  function borrarMov(id) { if(confirm("¿Borrar movimiento?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
-  function actualizarPerfil() {
-      const n = document.getElementById("inputNombreUsuario").value;
-      if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
-  }
-
+function toggleComent(id) { const c = document.getElementById(`c-${id}`); if(c) c.style.display = c.style.display === "block" ? "none" : "block"; }
+function borrarMov(id) { if(confirm("¿Borrar movimiento?")) db.collection("movimientos").doc(id).delete().then(()=>cargarMovimientos()); }
+function actualizarPerfil() {
+    const n = document.getElementById("inputNombreUsuario").value;
+    if(n) usuarioActual.updateProfile({ displayName: n }).then(() => { alert("Perfil actualizado"); actualizarHeaderNombre(); });
+}
 
 function toggleSwipe(el, event) {
     // Evitamos que el clic abra también el comentario de la tarjeta
     event.stopPropagation();
-    
+
     // Buscamos el contenedor que tiene el scroll (movimiento-wrapper)
     const wrapper = el.closest('.movimiento-wrapper');
-    
+
     // Si el scroll está al inicio, lo movemos al final (donde están los botones)
     if (wrapper.scrollLeft < 50) {
         wrapper.scrollTo({
@@ -1018,7 +1348,153 @@ function toggleSwipe(el, event) {
         el.textContent = '❮'; // Cambia la flecha para indicar apertura
     }
 }
-  
+
+// --- Modal Functions ---
+function openAddModal() {
+    document.getElementById("modalAddMovimiento").classList.remove("hidden");
+    inicializarFechasModal();
+}
+
+function closeAddModal() {
+    document.getElementById("modalAddMovimiento").classList.add("hidden");
+    // Reset modal form
+    document.getElementById("montoModal").value = "";
+    document.getElementById("notaModal").value = "";
+    document.getElementById("categoriaModal").classList.add("hidden");
+    document.getElementById("selectorPendienteContainerModal").classList.add("hidden");
+    document.getElementById("metodoPagoContainerModal").classList.add("hidden");
+    document.getElementById("btnGuardarModal").classList.add("hidden");
+    document.getElementById("btnIngresoModal").style.opacity = "1";
+    document.getElementById("btnEgresoModal").style.opacity = "1";
+}
+
+function inicializarFechasModal() {
+    document.getElementById("fechaModal").value = new Date().toLocaleDateString('en-CA');
+}
+
+let tipoSeleccionadoModal = "";
+
+function setTipoModal(t) {
+    tipoSeleccionadoModal = t;
+    document.getElementById("btnIngresoModal").style.opacity = t === 'ingreso' ? '1' : '0.4';
+    document.getElementById("btnEgresoModal").style.opacity = t === 'egreso' ? '1' : '0.4';
+    const catS = document.getElementById("categoriaModal");
+    catS.innerHTML = "";
+    const lista = misCategorias[t].sort((a,b) => (a.orden||0) - (b.orden||0));
+    lista.forEach(c => { const o = document.createElement("option"); o.value = o.textContent = c.nombre; catS.appendChild(o); });
+    catS.classList.remove("hidden");
+    document.getElementById("metodoPagoContainerModal").classList.remove("hidden");
+    document.getElementById("notaModal").classList.remove("hidden");
+    document.getElementById("btnGuardarModal").classList.remove("hidden");
+    detectarPendientesModal();
+}
+
+function seleccionarMetodoModal(m) {
+    document.getElementById("metodoPagoModal").value = m;
+    document.getElementById("optCashModal").classList.toggle("active", m === 'CASH');
+    document.getElementById("optBankModal").classList.toggle("active", m === 'BANK');
+}
+
+async function detectarPendientesModal() {
+    const cat = document.getElementById("categoriaModal").value;
+    const selContainer = document.getElementById("selectorPendienteContainerModal");
+    const selVinculo = document.getElementById("pendienteVinculoModal");
+
+    if (tipoSeleccionadoModal !== 'egreso') {
+        selContainer.classList.add("hidden");
+        return;
+    }
+
+    const todosPendientes = await obtenerTodosLosPendientesPorPagar();
+    const pendientesCat = todosPendientes.filter(p => p.categoria === cat);
+
+    if (pendientesCat.length > 0) {
+        selVinculo.innerHTML = '<option value="">-- OTRO (Gasto normal) --</option>';
+        pendientesCat.forEach(p => {
+            const o = document.createElement("option");
+            o.value = p.id;
+            const montoFormateado = new Intl.NumberFormat("es-CO").format(p.monto);
+            o.textContent = `[${p.fechaLegible}] PAGAR: $${montoFormateado} (${p.nota || 'Sin nota'})`;
+            selVinculo.appendChild(o);
+        });
+        selContainer.classList.remove("hidden");
+    } else {
+        selContainer.classList.add("hidden");
+    }
+}
+
+function aplicarDatosPendienteModal() {
+    const id = document.getElementById("pendienteVinculoModal").value;
+    if (!id) return;
+    const p = misPendientes.find(x => x.id === id);
+    if (p) {
+        document.getElementById("montoModal").value = "$ " + new Intl.NumberFormat("es-CO").format(p.monto);
+        document.getElementById("notaModal").value = p.nota;
+    }
+}
+
+async function guardarMovimientoModal() {
+    const btnGuardar = document.getElementById("btnGuardarModal");
+    const mI = document.getElementById("montoModal");
+    const val = Number(mI.value.replace(/\D/g, ""));
+    const fec = document.getElementById("fechaModal").value;
+    const pendienteId = document.getElementById("pendienteVinculoModal").value;
+
+    if (!val || !tipoSeleccionadoModal) return alert("Faltan datos");
+
+    btnGuardar.disabled = true;
+    btnGuardar.innerHTML = "⌛ Registrando...";
+    btnGuardar.style.opacity = "0.7";
+    btnGuardar.style.cursor = "not-allowed";
+
+    try {
+        const ahora = new Date();
+        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+
+        const batch = db.batch();
+        const movRef = db.collection("movimientos").doc();
+
+        batch.set(movRef, {
+            uid: usuarioActual.uid,
+            tipo: tipoSeleccionadoModal,
+            categoria: document.getElementById("categoriaModal").value,
+            monto: val,
+            fecha: fec,
+            hora: horaString,
+            metodo: document.getElementById("metodoPagoModal").value,
+            nota: document.getElementById("notaModal").value.trim(),
+            pendienteVinculado: pendienteId || null,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        if (pendienteId) {
+            batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
+        }
+
+        await batch.commit();
+
+        mI.value = "";
+        document.getElementById("notaModal").value = "";
+        document.getElementById("selectorPendienteContainerModal").classList.add("hidden");
+
+        await cargarPendientesDB();
+        cargarMovimientos();
+
+        closeAddModal();
+        cambiarVista('home'); // Switch to Movimientos section
+
+        console.log("Movimiento registrado con éxito");
+
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("Hubo un error al registrar. Inténtalo de nuevo.");
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.innerHTML = "Registrar Movimiento";
+        btnGuardar.style.opacity = "1";
+        btnGuardar.style.cursor = "pointer";
+    }
+}
 </script>
 </body>
 </html>
