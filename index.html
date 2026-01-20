@@ -1053,28 +1053,59 @@ async function guardarMovimiento() {
     }
 }
 
+
+
 function cargarMovimientos() {
     const m = parseInt(document.getElementById("mesFiltro").value);
     const a = parseInt(document.getElementById("anioFiltro").value);
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
     const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-        movimientosCache = [];
-        snap.forEach(doc => { movimientosCache.push({ id: doc.id, ...doc.data() }); });
-        movimientosCache.sort((a, b) => {
-            // Ordenar por timestamp de creación descendente (más reciente primero)
-            if (b.creado && a.creado) {
-                const diff = b.creado.seconds - a.creado.seconds;
-                if (diff !== 0) return diff;
-                return b.creado.nanoseconds - a.creado.nanoseconds;
-            }
-            // Fallback por fecha y hora si no hay timestamp
-            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
-            return (b.hora || "00:00").localeCompare(a.hora || "00:00");
+
+    db.collection("movimientos")
+        .where("uid", "==", usuarioActual.uid)
+        .where("fecha", ">=", pD)
+        .where("fecha", "<=", uD)
+        .get()
+        .then(snap => {
+            movimientosCache = [];
+            snap.forEach(doc => {
+                movimientosCache.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Ordenamiento: cronológico descendente (más reciente arriba)
+            movimientosCache.sort((a, b) => {
+                // 1. Fecha descendente (principal)
+                if (a.fecha !== b.fecha) {
+                    return b.fecha.localeCompare(a.fecha);
+                }
+
+                // 2. Hora descendente
+                const horaA = a.hora || "00:00";
+                const horaB = b.hora || "00:00";
+                if (horaA !== horaB) {
+                    return horaB.localeCompare(horaA);
+                }
+
+                // 3. Desempate: creado descendente (el más nuevo primero)
+                if (b.creado && a.creado) {
+                    const diff = b.creado.seconds - a.creado.seconds;
+                    if (diff !== 0) return diff;
+                    return b.creado.nanoseconds - a.creado.nanoseconds;
+                }
+
+                return 0;
+            });
+
+            renderizarLista(movimientosCache);
+        })
+        .catch(err => {
+            console.error("Error al cargar movimientos:", err);
         });
-        renderizarLista(movimientosCache);
-    }).catch(err => { console.error(err); });
 }
+
+
+
+  
 
 function renderizarLista(datos) {
     const listaCont = document.getElementById("listaMovimientos");
