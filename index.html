@@ -522,37 +522,13 @@
   </div>
 
   <div id="view-home" class="view-section">
-    <h3 id="formTitle">Nuevo Movimiento</h3>
-    <div class="row">
-      <input type="text" id="monto" inputmode="numeric" placeholder="$ 0" oninput="formatearMonto(this)" autocomplete="off">
-      <input type="date" id="fecha">
-    </div>
-    <div class="row">
-      <button id="btnIngreso" class="btn-ingreso" onclick="setTipo('ingreso')">INGRESO</button>
-      <button id="btnEgreso" class="btn-egreso" onclick="setTipo('egreso')">EGRESO</button>
-    </div>
+    
 
-    <select id="categoria" class="hidden" onchange="detectarPendientes()"></select>
 
-    <div id="selectorPendienteContainer" class="hidden">
-        <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #e67e22; font-weight: bold;">Vincular con pendiente:</p>
-        <select id="pendienteVinculo" onchange="aplicarDatosPendiente()">
-            <option value="">-- Escoger pendiente o "Otro" --</option>
-        </select>
-    </div>
 
-    <div id="metodoPagoContainer" class="hidden">
-        <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #666;">Método:</p>
-        <div class="metodo-selector">
-            <div class="metodo-option active" id="optCash" onclick="seleccionarMetodo('CASH')">💵 CASH</div>
-            <div class="metodo-option" id="optBank" onclick="seleccionarMetodo('BANK')">💳 BANK</div>
-        </div>
-        <input type="hidden" id="metodoPago" value="CASH">
-    </div>
 
-    <input type="text" id="nota" class="hidden" placeholder="Escribe un comentario (opcional)...">
-    <button id="btnGuardar" class="btn-main hidden" onclick="guardarMovimiento()">Registrar Movimiento</button>
-    <button id="btnCancelarEdit" class="logout hidden" onclick="cancelarEdicion()">Cancelar Edición</button>
+
+    
 
     <h3>Historial</h3>
     <div class="search-box">
@@ -719,6 +695,22 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+
+
+
+
+
+  let editandoId = null;  // null si es nuevo movimiento, o el ID si es edición
+let editandoData = null;  // Para guardar los datos originales temporalmente
+
+
+
+  
+
+
+
+
+  
 
   let usuarioActual = null;
   let tipoSeleccionado = "";
@@ -1115,7 +1107,7 @@ function renderizarLista(datos) {
                 <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
             </div>
             <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="prepararEdicion('${d.id}', ${JSON.stringify(d).replace(/"/g, '"')})">✏️</button>
+                <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${d.categoria.replace(/\'/g, "\\\'")}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${(d.nota || '').replace(/\'/g, "\\\'")}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
                 <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
             </div>
         `;
@@ -1350,9 +1342,66 @@ function toggleSwipe(el, event) {
 }
 
 // --- Modal Functions ---
-function openAddModal() {
-    document.getElementById("modalAddMovimiento").classList.remove("hidden");
-    inicializarFechasModal();
+function openAddModal(esEdicion = false, data = null, id = null) {
+    editandoId = esEdicion ? id : null;
+    editandoData = data;
+
+    const modal = document.getElementById("modalAddMovimiento");
+    const title = modal.querySelector("h3");  // El h3 dentro del modal
+    const btnGuardar = document.getElementById("btnGuardarModal");
+
+    if (esEdicion) {
+        title.textContent = "Editar Movimiento";
+        btnGuardar.textContent = "Guardar Cambios";
+        btnGuardar.onclick = guardarMovimientoModal;  // Asegura que use la función correcta
+
+        // Cargar datos en el form del modal
+        document.getElementById("montoModal").value = "$ " + new Intl.NumberFormat("es-CO").format(Math.abs(data.monto));
+        document.getElementById("fechaModal").value = data.fecha;
+        document.getElementById("notaModal").value = data.nota || "";
+
+        // Setear tipo (ingreso/egreso)
+        setTipoModal(data.tipo);
+
+        // Categoría (después de setTipoModal, porque cambia el select)
+        document.getElementById("categoriaModal").value = data.categoria;
+
+        // Método de pago
+        seleccionarMetodoModal(data.metodo);
+
+        // Mostrar secciones ocultas (ya que en edición ya hay tipo)
+        document.getElementById("categoriaModal").classList.remove("hidden");
+        document.getElementById("metodoPagoContainerModal").classList.remove("hidden");
+        document.getElementById("notaModal").classList.remove("hidden");
+        document.getElementById("btnGuardarModal").classList.remove("hidden");
+
+        // Detectar pendientes si es egreso
+        detectarPendientesModal();
+
+        // Si hay pendiente vinculado, precargarlo (opcional, pero útil)
+        if (data.pendienteVinculado) {
+            document.getElementById("pendienteVinculoModal").value = data.pendienteVinculado;
+        }
+    } else {
+        // Modo nuevo (lo que ya tenías)
+        title.textContent = "Nuevo Movimiento";
+        btnGuardar.textContent = "Registrar Movimiento";
+        btnGuardar.onclick = guardarMovimientoModal;
+
+        // Resetear form
+        document.getElementById("montoModal").value = "";
+        document.getElementById("fechaModal").value = new Date().toLocaleDateString('en-CA');
+        document.getElementById("notaModal").value = "";
+        document.getElementById("categoriaModal").classList.add("hidden");
+        document.getElementById("selectorPendienteContainerModal").classList.add("hidden");
+        document.getElementById("metodoPagoContainerModal").classList.add("hidden");
+        document.getElementById("btnGuardarModal").classList.add("hidden");
+        document.getElementById("btnIngresoModal").style.opacity = "1";
+        document.getElementById("btnEgresoModal").style.opacity = "1";
+        tipoSeleccionadoModal = "";
+    }
+
+    modal.classList.remove("hidden");
 }
 
 function closeAddModal() {
@@ -1366,6 +1415,7 @@ function closeAddModal() {
     document.getElementById("btnGuardarModal").classList.add("hidden");
     document.getElementById("btnIngresoModal").style.opacity = "1";
     document.getElementById("btnEgresoModal").style.opacity = "1";
+    editandoId = null; editandoData = null;
 }
 
 function inicializarFechasModal() {
@@ -1433,6 +1483,7 @@ function aplicarDatosPendienteModal() {
     }
 }
 
+
 async function guardarMovimientoModal() {
     const btnGuardar = document.getElementById("btnGuardarModal");
     const mI = document.getElementById("montoModal");
@@ -1442,6 +1493,7 @@ async function guardarMovimientoModal() {
 
     if (!val || !tipoSeleccionadoModal) return alert("Faltan datos");
 
+    // Efecto de carga
     btnGuardar.disabled = true;
     btnGuardar.innerHTML = "⌛ Registrando...";
     btnGuardar.style.opacity = "0.7";
@@ -1451,10 +1503,7 @@ async function guardarMovimientoModal() {
         const ahora = new Date();
         const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
 
-        const batch = db.batch();
-        const movRef = db.collection("movimientos").doc();
-
-        batch.set(movRef, {
+        const datos = {
             uid: usuarioActual.uid,
             tipo: tipoSeleccionadoModal,
             categoria: document.getElementById("categoriaModal").value,
@@ -1463,38 +1512,49 @@ async function guardarMovimientoModal() {
             hora: horaString,
             metodo: document.getElementById("metodoPagoModal").value,
             nota: document.getElementById("notaModal").value.trim(),
-            pendienteVinculado: pendienteId || null,
-            creado: firebase.firestore.FieldValue.serverTimestamp()
-        });
+            pendienteVinculado: pendienteId || null
+        };
 
-        if (pendienteId) {
+        const batch = db.batch();
+        const movRef = db.collection("movimientos").doc(editandoId || undefined);  // Usa ID si edición
+
+        if (editandoId) {
+            // Edición: update (no toca 'creado')
+            batch.update(movRef, datos);
+        } else {
+            // Nuevo: set con timestamp
+            datos.creado = firebase.firestore.FieldValue.serverTimestamp();
+            batch.set(movRef, datos);
+        }
+
+        // Si es nuevo y vincula pendiente, marcar pagado
+        if (pendienteId && !editandoId) {
             batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
         }
 
         await batch.commit();
 
-        mI.value = "";
-        document.getElementById("notaModal").value = "";
-        document.getElementById("selectorPendienteContainerModal").classList.add("hidden");
-
+        // Limpieza y recarga
+        closeAddModal();
         await cargarPendientesDB();
         cargarMovimientos();
 
-        closeAddModal();
-        cambiarVista('home'); // Switch to Movimientos section
-
-        console.log("Movimiento registrado con éxito");
+        console.log("Movimiento guardado/editado con éxito");
 
     } catch (error) {
         console.error("Error al guardar:", error);
         alert("Hubo un error al registrar. Inténtalo de nuevo.");
     } finally {
+        // Restaurar botón
         btnGuardar.disabled = false;
-        btnGuardar.innerHTML = "Registrar Movimiento";
+        btnGuardar.innerHTML = editandoId ? "Guardar Cambios" : "Registrar Movimiento";
         btnGuardar.style.opacity = "1";
         btnGuardar.style.cursor = "pointer";
     }
 }
+
+
+  
 </script>
 </body>
 </html>
