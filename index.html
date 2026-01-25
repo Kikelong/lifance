@@ -643,7 +643,48 @@
 
 
 
+/* Diseño exclusivo para la pantalla de ESTADÍSTICAS */
+.stats-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
+.stats-card-item {
+    padding: 12px 8px;
+    text-align: center;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.stats-card-item.main-balance {
+    grid-column: span 2;
+    background: var(--primary);
+    border: none;
+}
+
+.stats-card-item.main-balance small, 
+.stats-card-item.main-balance .stats-value-text {
+    color: white !important;
+}
+
+.stats-card-item.tc-debt-border {
+    border-color: #e74c3c;
+}
+
+.stats-card-item small {
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.stats-value-text {
+    font-weight: bold;
+    font-size: 1rem;
+}
 
 
 
@@ -673,26 +714,22 @@
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
     
-    <div class="resumen-stats-grid">
-        <!-- Disponible: Dinero real (Cash + Bank) -->
-        <div class="stat-card destacado">
-            <small>Disponible Real</small>
-            <div id="resumen-disponible" class="stat-value">$ 0</div>
+    <div class="stats-grid-container">
+        <div class="stats-card-item main-balance">
+            <small>Disponible</small>
+            <div id="st-disponible" class="stats-value-text">$ 0</div>
         </div>
-        
-        <div class="stat-card">
+        <div class="stats-card-item">
             <small style="color: #27ae60;">Ingresos</small>
-            <div id="resumen-total-ingresos" class="stat-value" style="color: #27ae60;">$ 0</div>
+            <div id="st-ingresos" class="stats-value-text" style="color: #27ae60;">$ 0</div>
         </div>
-        
-        <div class="stat-card">
+        <div class="stats-card-item">
             <small style="color: #e74c3c;">Egresos</small>
-            <div id="resumen-total-egresos" class="stat-value" style="color: #e74c3c;">$ 0</div>
+            <div id="st-egresos" class="stats-value-text" style="color: #e74c3c;">$ 0</div>
         </div>
-
-        <div class="stat-card tc-debt" style="grid-column: span 2;">
-            <small style="color: #e74c3c;">Deuda Tarjeta (TC)</small>
-            <div id="resumen-total-tc" class="stat-value" style="color: #e74c3c;">$ 0</div>
+        <div class="stats-card-item tc-debt-border" style="grid-column: span 2;">
+            <small style="color: #e74c3c;">Tarjeta (TC)</small>
+            <div id="st-tc" class="stats-value-text" style="color: #e74c3c;">$ 0</div>
         </div>
     </div>
 
@@ -850,7 +887,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.6</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.7</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1379,7 +1416,6 @@ function renderizarLista(datos) {
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0, tcTotal = 0;
     
     datos.forEach(d => {
-        // Lógica de saldos
         if (d.tipo === "ingreso") {
             iT += d.monto;
             if (d.metodo === 'CASH') cashTotal += d.monto; 
@@ -1399,21 +1435,13 @@ function renderizarLista(datos) {
 
         const wrapper = document.createElement("div");
         wrapper.className = "movimiento-wrapper";
-        
-        // --- NUEVA LÓGICA DE ICONOS (SOLO ICONO, SIN TEXTO) ---
-        let iconoMetodo = '💵'; // Default CASH
-        if(d.metodo === 'BANK') iconoMetodo = '📲';
-        if(d.metodo === 'TC') iconoMetodo = '💳'; 
+        let iconoMetodo = d.metodo === 'BANK' ? '📲' : (d.metodo === 'TC' ? '💳' : '💵');
 
         wrapper.innerHTML = `
             <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
                 <div class="card-top">
                     <div class="card-info">
-                        <div class="card-cat">
-                            ${d.categoria} 
-                            ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} 
-                            <span style="margin-left: 5px; font-size: 0.9rem;">${iconoMetodo}</span>
-                        </div>
+                        <div class="card-cat">${d.categoria} ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} <span style="margin-left:5px;">${iconoMetodo}</span></div>
                         <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                     </div>
                     <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
@@ -1429,16 +1457,21 @@ function renderizarLista(datos) {
         listaCont.appendChild(wrapper);
     });
 
-    // Actualizar totales
+    // Actualizar Pantalla Principal (nav-home)
     if(document.getElementById("totalIngresos")) document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
     if(document.getElementById("totalEgresos")) document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
     if(document.getElementById("disponible")) document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
     
-    // Actualizar saldos del popover
+    // Actualizar Popover (botón 💰)
     if(document.getElementById("saldo-cash")) document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
     if(document.getElementById("saldo-bank")) document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
     if(document.getElementById("saldo-tc")) document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
 }
+
+
+
+
+  
 
 function filtrarMovimientos() {
     const term = document.getElementById("buscador").value.toLowerCase();
@@ -1582,59 +1615,54 @@ function cancelarEdicion() {
     btn.onclick = guardarMovimiento;
 }
 
+
+
+
+
+
+
+
+
 async function cargarEstadisticas() {
     const mes = document.getElementById("mesFiltroStats").value;
     const anio = document.getElementById("anioFiltroStats").value;
     const inicio = `${anio}-${mes}-01`;
-    const fin = new Date(anio, mes, 0).toISOString().slice(0, 10);
+    const fin = `${anio}-${mes}-31`;
 
     try {
-        const snap = await db.collection("movimientos")
-            .where("uid", "==", usuarioActual.uid)
-            .where("fecha", ">=", inicio)
-            .where("fecha", "<=", fin)
-            .get();
-
-        let catsI = {}, catsE = {}, catsTC = {};
-        let totalI = 0, totalE = 0, totalTC = 0;
+        const snap = await db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", inicio).where("fecha", "<=", fin).get();
+        let catsI = {}, catsE = {}, catsTC = {}, tI = 0, tE = 0, tTC = 0;
 
         snap.forEach(doc => {
             const d = doc.data();
-            if (d.tipo === 'ingreso') {
-                totalI += d.monto;
-                catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto;
-            } else if (d.tipo === 'egreso') {
-                // SEPARAR TC DE EGRESOS REALES
-                if (d.metodo === 'TC') {
-                    totalTC += d.monto;
-                    catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto;
-                } else {
-                    totalE += d.monto;
-                    catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto;
-                }
+            if (d.tipo === 'ingreso') { tI += d.monto; catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto; }
+            else if (d.tipo === 'egreso') {
+                if (d.metodo === 'TC') { tTC += d.monto; catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto; }
+                else { tE += d.monto; catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto; }
             }
         });
 
-        // Dentro de cargarEstadisticas, después de calcular totalI y totalE:
-        const disponibleReal = totalI - totalE;
-        document.getElementById("resumen-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(disponibleReal);
+        // Actualizar Interfaz de Estadísticas (IDs con prefijo st-)
+        document.getElementById("st-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
+        document.getElementById("st-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
+        document.getElementById("st-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
+        document.getElementById("st-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tTC);
 
-        // Renderizar Ingresos
-        renderSeccionEst(catsI, totalI, "stats-ingresos");
-        // Renderizar Egresos Reales
-        renderSeccionEst(catsE, totalE, "stats-egresos");
-        // Renderizar Consumos TC (Nueva sección)
-        renderSeccionEst(catsTC, totalTC, "stats-tc", "💳 Consumos Tarjeta");
-
-        // Actualizar resumen de estadísticas
-        document.getElementById("resumen-total-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalI);
-        document.getElementById("resumen-total-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalE);
-        document.getElementById("resumen-total-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalTC);
-
-    } catch (e) {
-        console.error(e);
-    }
+        renderSeccionEst(catsI, tI, "stats-ingresos");
+        renderSeccionEst(catsE, tE, "stats-egresos");
+        renderSeccionEst(catsTC, tTC, "stats-tc", "💳 Consumos Tarjeta");
+    } catch (e) { console.error(e); }
 }
+
+
+
+
+
+
+
+
+
+  
 
 // Función auxiliar para renderizar cada sección de estadísticas
 function renderSeccionEst(datos, total, containerId, tituloPersonalizado) {
