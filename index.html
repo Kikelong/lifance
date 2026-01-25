@@ -1855,6 +1855,29 @@ async function ejecutarBusquedaAvanzada() {
 }
 
 
+
+
+  // --- Función de Limpiar Búsqueda Avanzada Mejorada ---
+
+function limpiarBusquedaAvanzada() {
+    // 1. Limpiar los campos de fecha
+    document.getElementById("fechaInicioBusqueda").value = "";
+    document.getElementById("fechaFinBusqueda").value = "";
+    
+    // 2. Limpiar el buscador de texto (opcional, pero recomendado para un reset total)
+    document.getElementById("buscador").value = "";
+    
+    // 3. Ocultar el panel de resumen de totales avanzados
+    document.getElementById("resumenBusquedaAvanzada").classList.add("hidden");
+    
+    // 4. Ocultar el panel avanzado completo (opcional, para limpiar la interfaz)
+    togglePanelAvanzado(); 
+    
+    // 5. Restaurar la lista original basada en los filtros de Mes/Año actuales
+    cargarMovimientos();
+    
+    console.log("Búsqueda avanzada limpiada y filtros originales restaurados.");
+}
   
 </script>
 </body>
