@@ -587,6 +587,72 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+
+.resumen-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    padding: 12px 8px;
+    text-align: center;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.stat-card.destacado {
+    grid-column: span 2; /* El disponible ocupa todo el ancho arriba */
+    background: var(--primary);
+    border: none;
+}
+
+.stat-card.destacado small, .stat-card.destacado .stat-value {
+    color: white !important;
+}
+
+.stat-card.tc-debt {
+    border-color: #e74c3c;
+}
+
+.stat-card small {
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
   </style>
@@ -606,18 +672,38 @@
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
-        <div class="resumen-container">
-            <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
-            <div class="resumen-grid">
-                <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
-                <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
-            </div>
+    
+    <div class="resumen-stats-grid">
+        <!-- Disponible: Dinero real (Cash + Bank) -->
+        <div class="stat-card destacado">
+            <small>Disponible Real</small>
+            <div id="resumen-disponible" class="stat-value">$ 0</div>
         </div>
-        <div class="row">
-            <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
-            <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
+        
+        <div class="stat-card">
+            <small style="color: #27ae60;">Ingresos</small>
+            <div id="resumen-total-ingresos" class="stat-value" style="color: #27ae60;">$ 0</div>
         </div>
-        <div id="statsContent"></div>
+        
+        <div class="stat-card">
+            <small style="color: #e74c3c;">Egresos</small>
+            <div id="resumen-total-egresos" class="stat-value" style="color: #e74c3c;">$ 0</div>
+        </div>
+
+        <div class="stat-card tc-debt" style="grid-column: span 2;">
+            <small style="color: #e74c3c;">Deuda Tarjeta (TC)</small>
+            <div id="resumen-total-tc" class="stat-value" style="color: #e74c3c;">$ 0</div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 20px;">
+        <select id="mesFiltroStats" onchange="cargarEstadisticas()" style="flex:1; margin-right:5px;"></select>
+        <select id="anioFiltroStats" onchange="cargarEstadisticas()" style="flex:1;"></select>
+    </div>
+
+    <div id="stats-ingresos"></div>
+    <div id="stats-egresos"></div>
+    <div id="stats-tc"></div>
   </div>
 
   <div id="view-home" class="view-section">
@@ -1528,6 +1614,10 @@ async function cargarEstadisticas() {
                 }
             }
         });
+
+        // Dentro de cargarEstadisticas, después de calcular totalI y totalE:
+        const disponibleReal = totalI - totalE;
+        document.getElementById("resumen-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(disponibleReal);
 
         // Renderizar Ingresos
         renderSeccionEst(catsI, totalI, "stats-ingresos");
