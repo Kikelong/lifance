@@ -887,7 +887,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.7</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.9.1</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1457,16 +1457,12 @@ function renderizarLista(datos) {
         listaCont.appendChild(wrapper);
     });
 
-    // --- CORRECCIÓN DE IDs PARA PANTALLA PRINCIPAL ---
+    // ACTUALIZACIÓN DE PANTALLA PRINCIPAL
     if(document.getElementById("totalIngresos")) document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
     if(document.getElementById("totalEgresos")) document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
+    if(document.getElementById("disponible")) document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
     
-    // El ID correcto en tu HTML es 'disponible-stats'
-    if(document.getElementById("disponible-stats")) {
-        document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
-    }
-    
-    // Actualizar Popover (botón 💰)
+    // ACTUALIZACIÓN DE POPOVER
     if(document.getElementById("saldo-cash")) document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
     if(document.getElementById("saldo-bank")) document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
     if(document.getElementById("saldo-tc")) document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
@@ -1627,58 +1623,34 @@ function cancelarEdicion() {
 
 
 async function cargarEstadisticas() {
-    // --- CORRECCIÓN DE IDs PARA SELECTORES ---
     const mes = document.getElementById("mesFiltroStats").value;
     const anio = document.getElementById("anioFiltroStats").value;
-    
     const inicio = `${anio}-${mes}-01`;
     const fin = `${anio}-${mes}-31`;
 
     try {
-        const snap = await db.collection("movimientos")
-            .where("uid", "==", usuarioActual.uid)
-            .where("fecha", ">=", inicio)
-            .where("fecha", "<=", fin)
-            .get();
-
+        const snap = await db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", inicio).where("fecha", "<=", fin).get();
         let catsI = {}, catsE = {}, catsTC = {}, tI = 0, tE = 0, tTC = 0;
 
         snap.forEach(doc => {
             const d = doc.data();
-            if (d.tipo === 'ingreso') { 
-                tI += d.monto; 
-                catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto; 
-            } else if (d.tipo === 'egreso') {
-                if (d.metodo === 'TC') { 
-                    tTC += d.monto; 
-                    catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto; 
-                } else { 
-                    tE += d.monto; 
-                    catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto; 
-                }
+            if (d.tipo === 'ingreso') { tI += d.monto; catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto; }
+            else if (d.tipo === 'egreso') {
+                if (d.metodo === 'TC') { tTC += d.monto; catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto; }
+                else { tE += d.monto; catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto; }
             }
         });
 
-        // --- CORRECCIÓN DE IDs PARA TARJETAS DE ESTADÍSTICAS ---
-        if(document.getElementById("st-disponible")) {
-            document.getElementById("st-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
-        }
-        if(document.getElementById("st-ingresos")) {
-            document.getElementById("st-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
-        }
-        if(document.getElementById("st-egresos")) {
-            document.getElementById("st-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
-        }
-        if(document.getElementById("st-tc")) {
-            document.getElementById("st-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tTC);
-        }
+        // ACTUALIZACIÓN DE PANTALLA DE ESTADÍSTICAS
+        if(document.getElementById("st-disponible")) document.getElementById("st-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
+        if(document.getElementById("st-ingresos")) document.getElementById("st-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
+        if(document.getElementById("st-egresos")) document.getElementById("st-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
+        if(document.getElementById("st-tc")) document.getElementById("st-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tTC);
 
         renderSeccionEst(catsI, tI, "stats-ingresos");
         renderSeccionEst(catsE, tE, "stats-egresos");
         renderSeccionEst(catsTC, tTC, "stats-tc", "💳 Consumos Tarjeta");
-    } catch (e) { 
-        console.error("Error en estadísticas:", e); 
-    }
+    } catch (e) { console.error(e); }
 }
 
 
