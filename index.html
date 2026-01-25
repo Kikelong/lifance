@@ -510,79 +510,50 @@
       .btn-swipe:hover { filter: brightness(1.1); }
     }
 
-
-
-/* =============================================
-   FAB Container - Botones flotantes esquina derecha
-   ============================================= */
-
-#fab-container {
-  position: fixed;
-  bottom: calc(var(--nav-height) + 20px);
-  right: 20px;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: auto;
-  pointer-events: auto;
-}
-
-/* Estilo BASE para TODOS los botones dentro de #fab-container (light + dark) */
-#fab-container button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  margin-bottom: 16px;           /* espacio si hay varios botones */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: all 0.2s ease;
-}
-
-/* Efecto al presionar (ya lo tienes, pero lo unificamos) */
 #fab-container button:active {
-  transform: scale(0.92);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
+      transform: scale(0.9);
+      transition: transform 0.1s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #fab-container button {
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-/* Mejora en dark mode: sombra más fuerte + borde sutil opcional */
-body.dark-mode #fab-container button {
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.55);
-  /* Opcional: borde muy sutil para más definición */
-  /* border: 1px solid rgba(255,255,255,0.08); */
-}
 
-/* Hover / focus (mejora usabilidad en ambos modos) */
-#fab-container button:hover,
-#fab-container button:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-}
+        #fab-container {
+      position: fixed;
+      bottom: calc(var(--nav-height) + 20px);
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
+    }
 
-/* En dark mode el hover puede ser un poco más claro */
-body.dark-mode #fab-container button:hover,
-body.dark-mode #fab-container button:focus {
-  background: #3a5a78;           /* un tono más claro que --primary en dark */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-}
 
-/* Asegurar que el ícono/emoji se vea bien centrado */
-#fab-container button i,
-#fab-container button span {
-  line-height: 1;
-  font-size: 1.8rem;   /* o 24px si prefieres fijo */
-}
 
-    
+          /* Dark mode específico para los botones del FAB */
+      body.dark-mode #fab-container button {
+        background: var(--primary);          /* ya es un azul/gris oscuro en dark */
+        color: white;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.45); /* sombra más oscura para que resalte */
+      }
+      
+      /* Opcional: si quieres que en dark mode sean un poco más claros o con borde sutil */
+      body.dark-mode #fab-container button:hover,
+      body.dark-mode #fab-container button:focus {
+        background: #3a5a78;                   /* un poco más claro que --primary en dark */
+        box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      }
+      
+      /* Si tienes íconos dentro (font-awesome, material icons, etc.) */
+      #fab-container button i,
+      #fab-container button span {
+        font-size: 1.8rem;
+      }
+
   </style>
 </head>
 <body>
