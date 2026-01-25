@@ -425,7 +425,6 @@
 
 
 
-/* Añade esta regla a tu sección de <style> para restaurar el botón de balance */
 #fab-container {
     position: fixed;
     bottom: calc(var(--nav-height) + 20px);
@@ -437,9 +436,69 @@
     width: auto;
 }
 
-/* Asegúrate de que el botón 💰 no tenga un margen excesivo */
+/* Botón principal 💰 */
 #fab-container button[onclick="toggleBalancePopover()"] {
-    margin-bottom: 0 !important; /* Corregimos el margen que lo empujaba fuera de vista */
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--primary); /* Usa el color primario del tema */
+    color: white;
+    border: none;
+    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    transition: transform 0.2s, background 0.3s;
+}
+
+#fab-container button[onclick="toggleBalancePopover()"]:active {
+    transform: scale(0.9);
+}
+
+/* Popover de Balance */
+#balance-popover {
+    background: var(--card-bg); /* Se adapta al modo oscuro */
+    border: 1px solid var(--border-color); /* Se adapta al modo oscuro */
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    min-width: 200px;
+    color: var(--text-main); /* Se adapta al modo oscuro */
+}
+
+#balance-popover small {
+    color: var(--text-muted); /* Se adapta al modo oscuro */
+}
+
+#balance-popover div[id^="saldo-"] {
+    color: var(--primary); /* Usa el color primario del tema */
+}
+
+/* Línea divisoria dentro del popover */
+#balance-popover hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+}
+
+/* Botón de Transferir dentro del popover */
+#balance-popover button {
+    background: var(--primary);
+    color: white;
+    padding: 10px;
+    font-size: 0.75rem;
+    margin: 0;
+    border-radius: 6px;
+    width: 100%;
+    transition: opacity 0.2s;
+}
+
+#balance-popover button:hover {
+    opacity: 0.9;
 }
 
     
