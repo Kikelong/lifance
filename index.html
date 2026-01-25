@@ -682,7 +682,7 @@
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
         <select id="transfOrigen" onchange="actualizarDestinoTransf()">
             <option value="CASH">💵 CASH (Efectivo)</option>
-            <option value="BANK">💳 BANK (Banco/Tarjeta)</option>
+            <option value="BANK">🏛️ BANK (Banco/Tarjeta)</option>
         </select>
         <div style="text-align: center; margin: 5px 0; font-size: 1.2rem;">⬇️</div>
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">DESTINO:</label>
@@ -720,7 +720,7 @@
             <p style="margin-top: 15px; margin-bottom: 5px; font-size: 0.85rem; color: #666;">Método:</p>
             <div class="metodo-selector">
                 <div class="metodo-option active" id="optCashModal" onclick="seleccionarMetodoModal('CASH')">💵 CASH</div>
-                <div class="metodo-option" id="optBankModal" onclick="seleccionarMetodoModal('BANK')">💳 BANK</div>
+                <div class="metodo-option" id="optBankModal" onclick="seleccionarMetodoModal('BANK')">🔁 TRANSF</div>
                 <div class="metodo-option" id="optTCModal" onclick="seleccionarMetodoModal('TC')">💳 TC</div>
             </div>
             <input type="hidden" id="metodoPagoModal" value="CASH">
@@ -744,7 +744,7 @@
           </div>
           
           <div style="margin-bottom: 8px;">
-              <small>💳 BANK</small>
+              <small>🏛️ BANK</small>
               <div id="saldo-bank" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
           </div>
           
@@ -1249,8 +1249,8 @@ function cargarMovimientos() {
             wrapper.className = "movimiento-wrapper";
     
             let iconoMetodo = '💵';
-            if (d.metodo === 'BANK') iconoMetodo = '💳';
-            if (d.metodo === 'TC') iconoMetodo = '🔥';
+            if (d.metodo === 'BANK') iconoMetodo = '📲';
+            if (d.metodo === 'TC') iconoMetodo = '💳';
     
             wrapper.innerHTML = `
                     <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
@@ -1386,7 +1386,7 @@ function toggleModalTransf() {
 
 function actualizarDestinoTransf() {
     const o = document.getElementById("transfOrigen").value;
-    document.getElementById("transfDestino").value = (o === 'CASH') ? '💳 BANK' : '💵 CASH';
+    document.getElementById("transfDestino").value = (o === 'CASH') ? '🏛️ BANK' : '💵 CASH';
 }
 
 async function ejecutarTransferencia() {
