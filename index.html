@@ -666,7 +666,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.0</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1590,74 +1590,75 @@ function aplicarDatosPendienteModal() {
 }
 
 
-async function guardarMovimientoModal() {
-    const btnGuardar = document.getElementById("btnGuardarModal");
-    const mI = document.getElementById("montoModal");
-    const val = Number(mI.value.replace(/\D/g, ""));
-    const fec = document.getElementById("fechaModal").value;
-    const pendienteId = document.getElementById("pendienteVinculoModal").value;
-
-    if (!val || !tipoSeleccionadoModal) return alert("Faltan datos");
-
-    // Efecto de carga
-    btnGuardar.disabled = true;
-    btnGuardar.innerHTML = "⌛ Registrando...";
-    btnGuardar.style.opacity = "0.7";
-    btnGuardar.style.cursor = "not-allowed";
-
-    try {
-        const ahora = new Date();
-        const horaString = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-
-        const datos = {
-            uid: usuarioActual.uid,
-            tipo: tipoSeleccionadoModal,
-            categoria: document.getElementById("categoriaModal").value,
-            monto: val,
-            fecha: fec,
-            hora: horaString,
-            metodo: document.getElementById("metodoPagoModal").value,
-            nota: document.getElementById("notaModal").value.trim(),
-            pendienteVinculado: pendienteId || null
-        };
-
-        const batch = db.batch();
-        const movRef = db.collection("movimientos").doc(editandoId || undefined);  // Usa ID si edición
-
-        if (editandoId) {
-            // Edición: update (no toca 'creado')
-            batch.update(movRef, datos);
-        } else {
-            // Nuevo: set con timestamp
-            datos.creado = firebase.firestore.FieldValue.serverTimestamp();
-            batch.set(movRef, datos);
+    async function guardarMovimientoModal() {
+        const btnGuardar = document.getElementById("btnGuardarModal");
+        const mI = document.getElementById("montoModal");
+        const val = Number(mI.value.replace(/\D/g, ""));
+        const fec = document.getElementById("fechaModal").value;
+        const pendienteId = document.getElementById("pendienteVinculoModal").value;
+    
+        if (!val || !tipoSeleccionadoModal) return alert("Faltan datos");
+    
+        // Efecto de carga
+        btnGuardar.disabled = true;
+        btnGuardar.innerHTML = "⌛ Guardando...";
+        btnGuardar.style.opacity = "0.7";
+        btnGuardar.style.cursor = "not-allowed";
+    
+        try {
+            const datos = {
+                uid: usuarioActual.uid,
+                tipo: tipoSeleccionadoModal,
+                categoria: document.getElementById("categoriaModal").value,
+                monto: val,
+                fecha: fec,
+                metodo: document.getElementById("metodoPagoModal").value,
+                nota: document.getElementById("notaModal").value.trim(),
+                pendienteVinculado: pendienteId || null
+            };
+    
+            const batch = db.batch();
+            const movRef = db.collection("movimientos").doc(editandoId || undefined);
+    
+            if (editandoId) {
+                // EDICIÓN: 
+                // NO incluimos la 'hora' en el objeto 'datos' para que Firebase no la sobrescriba.
+                // Así se mantiene la hora original del movimiento.
+                batch.update(movRef, datos);
+            } else {
+                // NUEVO MOVIMIENTO:
+                // Aquí sí generamos la hora actual y el timestamp de creación.
+                const ahora = new Date();
+                datos.hora = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+                datos.creado = firebase.firestore.FieldValue.serverTimestamp();
+                batch.set(movRef, datos);
+            }
+    
+            // Si es nuevo y vincula pendiente, marcar pagado
+            if (pendienteId && !editandoId) {
+                batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
+            }
+    
+            await batch.commit();
+    
+            // Limpieza y recarga
+            closeAddModal();
+            await cargarPendientesDB();
+            cargarMovimientos();
+    
+            console.log("Movimiento guardado/editado con éxito");
+    
+        } catch (error) {
+            console.error("Error al guardar:", error);
+            alert("Hubo un error al registrar. Inténtalo de nuevo.");
+        } finally {
+            // Restaurar botón
+            btnGuardar.disabled = false;
+            btnGuardar.innerHTML = editandoId ? "Guardar Cambios" : "Registrar Movimiento";
+            btnGuardar.style.opacity = "1";
+            btnGuardar.style.cursor = "pointer";
         }
-
-        // Si es nuevo y vincula pendiente, marcar pagado
-        if (pendienteId && !editandoId) {
-            batch.update(db.collection("pendientes").doc(pendienteId), { pagado: true });
-        }
-
-        await batch.commit();
-
-        // Limpieza y recarga
-        closeAddModal();
-        await cargarPendientesDB();
-        cargarMovimientos();
-
-        console.log("Movimiento guardado/editado con éxito");
-
-    } catch (error) {
-        console.error("Error al guardar:", error);
-        alert("Hubo un error al registrar. Inténtalo de nuevo.");
-    } finally {
-        // Restaurar botón
-        btnGuardar.disabled = false;
-        btnGuardar.innerHTML = editandoId ? "Guardar Cambios" : "Registrar Movimiento";
-        btnGuardar.style.opacity = "1";
-        btnGuardar.style.cursor = "pointer";
     }
-}
 
       function toggleDarkMode() {
           const isDark = document.body.classList.toggle('dark-mode');
