@@ -554,6 +554,12 @@
         font-size: 1.8rem;
       }
 
+    
+    .card.tc-item {
+        border-right: 4px dashed #e74c3c !important; /* Un borde sutil para identificar deuda */
+    }
+
+    
   </style>
 </head>
 <body>
@@ -715,6 +721,7 @@
             <div class="metodo-selector">
                 <div class="metodo-option active" id="optCashModal" onclick="seleccionarMetodoModal('CASH')">💵 CASH</div>
                 <div class="metodo-option" id="optBankModal" onclick="seleccionarMetodoModal('BANK')">💳 BANK</div>
+                <div class="metodo-option" id="optTCModal" onclick="seleccionarMetodoModal('TC')">💳 TC</div>
             </div>
             <input type="hidden" id="metodoPagoModal" value="CASH">
         </div>
@@ -730,15 +737,24 @@
   <div id="fab-container">
       <div id="balance-popover" class="hidden">
           <div style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Saldos Detallados</div>
+          
           <div style="margin-bottom: 8px;">
               <small>💵 CASH</small>
               <div id="saldo-cash" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
           </div>
-          <div style="margin-bottom: 10px;">
+          
+          <div style="margin-bottom: 8px;">
               <small>💳 BANK</small>
               <div id="saldo-bank" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
           </div>
+          
+          <div style="margin-bottom: 10px;">
+              <small>💳 TC</small>
+              <div id="saldo-tc" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">$ 0</div>
+          </div>
+          
           <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
+          
           <button onclick="toggleModalTransf()" style="background: #3498db; color: white; padding: 10px; font-size: 0.75rem; margin: 0; border-radius: 6px;">🔄 Transferir Dinero</button>
       </div>
       <button onclick="toggleBalancePopover()" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 100px;">💰</button>
@@ -1182,45 +1198,74 @@ function cargarMovimientos() {
 
   
 
-function renderizarLista(datos) {
-    const listaCont = document.getElementById("listaMovimientos");
-    if(!listaCont) return;
-    listaCont.innerHTML = "";
-    let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0;
-    datos.forEach(d => {
-        if (d.tipo === "ingreso") {
-            iT += d.monto;
-            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
-        } else if (d.tipo === "egreso") {
-            eT += d.monto;
-            if (d.metodo === 'CASH') cashTotal -= d.monto; else bankTotal -= d.monto;
-        } else if (d.tipo === "transferencia") {
-            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
-        }
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "movimiento-wrapper";
-        wrapper.innerHTML = `
-            <div class="card ${d.tipo}-item" onclick="toggleComent('${d.id}')">
-                <div class="card-top">
-                    <div class="card-info">
-                        <div class="card-cat">${d.categoria} ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} <small>${d.metodo === 'CASH' ? '💵':'💳'}</small></div>
-                        <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
+    function renderizarLista(datos) {
+        const listaCont = document.getElementById("listaMovimientos");
+        if (!listaCont) return;
+        listaCont.innerHTML = "";
+    
+        let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0, tcTotal = 0;
+    
+        datos.forEach(d => {
+            // Lógica de saldos
+            if (d.tipo === "ingreso") {
+                iT += d.monto;
+                if (d.metodo === 'CASH') cashTotal += d.monto;
+                else if (d.metodo === 'BANK') bankTotal += d.monto;
+                // Nota: si algún día permites ingresos con TC, agrégalo aquí
+            } 
+            else if (d.tipo === "egreso") {
+                if (d.metodo !== 'TC') {
+                    eT += d.monto;
+                    if (d.metodo === 'CASH') cashTotal -= d.monto;
+                    else if (d.metodo === 'BANK') bankTotal -= d.monto;
+                } else {
+                    // Egreso con TC → aumenta la deuda
+                    tcTotal += d.monto;
+                    // NO afecta eT ni cash/bank
+                }
+            } 
+            else if (d.tipo === "transferencia") {
+                if (d.metodo === 'CASH') cashTotal += d.monto;
+                else if (d.metodo === 'BANK') bankTotal += d.monto;
+                // Si algún día hay transferencias desde/hacia TC, agrégalo aquí
+            }
+    
+            // Renderizado de la tarjeta (con icono y clase para TC)
+            const wrapper = document.createElement("div");
+            wrapper.className = "movimiento-wrapper";
+    
+            let iconoMetodo = d.metodo === 'CASH' ? '💵' : '💳';
+            if (d.metodo === 'TC') iconoMetodo = '🔥'; // o el emoji que prefieras
+    
+            wrapper.innerHTML = `
+                <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <div class="card-cat">
+                                ${d.categoria} 
+                                ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} 
+                                <small>${iconoMetodo} ${d.metodo}</small>
+                            </div>
+                            <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
+                        </div>
+                        <div class="card-monto text-${d.tipo}">
+                            $ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}
+                        </div>
+                        <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
                     </div>
-                    <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
-                    <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
+                    <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
                 </div>
-                <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
-            </div>
-            <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${d.categoria.replace(/\'/g, "\\\'")}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${(d.nota || '').replace(/\'/g, "\\\'")}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
-                <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
-            </div>
-        `;
-        listaCont.appendChild(wrapper);
-    });
-    actualizarResumenVisual(iT, eT, cashTotal, bankTotal);
-}
+                <div class="card-swipe-actions">
+                    <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${d.categoria.replace(/\'/g, "\\\'")}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${(d.nota || '').replace(/\'/g, "\\\'")}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
+                    <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
+                </div>
+            `;
+            listaCont.appendChild(wrapper);
+        });
+    
+        // Mantenemos la llamada original → los -stats se actualizan sin romperse
+        actualizarResumenVisual(iT, eT, cashTotal, bankTotal, tcTotal);
+    }
 
 function filtrarMovimientos() {
     const term = document.getElementById("buscador").value.toLowerCase();
@@ -1228,26 +1273,45 @@ function filtrarMovimientos() {
     renderizarLista(filtrados);
 }
 
-function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
+function actualizarResumenVisual(iT, eT, cashTotal, bankTotal, tcTotal = 0) {
     const formato = new Intl.NumberFormat("es-CO");
-    const balance = iT - eT;
+    const balance = iT - eT;           // o cashTotal + bankTotal, según prefieras
+    // Nota: si quieres que disponible sea solo cash+bank (sin considerar TC como deuda),
+    // usa: const balance = cashTotal + bankTotal;
+
+    // Principales
     document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
     document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
+
     const disp = document.getElementById("disponible");
     disp.textContent = "$ " + formato.format(balance);
     disp.style.color = balance < 0 ? "#e74c3c" : "white";
-    if(document.getElementById("totalIngresos-stats")){
+
+    // Stats (se mantienen intactos)
+    if (document.getElementById("totalIngresos-stats")) {
         document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
         document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
+        // Opcional: color en stats también
+        document.getElementById("disponible-stats").style.color = balance < 0 ? "#e74c3c" : "white";
     }
+
+    // Saldos detallados del popover
     const cashEl = document.getElementById("saldo-cash");
     const bankEl = document.getElementById("saldo-bank");
-    if(cashEl && bankEl) {
+    const tcEl   = document.getElementById("saldo-tc");
+
+    if (cashEl) {
         cashEl.textContent = "$ " + formato.format(cashTotal);
-        bankEl.textContent = "$ " + formato.format(bankTotal);
         cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
+    }
+    if (bankEl) {
+        bankEl.textContent = "$ " + formato.format(bankTotal);
         bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
+    }
+    if (tcEl) {
+        tcEl.textContent = "$ " + formato.format(tcTotal);
+        tcEl.style.color = tcTotal > 0 ? "#e74c3c" : "#2c3e50";  // rojo si hay deuda positiva
     }
 }
 
@@ -1549,6 +1613,7 @@ function seleccionarMetodoModal(m) {
     document.getElementById("metodoPagoModal").value = m;
     document.getElementById("optCashModal").classList.toggle("active", m === 'CASH');
     document.getElementById("optBankModal").classList.toggle("active", m === 'BANK');
+    document.getElementById("optTCModal").classList.toggle("active", m === 'TC');
 }
 
 async function detectarPendientesModal() {
