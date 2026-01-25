@@ -83,6 +83,7 @@
     #fab-container button:active {
       transform: scale(0.9);
       transition: transform 0.1s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     #fab-container button {
       user-select: none;
@@ -102,6 +103,26 @@
     }
 
 
+
+          /* Dark mode específico para los botones del FAB */
+      body.dark-mode #fab-container button {
+        background: var(--primary);          /* ya es un azul/gris oscuro en dark */
+        color: white;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.45); /* sombra más oscura para que resalte */
+      }
+      
+      /* Opcional: si quieres que en dark mode sean un poco más claros o con borde sutil */
+      body.dark-mode #fab-container button:hover,
+      body.dark-mode #fab-container button:focus {
+        background: #3a5a78;                   /* un poco más claro que --primary en dark */
+        box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      }
+      
+      /* Si tienes íconos dentro (font-awesome, material icons, etc.) */
+      #fab-container button i,
+      #fab-container button span {
+        font-size: 1.8rem;
+      }
 
 
 
