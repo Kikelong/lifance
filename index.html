@@ -713,25 +713,26 @@
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
-    
-    <div class="stats-grid-container">
-        <div class="stats-card-item main-balance">
-            <small>Disponible</small>
-            <div id="st-disponible" class="stats-value-text">$ 0</div>
-        </div>
-        <div class="stats-card-item">
-            <small style="color: #27ae60;">Ingresos</small>
-            <div id="st-ingresos" class="stats-value-text" style="color: #27ae60;">$ 0</div>
-        </div>
-        <div class="stats-card-item">
-            <small style="color: #e74c3c;">Egresos</small>
-            <div id="st-egresos" class="stats-value-text" style="color: #e74c3c;">$ 0</div>
-        </div>
-        <div class="stats-card-item tc-debt-border" style="grid-column: span 2;">
-            <small style="color: #e74c3c;">Tarjeta (TC)</small>
-            <div id="st-tc" class="stats-value-text" style="color: #e74c3c;">$ 0</div>
+
+
+
+
+
+    <div class="row" style="margin-top:10px;">
+      <select id="mesFiltro" onchange="cargarMovimientos()"></select>
+      <select id="anioFiltro" onchange="cargarMovimientos()"></select>
+    </div>
+
+    <div class="resumen-container">
+        <div class="balance-card">Disponible <span id="disponible">$ 0</span></div>
+        <div class="resumen-grid">
+            <div class="resumen-item">Ingresos <span id="totalIngresos" class="text-ingreso">$ 0</span></div>
+            <div class="resumen-item">Egresos <span id="totalEgresos" class="text-egreso">$ 0</span></div>
         </div>
     </div>
+
+
+
 
     <div class="row" style="margin-bottom: 20px;">
         <select id="mesFiltroStats" onchange="cargarEstadisticas()" style="flex:1; margin-right:5px;"></select>
@@ -794,7 +795,7 @@
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                   <span>Egresos:</span> <span id="totalEgresosAvanzado" class="text-egreso" style="font-weight: bold;">$ 0</span>
               </div>
-              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); pt: 5px; font-weight: bold;">
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 5px; font-weight: bold;">
                   <span>Balance:</span> <span id="totalBalanceAvanzado">$ 0</span>
               </div>
           </div>
