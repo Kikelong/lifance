@@ -425,6 +425,24 @@
 
 
 
+/* Añade esta regla a tu sección de <style> para restaurar el botón de balance */
+#fab-container {
+    position: fixed;
+    bottom: calc(var(--nav-height) + 20px);
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: auto;
+}
+
+/* Asegúrate de que el botón 💰 no tenga un margen excesivo */
+#fab-container button[onclick="toggleBalancePopover()"] {
+    margin-bottom: 0 !important; /* Corregimos el margen que lo empujaba fuera de vista */
+}
+
+    
     
 
     .badge-pend {
@@ -694,7 +712,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.6</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.7</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1756,9 +1774,12 @@ function togglePanelAvanzado() {
     label.textContent = panel.classList.contains("hidden") ? "🔍 Búsqueda Avanzada" : "✕ Cerrar Búsqueda";
 }
 
+// --- Función de Búsqueda Avanzada Actualizada (v2) ---
+
 async function ejecutarBusquedaAvanzada() {
     const inicio = document.getElementById("fechaInicioBusqueda").value;
     const fin = document.getElementById("fechaFinBusqueda").value;
+    const textoBusqueda = document.getElementById("buscador").value.toLowerCase().trim();
 
     if (!inicio || !fin) {
         alert("Por favor selecciona ambas fechas");
@@ -1770,14 +1791,13 @@ async function ejecutarBusquedaAvanzada() {
         return;
     }
 
-    // Mostrar indicador de carga (opcional)
     const btn = document.querySelector("#panelBusquedaAvanzada .btn-main");
     const originalText = btn.textContent;
     btn.textContent = "⌛ Buscando...";
     btn.disabled = true;
 
     try {
-        // Consultar Firebase por el rango de fechas
+        // 1. Consultar Firebase por el rango de fechas
         const snap = await db.collection("movimientos")
             .where("uid", "==", usuarioActual.uid)
             .where("fecha", ">=", inicio)
@@ -1789,21 +1809,37 @@ async function ejecutarBusquedaAvanzada() {
 
         snap.forEach(doc => {
             const d = { id: doc.id, ...doc.data() };
-            resultados.push(d);
-            if (d.tipo === 'ingreso') tI += d.monto;
-            else if (d.tipo === 'egreso') tE += d.monto;
+            
+            // 2. Aplicar filtro de texto (Categoría o Nota)
+            const matchTexto = !textoBusqueda || 
+                               d.categoria.toLowerCase().includes(textoBusqueda) || 
+                               (d.nota && d.nota.toLowerCase().includes(textoBusqueda));
+
+            if (matchTexto) {
+                resultados.push(d);
+                if (d.tipo === 'ingreso') tI += d.monto;
+                else if (d.tipo === 'egreso') tE += d.monto;
+            }
         });
 
-        // Ordenar por fecha descendente
+        // 3. Ordenar por fecha y hora descendente
         resultados.sort((a, b) => b.fecha.localeCompare(a.fecha) || (b.hora || "").localeCompare(a.hora || ""));
 
-        // Renderizar la lista con los resultados del rango
+        // 4. Renderizar la lista filtrada
         renderizarLista(resultados);
 
-        // Actualizar el resumen del panel avanzado
-        document.getElementById("resumenBusquedaAvanzada").classList.remove("hidden");
+        // 5. Actualizar el resumen del panel avanzado
+        const resumenEl = document.getElementById("resumenBusquedaAvanzada");
+        resumenEl.classList.remove("hidden");
+        
+        // Título dinámico para el resumen
+        const tituloResumen = textoBusqueda ? `Resultados para "${textoBusqueda}"` : "Resumen del Rango";
+        resumenEl.querySelector("h4") || resumenEl.insertAdjacentHTML('afterbegin', `<h4 style="margin:0 0 10px 0; font-size:0.8rem; color:var(--primary);">${tituloResumen}</h4>`);
+        if(resumenEl.querySelector("h4")) resumenEl.querySelector("h4").textContent = tituloResumen;
+
         document.getElementById("totalIngresosAvanzado").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
         document.getElementById("totalEgresosAvanzado").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
+        
         const balance = tI - tE;
         const balanceEl = document.getElementById("totalBalanceAvanzado");
         balanceEl.textContent = "$ " + new Intl.NumberFormat("es-CO").format(balance);
@@ -1816,14 +1852,6 @@ async function ejecutarBusquedaAvanzada() {
         btn.textContent = originalText;
         btn.disabled = false;
     }
-}
-
-function limpiarBusquedaAvanzada() {
-    document.getElementById("fechaInicioBusqueda").value = "";
-    document.getElementById("fechaFinBusqueda").value = "";
-    document.getElementById("resumenBusquedaAvanzada").classList.add("hidden");
-    // Volver a cargar los movimientos del mes seleccionado en los filtros normales
-    cargarMovimientos();
 }
 
 
