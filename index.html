@@ -861,6 +861,20 @@ let editandoData = null;  // Para guardar los datos originales temporalmente
     actualizarSelectorCategoriasPendientes();
   }
 
+
+function escapeForJS(str) {
+    if (!str) return '';
+    return str
+        .replace(/\\/g, '\\\\')   // backslashes primero (importante el orden)
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
+}
+
+  
+
   function actualizarListaCategoriasEdit() {
     const cont = document.getElementById("listaCategoriasEdit");
     const filtro = document.getElementById("tipoNuevaCat").value;
@@ -1239,28 +1253,31 @@ function cargarMovimientos() {
             if (d.metodo === 'TC') iconoMetodo = '🔥';
     
             wrapper.innerHTML = `
-                <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
-                    <div class="card-top">
-                        <div class="card-info">
-                            <div class="card-cat">
-                                ${d.categoria}
-                                ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''}
-                                <span style="margin-left: 6px; font-size: 1rem;">${iconoMetodo}</span>
+                    <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
+                        <div class="card-top">
+                            <div class="card-info">
+                                <div class="card-cat">
+                                    ${d.categoria}
+                                    ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''}
+                                    <span style="margin-left: 6px; font-size: 1rem;" title="${d.metodo}">${iconoMetodo}</span>
+                                </div>
+                                <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                             </div>
-                            <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
+                            <div class="card-monto text-${d.tipo}">
+                                $ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}
+                            </div>
+                            <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
                         </div>
-                        <div class="card-monto text-${d.tipo}">
-                            $ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}
-                        </div>
-                        <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
+                        <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
                     </div>
-                    <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
-                </div>
-                <div class="card-swipe-actions">
-                    <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${d.categoria.replace(/\'/g, "\\\'")}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${(d.nota || '').replace(/\'/g, "\\\'")}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
-                    <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
-                </div>
-            `;
+            
+                    <div class="card-swipe-actions">
+                        <!-- Aquí va el botón de editar con escapeForJS -->
+                        <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${escapeForJS(d.categoria)}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${escapeForJS(d.nota)}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
+                        
+                        <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
+                    </div>
+                `;
             listaCont.appendChild(wrapper);
         });
     
