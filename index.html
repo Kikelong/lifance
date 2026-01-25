@@ -1234,17 +1234,18 @@ function cargarMovimientos() {
             const wrapper = document.createElement("div");
             wrapper.className = "movimiento-wrapper";
     
-            let iconoMetodo = d.metodo === 'CASH' ? '💵' : '💳';
-            if (d.metodo === 'TC') iconoMetodo = '🔥'; // o el emoji que prefieras
+            let iconoMetodo = '💵';
+            if (d.metodo === 'BANK') iconoMetodo = '💳';
+            if (d.metodo === 'TC') iconoMetodo = '🔥';
     
             wrapper.innerHTML = `
                 <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
                     <div class="card-top">
                         <div class="card-info">
                             <div class="card-cat">
-                                ${d.categoria} 
-                                ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} 
-                                <small>${iconoMetodo} ${d.metodo}</small>
+                                ${d.categoria}
+                                ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''}
+                                <span style="margin-left: 6px; font-size: 1rem;">${iconoMetodo}</span>
                             </div>
                             <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                         </div>
