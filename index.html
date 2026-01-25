@@ -764,7 +764,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.0</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v3.2</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -774,7 +774,7 @@
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">ORIGEN:</label>
         <select id="transfOrigen" onchange="actualizarDestinoTransf()">
             <option value="CASH">💵 CASH (Efectivo)</option>
-            <option value="BANK">📲 BANK (Banco/Tarjeta)</option>
+            <option value="BANK">🏦 BANK (Banco/Tarjeta)</option>
         </select>
         <div style="text-align: center; margin: 5px 0; font-size: 1.2rem;">⬇️</div>
         <label style="font-size: 0.8rem; font-weight: bold; color: #888;">DESTINO:</label>
@@ -1293,19 +1293,17 @@ function renderizarLista(datos) {
     let iT = 0, eT = 0, cashTotal = 0, bankTotal = 0, tcTotal = 0;
     
     datos.forEach(d => {
-        // Lógica de saldos reales (CASH y BANK)
+        // Lógica de saldos
         if (d.tipo === "ingreso") {
             iT += d.monto;
             if (d.metodo === 'CASH') cashTotal += d.monto; 
             else if (d.metodo === 'BANK') bankTotal += d.monto;
         } else if (d.tipo === "egreso") {
-            // SOLO sumamos a egresos totales si NO es TC
             if (d.metodo !== 'TC') {
                 eT += d.monto;
                 if (d.metodo === 'CASH') cashTotal -= d.monto; 
                 else bankTotal -= d.monto;
             } else {
-                // Si es TC, lo sumamos a la deuda acumulada
                 tcTotal += d.monto;
             }
         } else if (d.tipo === "transferencia") {
@@ -1313,12 +1311,11 @@ function renderizarLista(datos) {
             else if (d.metodo === 'BANK') bankTotal += d.monto;
         }
 
-        // Renderizado de la tarjeta (card)
         const wrapper = document.createElement("div");
         wrapper.className = "movimiento-wrapper";
         
-        // Icono dinámico según método
-        let iconoMetodo = '💵';
+        // --- NUEVA LÓGICA DE ICONOS (SOLO ICONO, SIN TEXTO) ---
+        let iconoMetodo = '💵'; // Default CASH
         if(d.metodo === 'BANK') iconoMetodo = '📲';
         if(d.metodo === 'TC') iconoMetodo = '💳'; 
 
@@ -1326,7 +1323,11 @@ function renderizarLista(datos) {
             <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
                 <div class="card-top">
                     <div class="card-info">
-                        <div class="card-cat">${d.categoria} ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} <small>${iconoMetodo} ${d.metodo}</small></div>
+                        <div class="card-cat">
+                            ${d.categoria} 
+                            ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} 
+                            <span style="margin-left: 5px; font-size: 0.9rem;">${iconoMetodo}</span>
+                        </div>
                         <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                     </div>
                     <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
@@ -1342,14 +1343,12 @@ function renderizarLista(datos) {
         listaCont.appendChild(wrapper);
     });
 
-    // --- AQUÍ ES DONDE VAN LAS LÍNEAS POR LAS QUE PREGUNTASTE ---
-    
-    // Actualizar los textos de la interfaz principal
+    // Actualizar totales
     if(document.getElementById("totalIngresos")) document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
     if(document.getElementById("totalEgresos")) document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
     if(document.getElementById("disponible")) document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
     
-    // Actualizar saldos del popover (botón 💰)
+    // Actualizar saldos del popover
     if(document.getElementById("saldo-cash")) document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
     if(document.getElementById("saldo-bank")) document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
     if(document.getElementById("saldo-tc")) document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
