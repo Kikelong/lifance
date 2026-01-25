@@ -1415,54 +1415,46 @@ function renderizarLista(datos) {
     datos.forEach(d => {
         if (d.tipo === "ingreso") {
             iT += d.monto;
-            if (d.metodo === 'CASH') cashTotal += d.monto; 
-            else if (d.metodo === 'BANK') bankTotal += d.monto;
+            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
         } else if (d.tipo === "egreso") {
             if (d.metodo !== 'TC') {
                 eT += d.monto;
-                if (d.metodo === 'CASH') cashTotal -= d.monto; 
-                else bankTotal -= d.monto;
+                if (d.metodo === 'CASH') cashTotal -= d.monto; else bankTotal -= d.monto;
             } else {
                 tcTotal += d.monto;
             }
         } else if (d.tipo === "transferencia") {
-            if (d.metodo === 'CASH') cashTotal += d.monto; 
-            else if (d.metodo === 'BANK') bankTotal += d.monto;
+            if (d.metodo === 'CASH') cashTotal += d.monto; else bankTotal += d.monto;
         }
 
         const wrapper = document.createElement("div");
         wrapper.className = "movimiento-wrapper";
-        let iconoMetodo = d.metodo === 'BANK' ? '📲' : (d.metodo === 'TC' ? '💳' : '💵');
+        let icono = d.metodo === 'BANK' ? '📲' : (d.metodo === 'TC' ? '💳' : '💵');
 
         wrapper.innerHTML = `
             <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
                 <div class="card-top">
                     <div class="card-info">
-                        <div class="card-cat">${d.categoria} ${d.pendienteVinculado ? '<span class="badge-pend">PAGADO</span>' : ''} <span style="margin-left:5px;">${iconoMetodo}</span></div>
+                        <div class="card-cat">${d.categoria} <span style="margin-left:5px;">${icono}</span></div>
                         <div class="card-date">${d.fecha} <span style="margin-left:5px; color:#aaa;">${d.hora || ''}</span></div>
                     </div>
                     <div class="card-monto text-${d.tipo}">$ ${new Intl.NumberFormat("es-CO").format(Math.abs(d.monto))}</div>
-                    <div onclick="toggleSwipe(this, event)" style="color: #ccc; font-size: 1.2rem; margin-left: 10px; cursor: pointer; padding: 10px;">❮</div>
                 </div>
                 <div id="c-${d.id}" class="comentario-box">📝 ${d.nota || 'Sin nota'}</div>
-            </div>
-            <div class="card-swipe-actions">
-                <button class="btn-swipe btn-edit" onclick="openAddModal(true, {tipo: '${d.tipo}', categoria: '${d.categoria.replace(/\'/g, "\\\'")}', monto: ${Math.abs(d.monto)}, fecha: '${d.fecha}', nota: '${(d.nota || '').replace(/\'/g, "\\\'")}', metodo: '${d.metodo}', pendienteVinculado: '${d.pendienteVinculado || ''}'}, '${d.id}')">✏️</button>
-                <button class="btn-swipe btn-delete" onclick="borrarMov('${d.id}')">✕</button>
             </div>
         `;
         listaCont.appendChild(wrapper);
     });
 
-    // ACTUALIZACIÓN DE PANTALLA PRINCIPAL
-    if(document.getElementById("totalIngresos")) document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
-    if(document.getElementById("totalEgresos")) document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
-    if(document.getElementById("disponible")) document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
+    // Actualizar Home
+    document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
+    document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
+    document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
     
-    // ACTUALIZACIÓN DE POPOVER
-    if(document.getElementById("saldo-cash")) document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
-    if(document.getElementById("saldo-bank")) document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
-    if(document.getElementById("saldo-tc")) document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
+    // Actualizar Popover
+    document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
+    document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
+    document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
 }
 
 
@@ -1627,26 +1619,27 @@ async function cargarEstadisticas() {
 
     try {
         const snap = await db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", inicio).where("fecha", "<=", fin).get();
-        let catsI = {}, catsE = {}, catsTC = {}, tI = 0, tE = 0, tTC = 0;
+        let catsI = {}, catsE = {}, tI = 0, tE = 0;
 
         snap.forEach(doc => {
             const d = doc.data();
-            if (d.tipo === 'ingreso') { tI += d.monto; catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto; }
-            else if (d.tipo === 'egreso') {
-                if (d.metodo === 'TC') { tTC += d.monto; catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto; }
-                else { tE += d.monto; catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto; }
+            if (d.tipo === 'ingreso') {
+                tI += d.monto;
+                catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto;
+            } else if (d.tipo === 'egreso' && d.metodo !== 'TC') {
+                tE += d.monto;
+                catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto;
             }
         });
 
-        // ACTUALIZACIÓN DE PANTALLA DE ESTADÍSTICAS
-        if(document.getElementById("st-disponible")) document.getElementById("st-disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
-        if(document.getElementById("st-ingresos")) document.getElementById("st-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
-        if(document.getElementById("st-egresos")) document.getElementById("st-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
-        if(document.getElementById("st-tc")) document.getElementById("st-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tTC);
+        // Actualizar el resumen de estadísticas (Diseño original)
+        document.getElementById("totalIngresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
+        document.getElementById("totalEgresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
+        document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
 
+        // Renderizar barras (puedes usar tu función renderSeccionEst original)
         renderSeccionEst(catsI, tI, "stats-ingresos");
         renderSeccionEst(catsE, tE, "stats-egresos");
-        renderSeccionEst(catsTC, tTC, "stats-tc", "💳 Consumos Tarjeta");
     } catch (e) { console.error(e); }
 }
 
