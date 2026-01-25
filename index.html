@@ -80,6 +80,33 @@
       transition: background 0.3s;
     }
 
+    #fab-container button:active {
+      transform: scale(0.9);
+      transition: transform 0.1s ease;
+    }
+    #fab-container button {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+
+        #fab-container {
+      position: fixed;
+      bottom: calc(var(--nav-height) + 20px);
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
+    }
+
+
+
+
+
+
+    
     h2 {
       text-align: center;
       color: var(--primary);
