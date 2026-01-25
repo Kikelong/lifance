@@ -564,6 +564,69 @@
         <input type="text" id="buscador" placeholder="Buscar categoría o comentario..." oninput="filtrarMovimientos()">
     </div>
 
+
+
+
+
+
+      <!-- Botón para mostrar/ocultar búsqueda avanzada -->
+      <div style="text-align: right; margin-top: 5px;">
+          <small id="toggleBusquedaAvanzada" onclick="togglePanelAvanzado()" style="color: var(--primary); cursor: pointer; font-weight: bold;">
+              🔍 Búsqueda Avanzada
+          </small>
+      </div>
+      
+      <!-- Panel de Búsqueda Avanzada (Oculto por defecto) -->
+      <div id="panelBusquedaAvanzada" class="hidden" style="background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          <h4 style="margin-top: 0; font-size: 0.9rem;">Filtrar por Rango de Fechas</h4>
+          <div class="row">
+              <div style="flex: 1;">
+                  <label style="font-size: 0.75rem; color: var(--text-muted);">Desde:</label>
+                  <input type="date" id="fechaInicioBusqueda" style="margin-top: 5px; padding: 8px; font-size: 14px;">
+              </div>
+              <div style="flex: 1;">
+                  <label style="font-size: 0.75rem; color: var(--text-muted);">Hasta:</label>
+                  <input type="date" id="fechaFinBusqueda" style="margin-top: 5px; padding: 8px; font-size: 14px;">
+              </div>
+          </div>
+          <div class="row" style="margin-top: 10px;">
+              <button class="btn-main" onclick="ejecutarBusquedaAvanzada()" style="margin-top: 0; padding: 10px; font-size: 14px;">Aplicar Filtro</button>
+              <button class="logout" onclick="limpiarBusquedaAvanzada()" style="margin-top: 0; padding: 10px; font-size: 14px; background: #95a5a6;">Limpiar</button>
+          </div>
+          <!-- Resumen del rango -->
+          <div id="resumenBusquedaAvanzada" class="hidden" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border-color); font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                  <span>Ingresos:</span> <span id="totalIngresosAvanzado" class="text-ingreso" style="font-weight: bold;">$ 0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                  <span>Egresos:</span> <span id="totalEgresosAvanzado" class="text-egreso" style="font-weight: bold;">$ 0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); pt: 5px; font-weight: bold;">
+                  <span>Balance:</span> <span id="totalBalanceAvanzado">$ 0</span>
+              </div>
+          </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     <div class="row" style="margin-top:10px;">
       <select id="mesFiltro" onchange="cargarMovimientos()"></select>
       <select id="anioFiltro" onchange="cargarMovimientos()"></select>
@@ -631,7 +694,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.3</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.6</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1682,6 +1745,88 @@ function configurarCierreModales() {
 configurarCierreModales();
 
   
+
+
+// --- Funciones de Búsqueda Avanzada ---
+
+function togglePanelAvanzado() {
+    const panel = document.getElementById("panelBusquedaAvanzada");
+    const label = document.getElementById("toggleBusquedaAvanzada");
+    panel.classList.toggle("hidden");
+    label.textContent = panel.classList.contains("hidden") ? "🔍 Búsqueda Avanzada" : "✕ Cerrar Búsqueda";
+}
+
+async function ejecutarBusquedaAvanzada() {
+    const inicio = document.getElementById("fechaInicioBusqueda").value;
+    const fin = document.getElementById("fechaFinBusqueda").value;
+
+    if (!inicio || !fin) {
+        alert("Por favor selecciona ambas fechas");
+        return;
+    }
+
+    if (inicio > fin) {
+        alert("La fecha de inicio no puede ser mayor a la de fin");
+        return;
+    }
+
+    // Mostrar indicador de carga (opcional)
+    const btn = document.querySelector("#panelBusquedaAvanzada .btn-main");
+    const originalText = btn.textContent;
+    btn.textContent = "⌛ Buscando...";
+    btn.disabled = true;
+
+    try {
+        // Consultar Firebase por el rango de fechas
+        const snap = await db.collection("movimientos")
+            .where("uid", "==", usuarioActual.uid)
+            .where("fecha", ">=", inicio)
+            .where("fecha", "<=", fin)
+            .get();
+
+        let resultados = [];
+        let tI = 0, tE = 0;
+
+        snap.forEach(doc => {
+            const d = { id: doc.id, ...doc.data() };
+            resultados.push(d);
+            if (d.tipo === 'ingreso') tI += d.monto;
+            else if (d.tipo === 'egreso') tE += d.monto;
+        });
+
+        // Ordenar por fecha descendente
+        resultados.sort((a, b) => b.fecha.localeCompare(a.fecha) || (b.hora || "").localeCompare(a.hora || ""));
+
+        // Renderizar la lista con los resultados del rango
+        renderizarLista(resultados);
+
+        // Actualizar el resumen del panel avanzado
+        document.getElementById("resumenBusquedaAvanzada").classList.remove("hidden");
+        document.getElementById("totalIngresosAvanzado").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
+        document.getElementById("totalEgresosAvanzado").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
+        const balance = tI - tE;
+        const balanceEl = document.getElementById("totalBalanceAvanzado");
+        balanceEl.textContent = "$ " + new Intl.NumberFormat("es-CO").format(balance);
+        balanceEl.className = balance >= 0 ? "text-ingreso" : "text-egreso";
+
+    } catch (error) {
+        console.error("Error en búsqueda avanzada:", error);
+        alert("Hubo un error al realizar la búsqueda");
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
+function limpiarBusquedaAvanzada() {
+    document.getElementById("fechaInicioBusqueda").value = "";
+    document.getElementById("fechaFinBusqueda").value = "";
+    document.getElementById("resumenBusquedaAvanzada").classList.add("hidden");
+    // Volver a cargar los movimientos del mes seleccionado en los filtros normales
+    cargarMovimientos();
+}
+
+
   
 </script>
 </body>
