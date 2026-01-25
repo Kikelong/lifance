@@ -606,18 +606,18 @@
 
   <div id="view-stats" class="view-section hidden">
     <h3>Resumen por Categorías</h3>
-    <div class="resumen-container">
-        <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
-        <div class="resumen-grid">
-            <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
-            <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
+        <div class="resumen-container">
+            <div class="balance-card">Disponible <span id="disponible-stats">$ 0</span></div>
+            <div class="resumen-grid">
+                <div class="resumen-item">Ingresos <span id="totalIngresos-stats" class="text-ingreso">$ 0</span></div>
+                <div class="resumen-item">Egresos <span id="totalEgresos-stats" class="text-egreso">$ 0</span></div>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
-        <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
-    </div>
-    <div id="statsContent"></div>
+        <div class="row">
+            <select id="mesFiltroStats" onchange="cargarEstadisticas()"></select>
+            <select id="anioFiltroStats" onchange="cargarEstadisticas()"></select>
+        </div>
+        <div id="statsContent"></div>
   </div>
 
   <div id="view-home" class="view-section">
@@ -1496,26 +1496,83 @@ function cancelarEdicion() {
     btn.onclick = guardarMovimiento;
 }
 
-function cargarEstadisticas() {
-    const cont = document.getElementById("statsContent");
-    if(!cont) return;
-    const m = parseInt(document.getElementById("mesFiltroStats").value);
-    const a = parseInt(document.getElementById("anioFiltroStats").value);
-    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
-    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
-    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
-      let sI = {}, sE = {}, tI = 0, tE = 0;
-      snap.forEach(doc => {
-        const d = doc.data();
-        if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
-        else if(d.tipo === 'egreso') { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
-      });
-      let h = `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
-      for(let [c,v] of Object.entries(sI)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
-      h += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
-      for(let [c,v] of Object.entries(sE)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
-      cont.innerHTML = h;
-    });
+async function cargarEstadisticas() {
+    const mes = document.getElementById("filtroMes").value;
+    const anio = document.getElementById("filtroAnio").value;
+    const inicio = `${anio}-${mes}-01`;
+    const fin = `${anio}-${mes}-31`;
+
+    try {
+        const snap = await db.collection("movimientos")
+            .where("uid", "==", usuarioActual.uid)
+            .where("fecha", ">=", inicio)
+            .where("fecha", "<=", fin)
+            .get();
+
+        let catsI = {}, catsE = {}, catsTC = {};
+        let totalI = 0, totalE = 0, totalTC = 0;
+
+        snap.forEach(doc => {
+            const d = doc.data();
+            if (d.tipo === 'ingreso') {
+                totalI += d.monto;
+                catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto;
+            } else if (d.tipo === 'egreso') {
+                // SEPARAR TC DE EGRESOS REALES
+                if (d.metodo === 'TC') {
+                    totalTC += d.monto;
+                    catsTC[d.categoria] = (catsTC[d.categoria] || 0) + d.monto;
+                } else {
+                    totalE += d.monto;
+                    catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto;
+                }
+            }
+        });
+
+        // Renderizar Ingresos
+        renderSeccionEst(catsI, totalI, "stats-ingresos");
+        // Renderizar Egresos Reales
+        renderSeccionEst(catsE, totalE, "stats-egresos");
+        // Renderizar Consumos TC (Nueva sección)
+        renderSeccionEst(catsTC, totalTC, "stats-tc", "💳 Consumos Tarjeta");
+
+        // Actualizar resumen de estadísticas
+        document.getElementById("resumen-total-ingresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalI);
+        document.getElementById("resumen-total-egresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalE);
+        document.getElementById("resumen-total-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(totalTC);
+
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// Función auxiliar para renderizar cada sección de estadísticas
+function renderSeccionEst(datos, total, containerId, tituloPersonalizado) {
+    const cont = document.getElementById(containerId);
+    if (!cont) return;
+    
+    let html = tituloPersonalizado ? `<h3 style="margin-top:20px; color:#e74c3c;">${tituloPersonalizado}</h3>` : "";
+    
+    if (total === 0) {
+        html += `<p style="color:#aaa; font-size:0.8rem;">No hay registros</p>`;
+    } else {
+        const ordenadas = Object.entries(datos).sort((a, b) => b[1] - a[1]);
+        ordenadas.forEach(([cat, monto]) => {
+            const porc = ((monto / total) * 100).toFixed(1);
+            html += `
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                        <span>${cat}</span>
+                        <span style="font-weight:bold;">$ ${new Intl.NumberFormat("es-CO").format(monto)} (${porc}%)</span>
+                    </div>
+                    <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden;">
+                        <div style="background:var(--primary); width:${porc}%; height:100%;"></div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    cont.innerHTML = html;
 }
 
 function actualizarHeaderNombre() {
@@ -1666,6 +1723,19 @@ function setTipoModal(t) {
     tipoSeleccionadoModal = t;
     document.getElementById("btnIngresoModal").style.opacity = t === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgresoModal").style.opacity = t === 'egreso' ? '1' : '0.4';
+    
+    // --- NUEVA LÓGICA: Ocultar TC si es Ingreso ---
+    const optTC = document.getElementById("optTCModal");
+    if (t === 'ingreso') {
+        optTC.classList.add("hidden");
+        // Si estaba seleccionado TC, volvemos a CASH por defecto
+        if (document.getElementById("metodoPagoModal").value === 'TC') {
+            seleccionarMetodoModal('CASH');
+        }
+    } else {
+        optTC.classList.remove("hidden");
+    }
+
     const catS = document.getElementById("categoriaModal");
     catS.innerHTML = "";
     const lista = misCategorias[t].sort((a,b) => (a.orden||0) - (b.orden||0));
