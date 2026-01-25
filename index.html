@@ -609,7 +609,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.2</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.3</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1624,30 +1624,40 @@ async function guardarMovimientoModal() {
 
 
 
-// Función para cerrar modales al hacer clic fuera del contenido (en el overlay)
-window.onclick = function(event) {
-    const modalAdd = document.getElementById("modalAddMovimiento");
-    const modalTransf = document.getElementById("modalTransferencia");
+// Función mejorada para cerrar modales al hacer clic/tocar fuera (PC y Móvil)
+function configurarCierreModales() {
+    const overlays = document.querySelectorAll('.modal-overlay');
     const popoverBalance = document.getElementById("balance-popover");
 
-    // Si el clic fue directamente en el overlay del modal de movimientos
-    if (event.target == modalAdd) {
-        closeAddModal();
-    }
-    
-    // Si el clic fue directamente en el overlay del modal de transferencia
-    if (event.target == modalTransf) {
-        toggleModalTransf();
-    }
+    // Manejar clics en los overlays de los modales
+    overlays.forEach(overlay => {
+        // Usamos 'mousedown' o 'click' para mayor compatibilidad en móviles
+        overlay.addEventListener('click', function(event) {
+            // Verificamos que el clic sea exactamente en el fondo (overlay) y no en el contenido
+            if (event.target === this) {
+                if (this.id === "modalAddMovimiento") {
+                    closeAddModal();
+                } else if (this.id === "modalTransferencia") {
+                    toggleModalTransf();
+                }
+            }
+        });
+    });
 
-    // Opcional: Cerrar el popover de balance si se hace clic fuera de él
-    if (popoverBalance && !popoverBalance.classList.contains("hidden")) {
-        // Si el clic no fue en el popover ni en el botón que lo abre (💰)
-        if (!popoverBalance.contains(event.target) && !event.target.innerText.includes("💰")) {
-            popoverBalance.classList.add("hidden");
+    // Manejar clics fuera del popover de balance
+    document.addEventListener('click', function(event) {
+        if (popoverBalance && !popoverBalance.classList.contains("hidden")) {
+            const btnBalance = event.target.closest('button');
+            // Si el clic no es dentro del popover y no es el botón de la moneda
+            if (!popoverBalance.contains(event.target) && (!btnBalance || !btnBalance.innerText.includes("💰"))) {
+                popoverBalance.classList.add("hidden");
+            }
         }
-    }
+    });
 }
+
+// Ejecutar la configuración al cargar la página
+configurarCierreModales();
 
   
   
