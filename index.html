@@ -1430,16 +1430,8 @@ function renderizarLista(datos) {
         `;
         listaCont.appendChild(wrapper);
     });
+actualizarResumenVisual(iT, eT, cashTotal, bankTotal, tcTotal);
 
-    // Actualizar Home
-    document.getElementById("totalIngresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(iT);
-    document.getElementById("totalEgresos").textContent = "$ " + new Intl.NumberFormat("es-CO").format(eT);
-    document.getElementById("disponible").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal + bankTotal);
-    
-    // Actualizar Popover
-    document.getElementById("saldo-cash").textContent = "$ " + new Intl.NumberFormat("es-CO").format(cashTotal);
-    document.getElementById("saldo-bank").textContent = "$ " + new Intl.NumberFormat("es-CO").format(bankTotal);
-    document.getElementById("saldo-tc").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tcTotal);
 }
 
 
@@ -1452,28 +1444,39 @@ function filtrarMovimientos() {
     renderizarLista(filtrados);
 }
 
-function actualizarResumenVisual(iT, eT, cashTotal, bankTotal) {
+function actualizarResumenVisual(iT, eT, cashTotal, bankTotal, tcTotal = 0) {
     const formato = new Intl.NumberFormat("es-CO");
     const balance = iT - eT;
-    document.getElementById("totalIngresos").textContent = "$ " + formato.format(iT);
-    document.getElementById("totalEgresos").textContent = "$ " + formato.format(eT);
+
+    // Home
+    const ti = document.getElementById("totalIngresos");
+    const te = document.getElementById("totalEgresos");
     const disp = document.getElementById("disponible");
-    disp.textContent = "$ " + formato.format(balance);
-    disp.style.color = balance < 0 ? "#e74c3c" : "white";
-    if(document.getElementById("totalIngresos-stats")){
+
+    if (ti) ti.textContent = "$ " + formato.format(iT);
+    if (te) te.textContent = "$ " + formato.format(eT);
+    if (disp) {
+        disp.textContent = "$ " + formato.format(balance);
+        disp.style.color = balance < 0 ? "#e74c3c" : "white";
+    }
+
+    // Stats
+    if (document.getElementById("totalIngresos-stats")) {
         document.getElementById("totalIngresos-stats").textContent = "$ " + formato.format(iT);
         document.getElementById("totalEgresos-stats").textContent = "$ " + formato.format(eT);
         document.getElementById("disponible-stats").textContent = "$ " + formato.format(balance);
     }
+
+    // Popover
     const cashEl = document.getElementById("saldo-cash");
     const bankEl = document.getElementById("saldo-bank");
-    if(cashEl && bankEl) {
-        cashEl.textContent = "$ " + formato.format(cashTotal);
-        bankEl.textContent = "$ " + formato.format(bankTotal);
-        cashEl.style.color = cashTotal < 0 ? "#c0392b" : "#2c3e50";
-        bankEl.style.color = bankTotal < 0 ? "#c0392b" : "#2c3e50";
-    }
+    const tcEl = document.getElementById("saldo-tc");
+
+    if (cashEl) cashEl.textContent = "$ " + formato.format(cashTotal);
+    if (bankEl) bankEl.textContent = "$ " + formato.format(bankTotal);
+    if (tcEl) tcEl.textContent = "$ " + formato.format(tcTotal);
 }
+
 
 // --- UI y Navegación ---
 function cambiarVista(v) {
@@ -1610,6 +1613,9 @@ function cargarEstadisticas() {
         if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
         else if(d.tipo === 'egreso') { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
       });
+
+      actualizarResumenVisual(tI, tE, 0, 0, 0);
+      
       let h = `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
       for(let [c,v] of Object.entries(sI)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
       h += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
