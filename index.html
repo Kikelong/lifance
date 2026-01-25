@@ -609,7 +609,7 @@
 
     
     <button class="logout" onclick="logout()">Cerrar Sesión</button>
-    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.1</p>
+    <p style="text-align: center; color: #999; font-size: 0.75rem; margin-top: 20px;">Lifance v2.8.2</p>
   </div>
 
   <div id="modalTransferencia" class="modal-overlay hidden">
@@ -1622,6 +1622,34 @@ async function guardarMovimientoModal() {
           // ... tu código existente ...
       });
 
+
+
+// Función para cerrar modales al hacer clic fuera del contenido (en el overlay)
+window.onclick = function(event) {
+    const modalAdd = document.getElementById("modalAddMovimiento");
+    const modalTransf = document.getElementById("modalTransferencia");
+    const popoverBalance = document.getElementById("balance-popover");
+
+    // Si el clic fue directamente en el overlay del modal de movimientos
+    if (event.target == modalAdd) {
+        closeAddModal();
+    }
+    
+    // Si el clic fue directamente en el overlay del modal de transferencia
+    if (event.target == modalTransf) {
+        toggleModalTransf();
+    }
+
+    // Opcional: Cerrar el popover de balance si se hace clic fuera de él
+    if (popoverBalance && !popoverBalance.classList.contains("hidden")) {
+        // Si el clic no fue en el popover ni en el botón que lo abre (💰)
+        if (!popoverBalance.contains(event.target) && !event.target.innerText.includes("💰")) {
+            popoverBalance.classList.add("hidden");
+        }
+    }
+}
+
+  
   
 </script>
 </body>
