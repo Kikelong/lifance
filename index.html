@@ -1596,36 +1596,26 @@ function cancelarEdicion() {
 
 
 
-async function cargarEstadisticas() {
-    const mes = document.getElementById("mesFiltroStats").value;
-    const anio = document.getElementById("anioFiltroStats").value;
-    const inicio = `${anio}-${mes}-01`;
-    const fin = `${anio}-${mes}-31`;
-
-    try {
-        const snap = await db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", inicio).where("fecha", "<=", fin).get();
-        let catsI = {}, catsE = {}, tI = 0, tE = 0;
-
-        snap.forEach(doc => {
-            const d = doc.data();
-            if (d.tipo === 'ingreso') {
-                tI += d.monto;
-                catsI[d.categoria] = (catsI[d.categoria] || 0) + d.monto;
-            } else if (d.tipo === 'egreso' && d.metodo !== 'TC') {
-                tE += d.monto;
-                catsE[d.categoria] = (catsE[d.categoria] || 0) + d.monto;
-            }
-        });
-
-        // Actualizar el resumen de estadísticas (Diseño original)
-        document.getElementById("totalIngresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI);
-        document.getElementById("totalEgresos-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tE);
-        document.getElementById("disponible-stats").textContent = "$ " + new Intl.NumberFormat("es-CO").format(tI - tE);
-
-        // Renderizar barras (puedes usar tu función renderSeccionEst original)
-        renderSeccionEst(catsI, tI, "stats-ingresos");
-        renderSeccionEst(catsE, tE, "stats-egresos");
-    } catch (e) { console.error(e); }
+function cargarEstadisticas() {
+    const cont = document.getElementById("statsContent");
+    if(!cont) return;
+    const m = parseInt(document.getElementById("mesFiltroStats").value);
+    const a = parseInt(document.getElementById("anioFiltroStats").value);
+    const pD = `${a}-${String(m).padStart(2, '0')}-01`;
+    const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
+    db.collection("movimientos").where("uid", "==", usuarioActual.uid).where("fecha", ">=", pD).where("fecha", "<=", uD).get().then(snap => {
+      let sI = {}, sE = {}, tI = 0, tE = 0;
+      snap.forEach(doc => {
+        const d = doc.data();
+        if(d.tipo === 'ingreso') { sI[d.categoria] = (sI[d.categoria]||0) + d.monto; tI += d.monto; }
+        else if(d.tipo === 'egreso') { sE[d.categoria] = (sE[d.categoria]||0) + d.monto; tE += d.monto; }
+      });
+      let h = `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
+      for(let [c,v] of Object.entries(sI)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+      h += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
+      for(let [c,v] of Object.entries(sE)) h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+      cont.innerHTML = h;
+    });
 }
 
 
