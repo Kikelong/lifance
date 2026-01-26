@@ -1616,6 +1616,19 @@ function setTipoModal(t) {
     tipoSeleccionadoModal = t;
     document.getElementById("btnIngresoModal").style.opacity = t === 'ingreso' ? '1' : '0.4';
     document.getElementById("btnEgresoModal").style.opacity = t === 'egreso' ? '1' : '0.4';
+    
+    // --- NUEVA LÓGICA: Ocultar TC si es Ingreso ---
+    const optTC = document.getElementById("optTCModal");
+    if (t === 'ingreso') {
+        optTC.classList.add("hidden");
+        // Si estaba seleccionado TC, volvemos a CASH por defecto
+        if (document.getElementById("metodoPagoModal").value === 'TC') {
+            seleccionarMetodoModal('CASH');
+        }
+    } else {
+        optTC.classList.remove("hidden");
+    }
+
     const catS = document.getElementById("categoriaModal");
     catS.innerHTML = "";
     const lista = misCategorias[t].sort((a,b) => (a.orden||0) - (b.orden||0));
