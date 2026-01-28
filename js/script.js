@@ -677,13 +677,16 @@ function cargarEstadisticas() {
     const pD = `${a}-${String(m).padStart(2, '0')}-01`;
     const uD = `${a}-${String(m).padStart(2, '0')}-${new Date(a, m, 0).getDate()}`;
 
+    // Mostrar indicador de carga (opcional, pero mejora UX)
+    document.getElementById("statsContent").innerHTML = '<p style="text-align:center; color:#888;">Cargando estadísticas...</p>';
+
     db.collection("movimientos")
         .where("uid", "==", usuarioActual.uid)
         .where("fecha", ">=", pD)
         .where("fecha", "<=", uD)
         .get()
         .then(snap => {
-            let sI = {}, sE = {}, sTC = {};   // ← nuevo objeto para TC
+            let sI = {}, sE = {}, sTC = {};
             let tI = 0, tE = 0, tTC = 0;
 
             snap.forEach(doc => {
@@ -694,8 +697,6 @@ function cargarEstadisticas() {
                 } else if (d.tipo === 'egreso') {
                     sE[d.categoria] = (sE[d.categoria] || 0) + d.monto;
                     tE += d.monto;
-
-                    // Solo egresos con TC
                     if (d.metodo === 'TC') {
                         sTC[d.categoria] = (sTC[d.categoria] || 0) + d.monto;
                         tTC += d.monto;
@@ -703,37 +704,40 @@ function cargarEstadisticas() {
                 }
             });
 
-            let h = '';
+            let html = '';
 
-            // Ingresos (como antes)
-            h += `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
+            // Ingresos
+            html += `<div class="stat-header text-ingreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:15px;">INGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tI)})</div>`;
             for (let [c, v] of Object.entries(sI)) {
-                h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+                html += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-ingreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
             }
 
             // Egresos normales
-            h += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:20px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
+            html += `<div class="stat-header text-egreso" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:20px;">EGRESOS ($ ${new Intl.NumberFormat("es-CO").format(tE)})</div>`;
             for (let [c, v] of Object.entries(sE)) {
-                h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+                html += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span class="text-egreso">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
             }
 
-            // ← NUEVO: Egresos solo con TC
+            // Egresos con TC
             if (tTC > 0) {
-                h += `<div class="stat-header text-tc" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:25px; color: #e67e22;">
+                html += `<div class="stat-header text-tc" style="background:#f1f1f1; padding:10px; font-weight:bold; margin-top:25px; color: #e67e22;">
                     EGRESOS CON TARJETA DE CRÉDITO ($ ${new Intl.NumberFormat("es-CO").format(tTC)})</div>`;
                 for (let [c, v] of Object.entries(sTC)) {
-                    h += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;"><span>${c}</span><span style="color:#e67e22;">$ ${new Intl.NumberFormat("es-CO").format(v)}</span></div>`;
+                    html += `<div class="row" style="justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">
+                        <span>${c}</span>
+                        <span style="color:#e67e22;">$ ${new Intl.NumberFormat("es-CO").format(v)}</span>
+                    </div>`;
                 }
             } else {
-                h += `<p style="text-align:center; color:#888; margin-top:20px;">No hay egresos con TC este mes</p>`;
+                html += `<p style="text-align:center; color:#888; margin-top:20px;">No hay egresos con TC este mes</p>`;
             }
 
-            document.getElementById("statsContent").innerHTML = h;
-            document.getElementById("totalEgresosTC").textContent = new Intl.NumberFormat("es-CO").format(tTC); // opcional si usas span
+            // Insertar todo de una vez al final
+            document.getElementById("statsContent").innerHTML = html;
         })
         .catch(err => {
             console.error("Error cargando estadísticas:", err);
-            document.getElementById("statsContent").innerHTML = "<p style='color:red; text-align:center;'>Error al cargar estadísticas</p>";
+            document.getElementById("statsContent").innerHTML = '<p style="color:red; text-align:center;">Error al cargar estadísticas</p>';
         });
 }
 
