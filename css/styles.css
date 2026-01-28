@@ -17,6 +17,18 @@
         --comentario-text: #856404;
     }
 
+
+:root {
+    --tc: #e67e22;          /* naranja típico de tarjetas */
+    /* o #9b59b6 morado, #f1c40f amarillo, etc. */
+}
+
+.text-tc { color: var(--tc); }
+.stat-header.text-tc {
+    color: var(--tc);
+    border-left: 4px solid var(--tc);
+}
+
     body.dark-mode {
         --primary: #34495e;
         --bg: #1a1a1a;
