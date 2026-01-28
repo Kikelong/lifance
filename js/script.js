@@ -1,4 +1,5 @@
 
+
   const firebaseConfig = {
     apiKey: "AIzaSyD0lj9irvH8deYcd0fsAzmFrDNPJaU34_c",
     authDomain: "lifance-d2316.firebaseapp.com",
