@@ -552,7 +552,7 @@
 
     
     .card.tc-item {
-        border-right: 4px dashed #d35400 !important; /* Un borde sutil para identificar deuda */
+        border-right: 4px dashed #f39c12 !important; /* Un borde sutil para identificar deuda */
     }
 
     
