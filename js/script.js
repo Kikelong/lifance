@@ -476,7 +476,7 @@ function cargarMovimientos() {
     
             let iconoMetodo = '💵';
             if (d.metodo === 'BANK') iconoMetodo = '📲';
-            if (d.metodo === 'TC') iconoMetodo = '💳 TC';
+            if (d.metodo === 'TC') iconoMetodo = '💳';
     
             wrapper.innerHTML = `
                     <div class="card ${d.tipo}-item ${d.metodo === 'TC' ? 'tc-item' : ''}" onclick="toggleComent('${d.id}')">
