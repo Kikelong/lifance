@@ -551,8 +551,14 @@
       }
 
     
-    .card.tc-item {
-        border-right: 4px dashed #f39c12 !important; /* Un borde sutil para identificar deuda */
-    }
-
+.card.tc-item {
+    /* Quitamos el borde dashed original */
+    border-right: none !important; 
+    
+    /* Creamos el borde personalizado */
+    background-image: linear-gradient(to bottom, #f39c12 70%, transparent 30%);
+    background-position: right;
+    background-size: 4px 8px; /* 4px de ancho, 8px de ciclo total */
+    background-repeat: repeat-y;
+}
     
