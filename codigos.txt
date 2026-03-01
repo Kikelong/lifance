@@ -1,0 +1,5 @@
+CODIGOS:
+
+CREAR .exe: pyinstaller --onefile --noconsole xxxxxxxxxxx.py -> esto hay que ponerlo en un cmd y donde estar el el .py
+
+  
